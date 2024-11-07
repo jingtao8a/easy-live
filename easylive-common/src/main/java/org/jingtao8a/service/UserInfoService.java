@@ -1,7 +1,10 @@
 package org.jingtao8a.service;
 import java.util.List;
+
+import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.query.UserInfoQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
 /**
@@ -90,4 +93,7 @@ public interface UserInfoService {
 	*/
 	Long deleteByNickName(String nickName);
 
+	void register(String email, String nickName, String registerPassword) throws BusinessException;
+
+	TokenUserInfoDto login(String email, String password, String ip) throws BusinessException;
 }

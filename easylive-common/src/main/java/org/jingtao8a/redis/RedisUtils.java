@@ -249,12 +249,12 @@ public class RedisUtils<V> {
     }
 
     /**
-     * 向sorted set添加元素，score默认为 1
+     * sorted set 的 key-v 的 score 加 1
      * @param key
      * @param v
      */
     public void zaddCount(String key, V v) {
-        redisTemplate.opsForZSet().add(key, v, 1L);
+        redisTemplate.opsForZSet().incrementScore(key, v, 1);
     }
 
     /**
@@ -263,7 +263,7 @@ public class RedisUtils<V> {
      * @param count
      * @return
      */
-    public List<V> getZSet(String key, Integer count) {
+    public List<V> getZSetList(String key, Integer count) {
         Set<V> topElements = redisTemplate.opsForZSet().reverseRange(key, 0, count);
         List<V> list = new ArrayList<>(topElements);
         return list;

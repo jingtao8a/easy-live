@@ -7,11 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class AGlobalExceptionHandlerController extends ABaseController{
@@ -32,7 +35,7 @@ public class AGlobalExceptionHandlerController extends ABaseController{
             ajaxResponse.setCode(biz.getCode());
             ajaxResponse.setInfo(biz.getMessage());
             ajaxResponse.setStatus(STATUS_ERROR);
-        } else if (e instanceof BindException) {
+        } else if (e instanceof ConstraintViolationException || e instanceof BindException || e instanceof MethodArgumentTypeMismatchException) {
             //参数类型错误
             ajaxResponse.setCode(ResponseCodeEnum.CODE_600.getCode());
             ajaxResponse.setInfo(ResponseCodeEnum.CODE_600.getMsg());
