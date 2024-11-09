@@ -101,7 +101,7 @@ public class AccountController extends ABaseController {
 		}
 	}
 
-	@RequestMapping("/login")
+	@RequestMapping("/autoLogin")
 	public ResponseVO autoLogin(HttpServletResponse response) throws BusinessException {
 		TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
 		if (null == tokenUserInfoDto) {

@@ -26,5 +26,5 @@ public class Constants {
 
     public static final String REDIS_KEY_TOKEN_WEB = REDIS_KEY_PREFIX + "token:web:";
 
-    public static final String TOKEN_WEB = REDIS_KEY_PREFIX + "token:web:";
+    public static final String TOKEN_WEB = "token:web:";
 }
