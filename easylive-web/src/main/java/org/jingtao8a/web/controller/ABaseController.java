@@ -1,10 +1,8 @@
 package org.jingtao8a.web.controller;
-import jdk.nashorn.internal.parser.Token;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.enums.ResponseCodeEnum;
-import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.ResponseVO;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

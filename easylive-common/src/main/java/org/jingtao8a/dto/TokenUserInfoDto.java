@@ -11,11 +11,11 @@ public class TokenUserInfoDto implements Serializable {
     private static final long serialVersionUID = 9170480547933408839L;
     private String userId;
     private String nickName;
-    private String avatar;
+    private String avatar;//头像
     private Long expireAt;// token 失效时间
     private String token;
 
-    private Integer fansCount;
+    private Integer fansCount;//粉丝数
     private Integer currentCoinCount;
-    private Integer focusCount;
+    private Integer focusCount;//关注数
 }
