@@ -69,7 +69,7 @@ public class ABaseController {
 
     protected void saveToken2Cookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(Constants.TOKEN_ADMIN, token);
-        cookie.setMaxAge(Constants.REDIS_KEY_EXPIRES_ONE_DAY / 1000);//浏览器保存cookie的时间单位为 second
+        cookie.setMaxAge(-1);//会话级别 浏览器保存cookie的时间单位为 second
         cookie.setPath("/");
         response.addCookie(cookie);
     }
