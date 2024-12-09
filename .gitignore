@@ -6,7 +6,7 @@ admin-log
 web-log
 
 ### IntelliJ IDEA ###
-
+.idea
 
 ### Eclipse ###
 .apt_generated
