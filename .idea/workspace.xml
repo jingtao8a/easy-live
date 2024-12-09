@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74dc2222-3284-4e60-ae20-335686e87817" name="Changes" comment="update">
-      <change afterPath="$PROJECT_DIR$/doc/登入注册.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/easylive-common/src/main/java/org/jingtao8a/dto/TokenUserInfoDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/easylive-common/src/main/java/org/jingtao8a/dto/TokenUserInfoDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/easylive-web/src/main/java/org/jingtao8a/web/controller/ABaseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/easylive-web/src/main/java/org/jingtao8a/web/controller/ABaseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/easylive-web/src/main/java/org/jingtao8a/web/controller/AGlobalExceptionHandlerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/easylive-web/src/main/java/org/jingtao8a/web/controller/AGlobalExceptionHandlerController.java" afterDir="false" />
+    <list default="true" id="74dc2222-3284-4e60-ae20-335686e87817" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +147,10 @@
       <workItem from="1731116674013" duration="1311000" />
       <workItem from="1732429103820" duration="27000" />
       <workItem from="1733556295085" duration="1817000" />
-      <workItem from="1733558132929" duration="2694000" />
+      <workItem from="1733558132929" duration="3239000" />
+      <workItem from="1733703944937" duration="94000" />
+      <workItem from="1733704043883" duration="29000" />
+      <workItem from="1733704075938" duration="52000" />
     </task>
     <task id="LOCAL-00001" summary="init project">
       <option name="closed" value="true" />
@@ -207,7 +208,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733558235383</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="update">
+      <option name="closed" value="true" />
+      <created>1733560945041</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1733560945041</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
