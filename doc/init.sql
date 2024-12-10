@@ -22,3 +22,16 @@ CREATE TABLE `easylive`.`user_info` (
   UNIQUE INDEX `idx_email` (`email` ASC) INVISIBLE,
   UNIQUE INDEX `idx_nick_name` (`nick_name` ASC) INVISIBLE)
 COMMENT = '用户信息';
+
+CREATE TABLE `easylive`.`category_info` (
+  `category_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增分类id',
+  `category_code` VARCHAR(30) NOT NULL COMMENT '分类编码',
+  `category_name` VARCHAR(30) NOT NULL COMMENT '分类名称',
+  `p_category_id` INT(11) NOT NULL COMMENT '父级分类id',
+  `icon` VARCHAR(50) NULL COMMENT '图标',
+  `background` VARCHAR(50) NULL COMMENT '背景图',
+  `sort` TINYINT(4) NOT NULL COMMENT '排序号',
+  PRIMARY KEY (`category_id`),
+  UNIQUE INDEX `idx_key_category_code` (`category_code` ASC) VISIBLE)
+COMMENT = '分类信息';
+
