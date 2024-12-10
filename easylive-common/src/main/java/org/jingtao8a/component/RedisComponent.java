@@ -2,11 +2,12 @@ package org.jingtao8a.component;
 
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.entity.po.CategoryInfo;
 import org.jingtao8a.redis.RedisUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class RedisComponent {
@@ -53,5 +54,9 @@ public class RedisComponent {
 
     public void cleanToken4Admin(String token) {
         redisUtils.delete(Constants.REDIS_KEY_TOKEN_ADMIN + token);
+    }
+
+    public void saveCategoryList(List<CategoryInfo> list) {
+        redisUtils.set(Constants.REDIS_KEY_CATEGORY_LIST, list);
     }
 }

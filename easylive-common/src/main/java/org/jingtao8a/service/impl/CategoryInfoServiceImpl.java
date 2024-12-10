@@ -1,5 +1,6 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.entity.po.CategoryInfo;
 import org.jingtao8a.entity.query.CategoryInfoQuery;
 import org.jingtao8a.entity.query.SimplePage;
@@ -23,6 +24,10 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 
 	@Resource
 	private CategoryInfoMapper<CategoryInfo, CategoryInfoQuery> categoryInfoMapper;
+
+	@Resource
+	private RedisComponent redisComponent;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -180,7 +185,8 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		categoryInfoQuery.setCategoryIdOrPCategoryId(categoryId);
 		categoryInfoMapper.deleteByParam(categoryInfoQuery);
 
-		//TODO 刷新缓存
+		//刷新缓存
+		save2Redis();
 	}
 
 	@Override
@@ -196,5 +202,15 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		}
 		categoryInfoMapper.updateSortBatch(categoryInfoList);
 
+		//刷新缓存
+		save2Redis();
+	}
+
+	private void save2Redis() {
+		CategoryInfoQuery query = new CategoryInfoQuery();
+		query.setOrderBy("sort asc");
+		query.setConvert2Tree(true);
+		List<CategoryInfo> list = this.findListByParam(query);
+		redisComponent.saveCategoryList(list);
 	}
 }

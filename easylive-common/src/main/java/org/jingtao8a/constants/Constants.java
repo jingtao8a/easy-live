@@ -28,6 +28,8 @@ public class Constants {
 
     public static final String REDIS_KEY_TOKEN_ADMIN = REDIS_KEY_PREFIX + "token:admin:";
 
+    public static final String REDIS_KEY_CATEGORY_LIST = REDIS_KEY_PREFIX + "category:list:";
+
     public static final String TOKEN_WEB = "token";
 
     public static final String TOKEN_ADMIN = "adminToken";
