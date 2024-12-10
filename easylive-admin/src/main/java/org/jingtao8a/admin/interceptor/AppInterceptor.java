@@ -40,11 +40,11 @@ public class AppInterceptor implements HandlerInterceptor {
         if (request.getRequestURI().contains(URL_FILE)) {//从cookie中查找TOKEN_ADMIN
             token = getTokenFromCookie(request);
         }
-        if (StringTools.isEmpty(token)) {
+        if (StringTools.isEmpty(token)) {//请求头和cookie中均没没找到TOKEN_ADMIN
             throw new BusinessException(ResponseCodeEnum.CODE_901);
         }
         Object sessionObj = redisComponent.getTokenInfo4Admin(token);
-        if (null == sessionObj) {
+        if (null == sessionObj) {//redis中的token已经失效
             throw new BusinessException(ResponseCodeEnum.CODE_901);
         }
         return true;
