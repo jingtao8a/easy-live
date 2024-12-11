@@ -15,4 +15,7 @@ public class AppConfig {
 
     @Value("${admin.password}")
     private String adminPassword;
+
+    @Value("${showFFmpegLog}")
+    private Boolean showFFmpegLog;
 }

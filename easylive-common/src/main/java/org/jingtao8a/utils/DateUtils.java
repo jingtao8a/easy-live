@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtils {
+    public static String YYYYMM = "yyyyMM";
     public static String YYYY_MM_DD = "yyyy-MM-dd";
     public static String YYYYMMDD = "yyyy/MM/dd";
     public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";

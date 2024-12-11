@@ -1,10 +1,19 @@
 package org.jingtao8a.constants;
 
 public class Constants {
+    public static final String FILE_TEMP = "temp/";
+
+    public static final String FILE_VIDEO = "video/";
+
+    public static final String FILE_COVER = "cover/";
+
+    public static final String FILE_FOLDER = "file/";
     //theme 1
     public static final Integer ONE = 1;
     //theme 0
     public static final Integer ZERO = 0;
+
+    public static final Integer LENGTH_30 = 30;
 
     public static final Integer LENGTH_10 = 10;
 
@@ -33,4 +42,6 @@ public class Constants {
     public static final String TOKEN_WEB = "token";
 
     public static final String TOKEN_ADMIN = "adminToken";
+
+    public static final String IMAGE_THUMBNAIL_SUFFIX = "_thumbnail.jpg";
 }

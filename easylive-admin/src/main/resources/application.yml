@@ -49,3 +49,4 @@ admin:
   account: admin
   password: admin123
 
+showFFmpegLog: true
