@@ -1,18 +1,28 @@
 package org.jingtao8a.component;
 
+import org.jingtao8a.config.AppConfig;
 import org.jingtao8a.constants.Constants;
+import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.dto.UploadingFileDto;
 import org.jingtao8a.entity.po.CategoryInfo;
 import org.jingtao8a.redis.RedisUtils;
+import org.jingtao8a.utils.DateUtils;
+import org.jingtao8a.utils.StringTools;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.*;
 
 @Component
 public class RedisComponent {
     @Resource
     private RedisUtils redisUtils;
+
+    @Resource
+    private AppConfig appConfig;
 
     public String saveCheckCode(String checkCode) {
         String checkCodeKey = UUID.randomUUID().toString();
@@ -62,5 +72,42 @@ public class RedisComponent {
 
     public List<CategoryInfo> getCategoryList() {
         return (List<CategoryInfo>)redisUtils.get(Constants.REDIS_KEY_CATEGORY_LIST);
+    }
+
+    public String savePreVideoFileInfo(String userId, String fileName, Integer chunks) {
+        String uploadId = StringTools.getRandomString(Constants.LENGTH_15);
+        UploadingFileDto fileDto = new UploadingFileDto();
+        fileDto.setUploadId(uploadId);
+        fileDto.setChunkIndex(0);
+        fileDto.setChunks(chunks);
+        fileDto.setFileName(fileName);
+        String day = DateUtils.format(new Date(), DateUtils.YYYYMMDD);
+        String filePath = day + '/' + userId + uploadId;
+        fileDto.setFilePath(filePath);
+        String folder = appConfig.getProjectFolder() + Constants.FILE_FOLDER
+                + Constants.FILE_TEMP + filePath;
+        File folderFile = new File(folder);
+        if (!folderFile.exists()) {
+            folderFile.mkdirs();
+        }
+        redisUtils.setex(Constants.REDIS_KEY_UPLOADING_FILE + userId + uploadId, fileDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY);
+        return uploadId;
+    }
+
+    public UploadingFileDto getUploadingFileDto(String userId, String uploadId) {
+        return (UploadingFileDto) redisUtils.get(Constants.REDIS_KEY_UPLOADING_FILE + userId + uploadId);
+    }
+
+    public SysSettingDto getSysSettingDto() {
+        SysSettingDto sysSettingDto = (SysSettingDto) redisUtils.get(Constants.REDIS_KEY_SYS_SETTING);
+        if (sysSettingDto == null) {
+            sysSettingDto = new SysSettingDto();
+            redisUtils.set(Constants.REDIS_KEY_SYS_SETTING, sysSettingDto);
+        }
+        return sysSettingDto;
+    }
+
+    public void updateUploadingFileDto(String userId, String uploadId, UploadingFileDto uploadingFileDto) {
+        redisUtils.setex(Constants.REDIS_KEY_UPLOADING_FILE + userId + uploadId, uploadingFileDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY);
     }
 }
