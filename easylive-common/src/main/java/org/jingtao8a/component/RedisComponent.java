@@ -6,6 +6,7 @@ import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.dto.UploadingFileDto;
 import org.jingtao8a.entity.po.CategoryInfo;
+import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.redis.RedisUtils;
 import org.jingtao8a.utils.DateUtils;
 import org.jingtao8a.utils.StringTools;
@@ -109,5 +110,21 @@ public class RedisComponent {
 
     public void updateUploadingFileDto(String userId, String uploadId, UploadingFileDto uploadingFileDto) {
         redisUtils.setex(Constants.REDIS_KEY_UPLOADING_FILE + userId + uploadId, uploadingFileDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY);
+    }
+
+    public void delUploadingFileDto(String userId, String uploadId) {
+        redisUtils.delete(Constants.REDIS_KEY_UPLOADING_FILE + userId + uploadId);
+    }
+
+    public void addFile2DelQueue(String videoId, List<String> filePathList) {
+        redisUtils.lpushAll(Constants.REDIS_KEY_FILE_DEL + videoId, filePathList, Long.valueOf(Constants.REDIS_KEY_EXPIRES_ONE_DAY * 7));
+    }
+
+    public void addFile2TransferQueue(List<VideoInfoFilePost> videoInfoFilePostList) {
+        redisUtils.lpushAll(Constants.REDIS_KEY_QUEUE_TRANSFER, videoInfoFilePostList, 0L);
+    }
+
+    public VideoInfoFilePost getFileFromTransferQueue() {
+        return (VideoInfoFilePost)redisUtils.rpop(Constants.REDIS_KEY_QUEUE_TRANSFER);
     }
 }
