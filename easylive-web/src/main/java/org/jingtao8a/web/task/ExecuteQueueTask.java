@@ -37,9 +37,9 @@ public class ExecuteQueueTask {
                     videoInfoFilePostService.transferVideoFile(videoInfoFilePost);
                 } catch (Exception e) {
                     log.error("获取转码文件队列信息失败", e);
-                    if (videoInfoFilePost != null) {
-                        redisComponent.addFile2TransferQueue4Single(videoInfoFilePost);
-                    }
+//                    if (videoInfoFilePost != null) {
+//                        redisComponent.addFile2TransferQueue4Single(videoInfoFilePost);
+//                    }
                 }
             }
         });
