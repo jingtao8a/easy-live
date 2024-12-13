@@ -181,14 +181,14 @@ public class VideoInfoFilePostServiceImpl implements VideoInfoFilePostService {
 			String completeVideo = targetFilePath + Constants.TEMP_VIDEO_NAME;
 			this.union(targetFilePath, completeVideo, true);
 
-			//获取播放时长
-			Integer duration = fFmpegUtils.getVideoInfoDuration(completeVideo);
+			//转为m3u8和ts文件
+			this.convertVideo2Ts(completeVideo);
+
+			Integer duration = fFmpegUtils.getVideoInfoDuration(completeVideo);//获取file时长
 			updateFilePost.setDuration(duration);
 			updateFilePost.setFileSize(new File(completeVideo).length());
 			updateFilePost.setFilePath(Constants.FILE_VIDEO + fileDto.getFilePath());
 			updateFilePost.setTransferResult(VideoFileTransferResultEnum.SUCCESS.getStatus());
-
-			this.convertVideo2Ts(completeVideo);
 		} catch (Exception e) {
 			log.error("文件转码失败", e);
 			updateFilePost.setTransferResult(VideoFileTransferResultEnum.FAIL.getStatus());
@@ -198,7 +198,7 @@ public class VideoInfoFilePostServiceImpl implements VideoInfoFilePostService {
 			filePostQuery.setVideoId(videoInfoFilePost.getVideoId());
 			filePostQuery.setTransferResult(VideoFileTransferResultEnum.FAIL.getStatus());
 			Long failCount = videoInfoFilePostMapper.selectCount(filePostQuery);
-			if (failCount > 0L) {
+			if (failCount > 0L) {//video有转码失败的文件
 				VideoInfoPost updateVideoInfoPost = new VideoInfoPost();
 				updateVideoInfoPost.setStatus(VideoStatusEnum.STATUS1.getStatus());
 				videoInfoPostMapper.updateByVideoId(updateVideoInfoPost, videoInfoFilePost.getVideoId());
@@ -206,13 +206,14 @@ public class VideoInfoFilePostServiceImpl implements VideoInfoFilePostService {
 			}
 			filePostQuery.setTransferResult(VideoFileTransferResultEnum.TRANSFER.getStatus());
 			Long transferCount = videoInfoFilePostMapper.selectCount(filePostQuery);
-			if (transferCount == 0L) {
-				Integer duration = videoInfoFilePostMapper.sumDuration(videoInfoFilePost.getVideoId());
+			if (transferCount == 0L) {//video所有文件全部转码完成
+				Integer duration = videoInfoFilePostMapper.sumDuration(videoInfoFilePost.getVideoId());//获取video总时长
 				VideoInfoPost updateVideoInfoPost = new VideoInfoPost();
 				updateVideoInfoPost.setStatus(VideoStatusEnum.STATUS2.getStatus());
 				updateVideoInfoPost.setDuration(duration);
 				videoInfoPostMapper.updateByVideoId(updateVideoInfoPost, videoInfoFilePost.getVideoId());
 			}
+			//video还有文件正在转码
 		}
 	}
 
