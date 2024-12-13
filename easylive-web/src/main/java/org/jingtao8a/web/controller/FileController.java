@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.config.AppConfig;
 import org.jingtao8a.constants.Constants;
@@ -44,8 +45,8 @@ public class FileController extends ABaseController{
 
     @RequestMapping("/uploadImage")
     public ResponseVO uploadImage(@NotNull MultipartFile file, @NotNull Boolean createThumbnail) throws IOException, BusinessException {
-        String month = DateUtils.format(new Date(), DateUtils.YYYYMM);
-        String folder = appConfig.getProjectFolder() + Constants.FILE_FOLDER + Constants.FILE_COVER + month;
+        String day = DateUtils.format(new Date(), DateUtils.YYYYMMDD);
+        String folder = appConfig.getProjectFolder() + Constants.FILE_FOLDER + Constants.FILE_COVER + day;
         File folderFile = new File(folder);
         if (!folderFile.exists()) {
             folderFile.mkdirs();
@@ -59,7 +60,7 @@ public class FileController extends ABaseController{
             //生成缩略图
             fFmpegUtils.createImageThumbnail(filePath);
         }
-        return getSuccessResponseVO(Constants.FILE_COVER + month + "/" + realFileName);
+        return getSuccessResponseVO(Constants.FILE_COVER + day + "/" + realFileName);
     }
 
     @RequestMapping("/getResource")
@@ -124,5 +125,17 @@ public class FileController extends ABaseController{
         uploadingFileDto.setFileSize(uploadingFileDto.getFileSize() + chunkFile.getSize());
         redisComponent.updateUploadingFileDto(tokenUserInfoDto.getUserId(), uploadId, uploadingFileDto);
         return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/delUploadVideo")
+    public ResponseVO delUploadVideo(@NotNull String uploadId) throws BusinessException, IOException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        UploadingFileDto uploadingFileDto = redisComponent.getUploadingFileDto(tokenUserInfoDto.getUserId(), uploadId);
+        if (uploadingFileDto == null) {
+            throw new BusinessException("文件不存在,请重新上传");
+        }
+        redisComponent.delUploadingFileDto(tokenUserInfoDto.getUserId(), uploadId);
+        FileUtils.deleteDirectory(new File(appConfig.getProjectFolder() + Constants.FILE_FOLDER + Constants.FILE_TEMP + uploadingFileDto.getFilePath()));
+        return getSuccessResponseVO(uploadId);
     }
 }
