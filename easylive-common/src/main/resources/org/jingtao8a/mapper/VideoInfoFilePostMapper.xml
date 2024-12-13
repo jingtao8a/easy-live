@@ -419,5 +419,9 @@
 		</set>
 		where  upload_id = #{uploadId} 
 	</update>
-
+	<delete id="deleteBatchByFileIdList">
+		delete from video_info_file_post where
+			file_id in (<foreach collection="list" item="item" separator="," > #{item} </foreach>)
+			and user_id = #{userId}
+	</delete>
 </mapper>

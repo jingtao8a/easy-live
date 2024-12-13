@@ -1,5 +1,8 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
 @Description:视频文件信息Mapper
 @Date:2024-12-11
@@ -36,4 +39,5 @@ public interface VideoInfoFilePostMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByUploadId(@Param("uploadId") String uploadId);
 
+	void deleteBatchByFileIdList(@Param("list") List<String> delFileIdList, @Param("userId") String userId);
 }
