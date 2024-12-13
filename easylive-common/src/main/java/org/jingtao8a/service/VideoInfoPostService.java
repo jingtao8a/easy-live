@@ -1,7 +1,9 @@
 package org.jingtao8a.service;
 
+import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.entity.po.VideoInfoPost;
 import org.jingtao8a.entity.query.VideoInfoPostQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import java.util.List;
@@ -62,4 +64,5 @@ public interface VideoInfoPostService {
 	*/
 	Long deleteByVideoId(String videoId);
 
+	void saveVideoInfoPost(VideoInfoPost videoInfoPost, List<VideoInfoFilePost> videoInfoFilePostList) throws BusinessException;
 }
