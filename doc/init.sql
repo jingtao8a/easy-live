@@ -19,8 +19,8 @@ CREATE TABLE `easylive`.`user_info` (
   `current_coin_count` INT(11) NOT NULL COMMENT '当前硬币数',
   `theme` TINYINT(1) NOT NULL COMMENT '主题',
   PRIMARY KEY (`user_id`),
-  UNIQUE INDEX `idx_email` (`email` ASC) INVISIBLE,
-  UNIQUE INDEX `idx_nick_name` (`nick_name` ASC) INVISIBLE)
+  UNIQUE INDEX `idx_email` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `idx_nick_name` (`nick_name` ASC) VISIBLE)
 COMMENT = '用户信息';
 
 CREATE TABLE `easylive`.`category_info` (
@@ -52,9 +52,9 @@ CREATE TABLE `easylive`.`video_info_post` (
   `interaction` VARCHAR(5) NULL COMMENT '互动设置',
   `duration` INT(11) NULL COMMENT '持续时间(seconds)',
   PRIMARY KEY (`video_id`),
-  INDEX `idx_create_time` (`create_time` ASC) INVISIBLE,
-  INDEX `idx_user_id` (`user_id` ASC) INVISIBLE,
-  INDEX `idx_category_id` (`category_id` ASC) INVISIBLE,
+  INDEX `idx_create_time` (`create_time` ASC) VISIBLE,
+  INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
+  INDEX `idx_category_id` (`category_id` ASC) VISIBLE,
   INDEX `idx_pcategory_id` (`p_category_id` ASC) VISIBLE)
   COMMENT = '视频信息';
   
@@ -71,7 +71,7 @@ CREATE TABLE `easylive`.`video_info_post` (
   `transfer_result` TINYINT(4) NULL COMMENT '0:转码中 1:转码成功 2:转码失败',
   `duration` INT(11) NULL COMMENT '持续时间(seconds)',
   PRIMARY KEY (`file_id`),
-  UNIQUE INDEX `idx_key_upload_id` (`upload_id` ASC) INVISIBLE,
+  UNIQUE INDEX `idx_key_upload_id` (`upload_id` ASC) VISIBLE,
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
 COMMENT = '视频文件信息';
 
@@ -115,8 +115,6 @@ CREATE TABLE `easylive`.`video_info` (
   `file_name` VARCHAR(200) NULL COMMENT '文件名',
   `file_size` BIGINT(20) NULL COMMENT '文件大小',
   `file_path` VARCHAR(100) NULL COMMENT '文件路径',
-  `update_type` TINYINT(4) NULL COMMENT '0:无更新 1:有更新',
-  `transfer_result` TINYINT(4) NULL COMMENT '0:转码中 1:转码成功 2:转码失败',
   `duration` INT(11) NULL COMMENT '持续时间(seconds)',
   PRIMARY KEY (`file_id`),
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
