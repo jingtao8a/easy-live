@@ -120,3 +120,9 @@ CREATE TABLE `easylive`.`video_info` (
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
 COMMENT = '视频文件信息';
 
+-- drop table `easylive`.`user_info`;
+-- drop table `easylive`.`category_info`;
+-- drop table `easylive`.`video_info_post`;
+-- drop table `easylive`.`video_info_file_post`;
+-- drop table `easylive`.`video_info`;
+-- drop table `easylive`.`video_info_file`;
