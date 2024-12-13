@@ -4,13 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.entity.po.VideoInfoPost;
+import org.jingtao8a.entity.query.VideoInfoPostQuery;
+import org.jingtao8a.enums.VideoStatusEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.VideoInfoFilePostService;
 import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.service.VideoInfoPostService;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.utils.JsonUtils;
+import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
+import org.jingtao8a.vo.VideoStatusCountInfoVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,5 +67,47 @@ public class UcenterVideoPostController extends ABaseController{
 
         videoInfoPostService.saveVideoInfoPost(videoInfoPost, videoInfoFilePostList);
         return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/loadVideoList")
+    public ResponseVO loadVideoList(Integer status, Long pageNo, String videoNameFuzzy) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
+        videoInfoPostQuery.setUserId(tokenUserInfoDto.getUserId());
+        videoInfoPostQuery.setPageNo(pageNo);
+        videoInfoPostQuery.setOrderBy("v.create_time desc");
+        videoInfoPostQuery.setVideoName(videoNameFuzzy);
+        videoInfoPostQuery.setQueryCountInfo(true);
+        if (status != null) {
+            if (status == -1) {//进行中的video
+                videoInfoPostQuery.setExcludeStatusArray(new Integer[]{VideoStatusEnum.STATUS3.getStatus(), VideoStatusEnum.STATUS4.getStatus()});
+            } else {//指定status的video
+                videoInfoPostQuery.setStatus(status);
+            }
+        }
+        PaginationResultVO resultVO = videoInfoPostService.findListByPage(videoInfoPostQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
+    @RequestMapping("/getVideoCountInfo")
+    public ResponseVO getVideoCountInfo() {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
+        videoInfoPostQuery.setUserId(tokenUserInfoDto.getUserId());
+        videoInfoPostQuery.setStatus(VideoStatusEnum.STATUS3.getStatus());//审核通过的
+        Long auditPassCount = videoInfoPostService.findCountByParam(videoInfoPostQuery);
+
+        videoInfoPostQuery.setStatus(VideoStatusEnum.STATUS4.getStatus());//审核不通过的
+        Long auditFailCount = videoInfoPostService.findCountByParam(videoInfoPostQuery);
+
+        videoInfoPostQuery.setStatus(null);
+        videoInfoPostQuery.setExcludeStatusArray(new Integer[]{VideoStatusEnum.STATUS3.getStatus(), VideoStatusEnum.STATUS4.getStatus()});
+        Long inProgress = videoInfoPostService.findCountByParam(videoInfoPostQuery);
+
+        VideoStatusCountInfoVO videoStatusCountInfoVO = new VideoStatusCountInfoVO();
+        videoStatusCountInfoVO.setAuditPassCount(auditPassCount);
+        videoStatusCountInfoVO.setAuditFailCount(auditFailCount);
+        videoStatusCountInfoVO.setInProgressCount(inProgress);
+        return getSuccessResponseVO(videoStatusCountInfoVO);
     }
 }

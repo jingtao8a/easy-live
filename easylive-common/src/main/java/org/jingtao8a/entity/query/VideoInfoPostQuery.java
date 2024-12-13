@@ -93,4 +93,8 @@ public class VideoInfoPostQuery extends BaseQuery {
 	 * 持续时间(seconds)
 	*/
 	private Integer duration;
+
+	private Integer[] excludeStatusArray;
+
+	private Boolean queryCountInfo;
 }
