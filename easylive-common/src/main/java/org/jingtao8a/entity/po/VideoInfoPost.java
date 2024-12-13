@@ -3,6 +3,7 @@ package org.jingtao8a.entity.po;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.ToString;
+import org.jingtao8a.enums.VideoStatusEnum;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.util.Date;
 */
 @Data
 @ToString
-public class VideoInfoPost implements Serializable {
+public class VideoInfoPost extends VideoInfo implements Serializable {
 	/**
 	 * 视频ID
 	*/
@@ -78,4 +79,11 @@ public class VideoInfoPost implements Serializable {
 	 * 持续时间(seconds)
 	*/
 	private Integer duration;
+
+	private String statusName;
+
+	public String getStatusName() {
+		VideoStatusEnum videoStatusEnum = VideoStatusEnum.getByStatus(status);
+		return videoStatusEnum == null ? "" : videoStatusEnum.getDesc();
+	}
 }
