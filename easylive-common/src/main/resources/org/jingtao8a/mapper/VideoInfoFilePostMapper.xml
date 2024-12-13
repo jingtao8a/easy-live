@@ -424,4 +424,7 @@
 			file_id in (<foreach collection="list" item="item" separator="," > #{item} </foreach>)
 			and user_id = #{userId}
 	</delete>
+	<select id="sumDuration" resultType="java.lang.Integer">
+		select ifnull(sum(duration), 0) from video_info_file_post where video_id = #{videoId}
+	</select>
 </mapper>
