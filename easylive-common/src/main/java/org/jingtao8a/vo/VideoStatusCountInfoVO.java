@@ -6,5 +6,5 @@ import lombok.Data;
 public class VideoStatusCountInfoVO {
     private Long auditPassCount;
     private Long auditFailCount;
-    private Long inProgressCount;
+    private Long inProgress;
 }

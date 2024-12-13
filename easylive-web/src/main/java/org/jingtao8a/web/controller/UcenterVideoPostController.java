@@ -84,7 +84,7 @@ public class UcenterVideoPostController extends ABaseController{
             } else {//指定status的video
                 videoInfoPostQuery.setStatus(status);
             }
-        }
+        }//else 全部video
         PaginationResultVO resultVO = videoInfoPostService.findListByPage(videoInfoPostQuery);
         return getSuccessResponseVO(resultVO);
     }
@@ -107,7 +107,7 @@ public class UcenterVideoPostController extends ABaseController{
         VideoStatusCountInfoVO videoStatusCountInfoVO = new VideoStatusCountInfoVO();
         videoStatusCountInfoVO.setAuditPassCount(auditPassCount);
         videoStatusCountInfoVO.setAuditFailCount(auditFailCount);
-        videoStatusCountInfoVO.setInProgressCount(inProgress);
+        videoStatusCountInfoVO.setInProgress(inProgress);
         return getSuccessResponseVO(videoStatusCountInfoVO);
     }
 }
