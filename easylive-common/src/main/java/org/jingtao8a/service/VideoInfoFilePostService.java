@@ -77,4 +77,5 @@ public interface VideoInfoFilePostService {
 	*/
 	Long deleteByUploadId(String uploadId);
 
+	void transferVideoFile(VideoInfoFilePost videoInfoFilePost);
 }
