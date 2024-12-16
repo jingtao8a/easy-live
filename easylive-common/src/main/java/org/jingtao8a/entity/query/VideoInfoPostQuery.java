@@ -97,4 +97,6 @@ public class VideoInfoPostQuery extends BaseQuery {
 	private Integer[] excludeStatusArray;
 
 	private Boolean queryCountInfo;
+
+	private Boolean queryUserInfo;
 }
