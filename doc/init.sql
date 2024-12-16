@@ -18,6 +18,7 @@ CREATE TABLE `easylive`.`user_info` (
   `total_coin_count` INT(11) NOT NULL COMMENT '硬币总数量',
   `current_coin_count` INT(11) NOT NULL COMMENT '当前硬币数',
   `theme` TINYINT(1) NOT NULL COMMENT '主题',
+  `avatar` VARCHAR(255) COMMENT '头像',
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `idx_email` (`email` ASC) VISIBLE,
   UNIQUE INDEX `idx_nick_name` (`nick_name` ASC) VISIBLE)
@@ -120,7 +121,7 @@ CREATE TABLE `easylive`.`video_info` (
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
 COMMENT = '视频文件信息';
 
--- drop table `easylive`.`user_info`;
+-- drop table `easylive`.`user_info`; 
 -- drop table `easylive`.`category_info`;
 -- drop table `easylive`.`video_info_post`;
 -- drop table `easylive`.`video_info_file_post`;
