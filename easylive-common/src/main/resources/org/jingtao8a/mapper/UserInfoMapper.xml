@@ -37,10 +37,12 @@
 		<result column="current_coin_count" property="currentCoinCount"/>
 	<!-- 主题-->
 		<result column="theme" property="theme"/>
+	<!-- 头像-->
+		<result column="avatar" property="avatar"/>
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		user_id ,nick_name ,email ,password ,sex ,birthday ,school ,person_introduction ,join_time ,last_login_time ,last_login_ip ,status ,notice_info ,total_coin_count ,current_coin_count ,theme 
+		user_id ,nick_name ,email ,password ,sex ,birthday ,school ,person_introduction ,join_time ,last_login_time ,last_login_ip ,status ,notice_info ,total_coin_count ,current_coin_count ,theme , avatar
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
@@ -92,6 +94,9 @@
 		<if test="query.theme != null">
 				and theme = #{query.theme}
 		</if>
+		<if test="query.avatar != null">
+				and avatar = #{query.avatar}
+		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
@@ -134,6 +139,9 @@
 		</if>
 		<if test="query.noticeInfoFuzzy != null and query.noticeInfoFuzzy != ''">
 			 and notice_info like concat('%', #{query.noticeInfoFuzzy}, '%')
+		</if>
+		<if test="query.avatarFuzzy != null and query.avatarFuzzy != ''">
+			and avatar like concat('%', #{query.avatarFuzzy}, '%')
 		</if>
 	</sql>
 
@@ -214,6 +222,9 @@
 			<if test="bean.theme != null">
 				theme,
 			</if>
+		    <if test="bean.avatar != null">
+				avatar,
+			</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
 			<if test="bean.userId != null">
@@ -263,6 +274,9 @@
 			</if>
 			<if test="bean.theme != null">
 				#{bean.theme},
+			</if>
+			<if test="bean.avatar != null">
+				#{bean.avatar}
 			</if>
 		</trim>
 	</insert>
@@ -320,6 +334,9 @@
 			<if test="bean.theme != null">
 				theme,
 			</if>
+		    <if test="bean.avatar != null">
+				avatar,
+			</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
 			<if test="bean.userId != null">
@@ -370,6 +387,9 @@
 			<if test="bean.theme != null">
 				#{bean.theme},
 			</if>
+			<if test="bean.avatar != null">
+				#{bean.avatar},
+			</if>
 		</trim>
 		on DUPLICATE key update
 		<trim prefix="" suffix="" suffixOverrides=",">
@@ -412,20 +432,23 @@
 			<if test="bean.theme != null">
 				theme = VALUES(theme),
 			</if>
+			<if test="bean.avatar != null">
+				avatar = VALUES(avatar),
+			</if>
 		</trim>
 	</insert>
 	<!-- 添加(批量插入)-->
 	<insert id="insertBatch" parameterType="org.jingtao8a.entity.po.UserInfo" >
-		INSERT INTO user_info (user_id,nick_name,email,password,sex,birthday,school,person_introduction,join_time,last_login_time,last_login_ip,status,notice_info,total_coin_count,current_coin_count,theme) VALUES
+		INSERT INTO user_info (user_id,nick_name,email,password,sex,birthday,school,person_introduction,join_time,last_login_time,last_login_ip,status,notice_info,total_coin_count,current_coin_count,theme,avatar) VALUES
 		<foreach collection="list" item="item" separator="," >
-			(#{item.userId},#{item.nickName},#{item.email},#{item.password},#{item.sex},#{item.birthday},#{item.school},#{item.personIntroduction},#{item.joinTime},#{item.lastLoginTime},#{item.lastLoginIp},#{item.status},#{item.noticeInfo},#{item.totalCoinCount},#{item.currentCoinCount},#{item.theme})
+			(#{item.userId},#{item.nickName},#{item.email},#{item.password},#{item.sex},#{item.birthday},#{item.school},#{item.personIntroduction},#{item.joinTime},#{item.lastLoginTime},#{item.lastLoginIp},#{item.status},#{item.noticeInfo},#{item.totalCoinCount},#{item.currentCoinCount},#{item.theme},#{item.avatar})
 		</foreach>
 	</insert>
 	<!-- 批量插入或更新-->
 	<insert id="insertOrUpdateBatch" parameterType="org.jingtao8a.entity.po.UserInfo" >
-		INSERT INTO user_info (user_id,nick_name,email,password,sex,birthday,school,person_introduction,join_time,last_login_time,last_login_ip,status,notice_info,total_coin_count,current_coin_count,theme) VALUES
+		INSERT INTO user_info (user_id,nick_name,email,password,sex,birthday,school,person_introduction,join_time,last_login_time,last_login_ip,status,notice_info,total_coin_count,current_coin_count,theme,avatar) VALUES
 		<foreach collection="list" item="item" separator="," >
-			(#{item.userId},#{item.nickName},#{item.email},#{item.password},#{item.sex},#{item.birthday},#{item.school},#{item.personIntroduction},#{item.joinTime},#{item.lastLoginTime},#{item.lastLoginIp},#{item.status},#{item.noticeInfo},#{item.totalCoinCount},#{item.currentCoinCount},#{item.theme})
+			(#{item.userId},#{item.nickName},#{item.email},#{item.password},#{item.sex},#{item.birthday},#{item.school},#{item.personIntroduction},#{item.joinTime},#{item.lastLoginTime},#{item.lastLoginIp},#{item.status},#{item.noticeInfo},#{item.totalCoinCount},#{item.currentCoinCount},#{item.theme},#{item.avatar})
 		</foreach>
 		on DUPLICATE key update
 		<trim prefix="" suffix="" suffixOverrides=",">
@@ -442,6 +465,7 @@
 			total_coin_count = VALUES(total_coin_count),
 			current_coin_count = VALUES(current_coin_count),
 			theme = VALUES(theme),
+			avatar = VALUES(avatar),
 		</trim>
 	</insert>
 	<!-- 根据UserId查找-->
@@ -503,6 +527,9 @@
 			</if>
 			<if test="bean.theme != null">
 				theme=#{bean.theme},
+			</if>
+			<if test="bean.avatar != null">
+				avatar=#{bean.avatar},
 			</if>
 		</set>
 		where  user_id = #{userId} 
@@ -568,6 +595,9 @@
 			<if test="bean.theme != null">
 				theme=#{bean.theme},
 			</if>
+			<if test="bean.avatar != null">
+				avatar=#{bean.avatar}
+			</if>
 		</set>
 		where  email = #{email} 
 	</update>
@@ -631,6 +661,9 @@
 			</if>
 			<if test="bean.theme != null">
 				theme=#{bean.theme},
+			</if>
+			<if test="bean.avatar != null">
+				avatar=#{bean.avatar},
 			</if>
 		</set>
 		where  nick_name = #{nickName} 
