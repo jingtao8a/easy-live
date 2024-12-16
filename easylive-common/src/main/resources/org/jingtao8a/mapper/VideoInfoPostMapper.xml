@@ -147,9 +147,15 @@
 		<if test="query.queryCountInfo">
 			, c.play_count, c.like_count, c.danmu_count, c.comment_count, c.coin_count, c.collect_count, c.recommend_type
 		</if>
+		<if test="query.queryUserInfo">
+			, u.nick_name, u.avatar
+		</if>
 		FROM video_info_post v
 		<if test="query.queryCountInfo">
 			left join video_info c on c.video_id = v.video_id
+		</if>
+		<if test="query.queryUserInfo">
+			left join user_info u on u.user_id = v.user_id
 		</if>
 		<include refid="query_condition"/>
 		<if test="query.orderBy!=null">
@@ -440,6 +446,58 @@
 			duration = VALUES(duration),
 		</trim>
 	</insert>
+	<!--多条件修改-->
+	<update id="updateByParam">
+		UPDATE video_info_post v
+		<set>
+			<if test="bean.videoId != null">
+				video_id = #{bean.videoId},
+			</if>
+			<if test="bean.videoCover != null">
+				video_cover = #{bean.videoCover},
+			</if>
+			<if test="bean.videoName != null">
+				video_name = #{bean.videoName},
+			</if>
+			<if test="bean.userId != null">
+				user_id = #{bean.userId},
+			</if>
+			<if test="bean.createTime != null">
+				create_time = #{bean.createTime},
+			</if>
+			<if test="bean.lastUpdateTime != null">
+				last_update_time = #{bean.lastUpdateTime},
+			</if>
+			<if test="bean.pCategoryId != null">
+				p_category_id = #{bean.pCategoryId},
+			</if>
+			<if test="bean.categoryId != null">
+				category_id = #{bean.categoryId},
+			</if>
+			<if test="bean.status != null">
+				status = #{bean.status},
+			</if>
+			<if test="bean.postType != null">
+				post_type = #{bean.postType},
+			</if>
+			<if test="bean.originInfo != null">
+				origin_info = #{bean.originInfo},
+			</if>
+			<if test="bean.tags != null">
+				tags = #{bean.tags},
+			</if>
+			<if test="bean.introduction != null">
+				introduction = #{bean.introduction},
+			</if>
+			<if test="bean.interaction != null">
+				interaction = #{bean.interaction},
+			</if>
+			<if test="bean.duration != null">
+				duration = #{bean.duration},
+			</if>
+		</set>
+		<include refid="query_condition"/>
+	</update>
 	<!-- 根据VideoId查找-->
 	<select id="selectByVideoId" resultMap="base_result_map">
 		select <include refid="base_column_list"/> from video_info_post v where  v.video_id = #{videoId}

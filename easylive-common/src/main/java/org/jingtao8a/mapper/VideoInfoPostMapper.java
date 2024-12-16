@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 */
 
 public interface VideoInfoPostMapper<T,P> extends BaseMapper {
+	Long updateByParam(@Param("bean") T t, @Param("query") P param);
 	/**
 	 * 根据VideoId查询
 	*/
