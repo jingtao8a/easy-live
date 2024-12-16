@@ -97,4 +97,9 @@ public class UserInfoQuery extends BaseQuery {
 	 * 主题
 	*/
 	private Integer theme;
+	/**
+	 * 头像
+	 */
+	private String avatar;
+	private String avatarFuzzy;
 }

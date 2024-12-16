@@ -80,6 +80,8 @@ public class UserInfo implements Serializable {
 	 * 主题
 	*/
 	private Integer theme;
-
+	/**
+	 * 头像
+	 */
 	private String avatar;
 }
