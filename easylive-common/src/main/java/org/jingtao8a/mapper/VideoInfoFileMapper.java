@@ -21,4 +21,5 @@ public interface VideoInfoFileMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByFileId(@Param("fileId") String fileId);
 
+	 Long deleteByParam(@Param("query") P videoInfoFileQuery);
 }

@@ -91,7 +91,9 @@
 			limit #{query.simplePage.start}, #{query.simplePage.end}
 		</if>
 	</select>
-
+	<delete id="deleteByParam">
+		delete from video_info_file <include refid="query_condition"></include>
+	</delete>
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
 		SELECT count(1) FROM video_info_file <include refid="query_condition"/>
