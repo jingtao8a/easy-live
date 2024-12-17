@@ -9,6 +9,7 @@ import java.util.List;
 */
 
 public interface VideoInfoFilePostMapper<T,P> extends BaseMapper {
+	void updateByParam(@Param("bean") T videoInfoFilePost, @Param("query") P videoInfoFilePostQuery);
 	/**
 	 * 根据FileId查询
 	*/
