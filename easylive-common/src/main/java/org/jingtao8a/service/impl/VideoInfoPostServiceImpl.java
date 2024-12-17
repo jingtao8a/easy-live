@@ -237,6 +237,18 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 	}
 
+	private Boolean changeVideoInfoPost(VideoInfoPost videoInfoPost) {
+		VideoInfoPost dbInfo = this.videoInfoPostMapper.selectByVideoId(videoInfoPost.getVideoId());
+		//标题，封面，标签，简介
+		if (!videoInfoPost.equals(dbInfo.getVideoName())
+				|| !videoInfoPost.getVideoCover().equals(dbInfo.getVideoCover())
+				|| !videoInfoPost.getTags().equals(dbInfo.getTags())
+				|| !videoInfoPost.getInteraction().equals(dbInfo.getInteraction())) {
+			return true;
+		}
+		return false;
+	}
+
     @Override
     @Transactional(rollbackFor = Exception.class)
 	public void auditVideo(String videoId, Integer status, String reason) throws BusinessException {
@@ -308,18 +320,6 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 		redisComponent.cleanDelFileList(videoId);
 		//TODO 保存信息到 es
-	}
-
-    private Boolean changeVideoInfoPost(VideoInfoPost videoInfoPost) {
-		VideoInfoPost dbInfo = this.videoInfoPostMapper.selectByVideoId(videoInfoPost.getVideoId());
-		//标题，封面，标签，简介
-		if (!videoInfoPost.equals(dbInfo.getVideoName())
-				|| !videoInfoPost.getVideoCover().equals(dbInfo.getVideoCover())
-				|| !videoInfoPost.getTags().equals(dbInfo.getTags())
-				|| !videoInfoPost.getInteraction().equals(dbInfo.getInteraction())) {
-			return true;
-		}
-		return false;
 	}
 
 }
