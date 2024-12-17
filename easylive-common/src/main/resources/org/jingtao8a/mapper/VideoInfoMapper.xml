@@ -50,115 +50,115 @@
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		video_id ,video_cover ,video_name ,user_id ,create_time ,last_update_time ,p_category_id ,category_id ,post_type ,tags ,introduction ,interaction ,duration ,play_count ,like_count ,danmu_count ,comment_count ,coin_count ,collect_count ,recommend_type ,last_play_time 
+		v.video_id ,v.video_cover ,v.video_name ,v.user_id ,v.create_time ,v.last_update_time ,v.p_category_id ,v.category_id ,v.post_type ,v.tags ,v.introduction ,v.interaction ,v.duration ,v.play_count ,v.like_count ,v.danmu_count ,v.comment_count ,v.coin_count ,v.collect_count ,v.recommend_type ,v.last_play_time
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
 		<if test="query.videoId != null and query.videoId !=''">
-				and video_id = #{query.videoId}
+				and v.video_id = #{query.videoId}
 		</if>
 		<if test="query.videoCover != null and query.videoCover !=''">
-				and video_cover = #{query.videoCover}
+				and v.video_cover = #{query.videoCover}
 		</if>
 		<if test="query.videoName != null and query.videoName !=''">
-				and video_name = #{query.videoName}
+				and v.video_name = #{query.videoName}
 		</if>
 		<if test="query.userId != null and query.userId !=''">
-				and user_id = #{query.userId}
+				and v.user_id = #{query.userId}
 		</if>
 		<if test="query.createTime != null">
-				and create_time = #{query.createTime}
+				and v.create_time = #{query.createTime}
 		</if>
 		<if test="query.lastUpdateTime != null">
-				and last_update_time = #{query.lastUpdateTime}
+				and v.last_update_time = #{query.lastUpdateTime}
 		</if>
 		<if test="query.pCategoryId != null">
-				and p_category_id = #{query.pCategoryId}
+				and v.p_category_id = #{query.pCategoryId}
 		</if>
 		<if test="query.categoryId != null">
-				and category_id = #{query.categoryId}
+				and v.category_id = #{query.categoryId}
 		</if>
 		<if test="query.postType != null">
-				and post_type = #{query.postType}
+				and v.post_type = #{query.postType}
 		</if>
 		<if test="query.tags != null and query.tags !=''">
-				and tags = #{query.tags}
+				and v.tags = #{query.tags}
 		</if>
 		<if test="query.introduction != null and query.introduction !=''">
-				and introduction = #{query.introduction}
+				and v.introduction = #{query.introduction}
 		</if>
 		<if test="query.interaction != null and query.interaction !=''">
-				and interaction = #{query.interaction}
+				and v.interaction = #{query.interaction}
 		</if>
 		<if test="query.duration != null">
-				and duration = #{query.duration}
+				and v.duration = #{query.duration}
 		</if>
 		<if test="query.playCount != null">
-				and play_count = #{query.playCount}
+				and v.play_count = #{query.playCount}
 		</if>
 		<if test="query.likeCount != null">
-				and like_count = #{query.likeCount}
+				and v.like_count = #{query.likeCount}
 		</if>
 		<if test="query.danmuCount != null">
-				and danmu_count = #{query.danmuCount}
+				and v.danmu_count = #{query.danmuCount}
 		</if>
 		<if test="query.commentCount != null">
-				and comment_count = #{query.commentCount}
+				and v.comment_count = #{query.commentCount}
 		</if>
 		<if test="query.coinCount != null">
-				and coin_count = #{query.coinCount}
+				and v.coin_count = #{query.coinCount}
 		</if>
 		<if test="query.collectCount != null">
-				and collect_count = #{query.collectCount}
+				and v.collect_count = #{query.collectCount}
 		</if>
 		<if test="query.recommendType != null">
-				and recommend_type = #{query.recommendType}
+				and v.recommend_type = #{query.recommendType}
 		</if>
 		<if test="query.lastPlayTime != null">
-				and last_play_time = #{query.lastPlayTime}
+				and v.last_play_time = #{query.lastPlayTime}
 		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
 	<sql id="base_query_condition_extend">
 		<if test="query.videoIdFuzzy != null and query.videoIdFuzzy != ''">
-			 and video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			 and v.video_id like concat('%', #{query.videoIdFuzzy}, '%')
 		</if>
 		<if test="query.videoCoverFuzzy != null and query.videoCoverFuzzy != ''">
-			 and video_cover like concat('%', #{query.videoCoverFuzzy}, '%')
+			 and v.video_cover like concat('%', #{query.videoCoverFuzzy}, '%')
 		</if>
 		<if test="query.videoNameFuzzy != null and query.videoNameFuzzy != ''">
-			 and video_name like concat('%', #{query.videoNameFuzzy}, '%')
+			 and v.video_name like concat('%', #{query.videoNameFuzzy}, '%')
 		</if>
 		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
-			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+			 and v.user_id like concat('%', #{query.userIdFuzzy}, '%')
 		</if>
 		<if test="query.createTimeStart != null and query.createTimeStart != ''">
-			<![CDATA[ and create_time >= str_to_date(#{query.createTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and v.create_time >= str_to_date(#{query.createTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.createTimeEnd != null and query.createTimeEnd != ''">
-			<![CDATA[ and create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and v.create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 		<if test="query.lastUpdateTimeStart != null and query.lastUpdateTimeStart != ''">
-			<![CDATA[ and last_update_time >= str_to_date(#{query.lastUpdateTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and v.last_update_time >= str_to_date(#{query.lastUpdateTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.lastUpdateTimeEnd != null and query.lastUpdateTimeEnd != ''">
-			<![CDATA[ and last_update_time < date_sub(str_to_date(#{query.lastUpdateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and v.last_update_time < date_sub(str_to_date(#{query.lastUpdateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 		<if test="query.tagsFuzzy != null and query.tagsFuzzy != ''">
-			 and tags like concat('%', #{query.tagsFuzzy}, '%')
+			 and v.tags like concat('%', #{query.tagsFuzzy}, '%')
 		</if>
 		<if test="query.introductionFuzzy != null and query.introductionFuzzy != ''">
-			 and introduction like concat('%', #{query.introductionFuzzy}, '%')
+			 and v.introduction like concat('%', #{query.introductionFuzzy}, '%')
 		</if>
 		<if test="query.interactionFuzzy != null and query.interactionFuzzy != ''">
-			 and interaction like concat('%', #{query.interactionFuzzy}, '%')
+			 and v.interaction like concat('%', #{query.interactionFuzzy}, '%')
 		</if>
 		<if test="query.lastPlayTimeStart != null and query.lastPlayTimeStart != ''">
-			<![CDATA[ and last_play_time >= str_to_date(#{query.lastPlayTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and v.last_play_time >= str_to_date(#{query.lastPlayTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.lastPlayTimeEnd != null and query.lastPlayTimeEnd != ''">
-			<![CDATA[ and last_play_time < date_sub(str_to_date(#{query.lastPlayTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and v.last_play_time < date_sub(str_to_date(#{query.lastPlayTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 	</sql>
 
@@ -172,7 +172,15 @@
 
 	<!-- 查询列表 -->
 	<select id="selectList" resultMap="base_result_map">
-		SELECT <include refid="base_column_list"/> FROM video_info <include refid="query_condition"/>
+		SELECT <include refid="base_column_list"/>
+		<if test="query.queryUserInfo">
+			, u.nick_name, u.avatar
+		</if>
+		FROM video_info v
+		<if test="query.queryUserInfo">
+			left join user_info u on u.user_id = v.user_id
+		</if>
+		<include refid="query_condition"/>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
 		</if>
@@ -183,7 +191,7 @@
 
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT count(1) FROM video_info <include refid="query_condition"/>
+		SELECT count(1) FROM video_info v <include refid="query_condition"/>
 	</select>
 
 	<!-- 单条插入 -->
@@ -559,7 +567,7 @@
 	</insert>
 	<!-- 根据VideoId查找-->
 	<select id="selectByVideoId" resultMap="base_result_map">
-		select <include refid="base_column_list"/> from video_info  where  video_id = #{videoId} 
+		select <include refid="base_column_list"/> from video_info v where  v.video_id = #{videoId}
 	</select>
 	<!-- 根据VideoId删除-->
 	<delete id="deleteByVideoId" >

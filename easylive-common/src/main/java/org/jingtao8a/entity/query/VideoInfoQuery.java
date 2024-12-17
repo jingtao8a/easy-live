@@ -118,4 +118,5 @@ public class VideoInfoQuery extends BaseQuery {
 	private String lastPlayTimeStart;
 	private String lastPlayTimeEnd;
 
+    private boolean queryUserInfo;
 }
