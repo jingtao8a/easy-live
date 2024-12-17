@@ -121,6 +121,59 @@ CREATE TABLE `easylive`.`video_info` (
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
 COMMENT = '视频文件信息';
 
+CREATE TABLE `easylive`.`user_action` (
+  `action_id` INT(11) NOT NULL COMMENT '自增id',
+  `video_id` VARCHAR(10) NOT NULL COMMENT '视频ID',
+  `video_user_id` VARCHAR(10) NOT NULL COMMENT '视频用户ID',
+  `comment_id` INT(11) NOT NULL DEFAULT 0 COMMENT '评论ID',
+  `action_type` TINYINT(1) NOT NULL COMMENT '0:喜欢点赞评论 1.讨厌评论 2.视频点赞 3.视频收藏 4.视频投币',
+  `action_count` INT(11) NOT NULL COMMENT '数量',
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `action_time` DATETIME NOT NULL COMMENT '操作时间',
+  PRIMARY KEY (`action_id`),
+  UNIQUE INDEX `idx_key_video_comment_type_user` (`video_id` ASC, `comment_id` ASC, `action_type` ASC, `user_id` ASC) VISIBLE,
+  INDEX `idx_video_id` (`video_id` ASC) VISIBLE,
+  INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
+  INDEX `idx_type` (`action_type` ASC) VISIBLE,
+  INDEX `idx_action_time` (`action_time` ASC) VISIBLE)
+COMMENT = '用户行为 点赞、评论';
+
+CREATE TABLE `easylive`.`video_danmu` (
+  `danmu_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `video_id` VARCHAR(10) NOT NULL COMMENT '视频ID',
+  `file_id` VARCHAR(20) NOT NULL COMMENT '视频文件ID',
+  `user_id` VARCHAR(45) NOT NULL COMMENT '用户ID',
+  `post_time` DATETIME NULL DEFAULT NULL COMMENT '发布时间',
+  `text` VARCHAR(300) NULL DEFAULT NULL COMMENT '内容',
+  `mode` TINYINT(1) NULL DEFAULT NULL COMMENT '展示位置',
+  `color` VARCHAR(10) NULL DEFAULT NULL COMMENT '颜色',
+  `time` INT(11) NULL DEFAULT NULL COMMENT '展示时间',
+  PRIMARY KEY (`danmu_id`),
+  INDEX `idx_file_id` (`file_id` ASC) VISIBLE)
+COMMENT = '视频弹幕';
+
+CREATE TABLE `easylive`.`video_comment` (
+  `comment_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '评论ID',
+  `p_comment_id` INT NOT NULL COMMENT '父级评论ID',
+  `video_id` VARCHAR(10) NOT NULL COMMENT '视频ID',
+  `video_user_id` VARCHAR(10) NOT NULL COMMENT '视频用户ID',
+  `content` VARCHAR(500) NULL DEFAULT NULL COMMENT '回复内容',
+  `img_path` VARCHAR(150) NULL DEFAULT NULL COMMENT '图片',
+  `user_id` VARCHAR(15) NOT NULL COMMENT '用户ID',
+  `reply_user_id` VARCHAR(15) NULL DEFAULT NULL COMMENT '回复人ID',
+  `top_type` TINYINT(4) NULL DEFAULT 0 COMMENT '0:未置顶 1:置顶',
+  `post_time` DATETIME NOT NULL COMMENT '发布时间',
+  `like_count` INT(11) NULL DEFAULT 0 COMMENT '喜欢数量',
+  `hate_count` INT(11) NULL DEFAULT 0 COMMENT '讨厌数量',
+  PRIMARY KEY (`comment_id`),
+  INDEX `idx_post_time` (`post_time` ASC) VISIBLE,
+  INDEX `idx_top` (`top_type` ASC) VISIBLE,
+  INDEX `idx_p_id` (`p_comment_id` ASC) VISIBLE,
+  INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
+  INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
+COMMENT = '评论';
+
+
 -- drop table `easylive`.`user_info`; 
 -- drop table `easylive`.`category_info`;
 -- drop table `easylive`.`video_info_post`;
