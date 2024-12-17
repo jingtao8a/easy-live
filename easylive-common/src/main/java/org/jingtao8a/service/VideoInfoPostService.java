@@ -65,4 +65,6 @@ public interface VideoInfoPostService {
 	Long deleteByVideoId(String videoId);
 
 	void saveVideoInfoPost(VideoInfoPost videoInfoPost, List<VideoInfoFilePost> videoInfoFilePostList) throws BusinessException;
+
+    void auditVideo(String videoId, Integer status, String reason) throws BusinessException;
 }
