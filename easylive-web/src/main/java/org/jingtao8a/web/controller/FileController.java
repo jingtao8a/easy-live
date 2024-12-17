@@ -8,13 +8,16 @@ import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.dto.UploadingFileDto;
+import org.jingtao8a.entity.po.VideoInfoFile;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.utils.DateUtils;
 import org.jingtao8a.utils.FFmpegUtils;
 import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.ResponseVO;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +45,9 @@ public class FileController extends ABaseController{
 
     @Resource
     private RedisComponent redisComponent;
+
+    @Resource
+    private VideoInfoFileService videoInfoFileService;
 
     @RequestMapping("/uploadImage")
     public ResponseVO uploadImage(@NotNull MultipartFile file, @NotNull Boolean createThumbnail) throws IOException, BusinessException {
@@ -137,5 +143,20 @@ public class FileController extends ABaseController{
         redisComponent.delUploadingFileDto(tokenUserInfoDto.getUserId(), uploadId);
         FileUtils.deleteDirectory(new File(appConfig.getProjectFolder() + Constants.FILE_FOLDER + Constants.FILE_TEMP + uploadingFileDto.getFilePath()));
         return getSuccessResponseVO(uploadId);
+    }
+
+    @RequestMapping("/videoResource/{fileId}")
+    public void videResource(@PathVariable @NotEmpty String fileId, HttpServletResponse response) throws BusinessException, IOException {
+        VideoInfoFile videoInfoFile = videoInfoFileService.selectByFileId(fileId);
+        String filePath = videoInfoFile.getFilePath();
+        readFile(response, filePath + "/" + Constants.M3U8_NAME);
+        //TOD 更新视频的阅读信息
+    }
+
+    @RequestMapping("/videoResource/{fileId}/{ts}")
+    public void videResourceTS(@PathVariable @NotEmpty String fileId, @PathVariable @NotEmpty String ts, HttpServletResponse response) {
+        VideoInfoFile videoInfoFile = videoInfoFileService.selectByFileId(fileId);
+        String filePath = videoInfoFile.getFilePath();
+        readFile(response, filePath + "/" + ts);
     }
 }
