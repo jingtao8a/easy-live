@@ -668,5 +668,14 @@
 		</set>
 		where  nick_name = #{nickName} 
 	</update>
-
+	<update id="updateCoinCount">
+		update user_info
+		<set>
+			curren_coin_count = current_coin_count + #{changeCount}
+		</set>
+		<if test="changeCount > 0">
+			total_coin_count = total_coin_count + #{changeCount}
+		</if>
+		where user_id = #{userId} and current_coin_count + #{changeCount} >= 0
+	</update>
 </mapper>
