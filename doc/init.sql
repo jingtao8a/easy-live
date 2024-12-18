@@ -122,7 +122,7 @@ CREATE TABLE `easylive`.`video_info` (
 COMMENT = '视频文件信息';
 
 CREATE TABLE `easylive`.`user_action` (
-  `action_id` INT(11) NOT NULL COMMENT '自增id',
+  `action_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `video_id` VARCHAR(10) NOT NULL COMMENT '视频ID',
   `video_user_id` VARCHAR(10) NOT NULL COMMENT '视频用户ID',
   `comment_id` INT(11) NOT NULL DEFAULT 0 COMMENT '评论ID',
