@@ -150,7 +150,7 @@ public class FileController extends ABaseController{
         VideoInfoFile videoInfoFile = videoInfoFileService.selectByFileId(fileId);
         String filePath = videoInfoFile.getFilePath();
         readFile(response, filePath + "/" + Constants.M3U8_NAME);
-        //TOD 更新视频的阅读信息
+        //TODO 更新视频的阅读信息
     }
 
     @RequestMapping("/videoResource/{fileId}/{ts}")
