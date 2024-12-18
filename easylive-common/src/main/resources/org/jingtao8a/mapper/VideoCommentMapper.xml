@@ -133,9 +133,6 @@
 		</selectKey>
 		INSERT INTO video_comment
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="bean.commentId != null">
-				comment_id,
-			</if>
 			<if test="bean.pCommentId != null">
 				p_comment_id,
 			</if>
@@ -171,9 +168,6 @@
 			</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
-			<if test="bean.commentId != null">
-				#{bean.commentId},
-			</if>
 			<if test="bean.pCommentId != null">
 				#{bean.pCommentId},
 			</if>

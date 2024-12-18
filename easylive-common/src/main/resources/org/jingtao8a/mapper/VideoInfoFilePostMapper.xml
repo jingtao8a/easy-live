@@ -267,7 +267,10 @@
 		</trim>
 		on DUPLICATE key update
 		<trim prefix="" suffix="" suffixOverrides=",">
-			<if test="bean.userId != null">
+			<if test="bean.uploadId != null">
+				upload_id = VALUES(upload_id),
+			</if>
+		    <if test="bean.userId != null">
 				user_id = VALUES(user_id),
 			</if>
 			<if test="bean.videoId != null">
