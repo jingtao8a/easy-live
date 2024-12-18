@@ -71,6 +71,9 @@
 		<if test="query.actionTimeEnd != null and query.actionTimeEnd != ''">
 			<![CDATA[ and action_time < date_sub(str_to_date(#{query.actionTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
+-- 		<if test="query.actionTypeArray != null and query.actionTypeArray.length > 0">
+			and action_type in (<foreach collection="query.actionTypeArray" separator="," item="item"> #{item} </foreach>)
+		</if>
 	</sql>
 
 	<!-- 通用查询条件 -->
@@ -99,12 +102,11 @@
 
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="org.jingtao8a.entity.po.UserAction">
-
+		<selectKey> keyProperty="bean.actionId" resultType="Integer" order="AFTER"
+			SELECT LAST_INSERT_ID()
+		</selectKey>
 		INSERT INTO user_action
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="bean.actionId != null">
-				action_id,
-			</if>
 			<if test="bean.videoId != null">
 				video_id,
 			</if>
@@ -128,9 +130,6 @@
 			</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
-			<if test="bean.actionId != null">
-				#{bean.actionId},
-			</if>
 			<if test="bean.videoId != null">
 				#{bean.videoId},
 			</if>
@@ -213,11 +212,23 @@
 		</trim>
 		on DUPLICATE key update
 		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.videoId != null">
+				video_id = VALUES(video_id),
+			</if>
 			<if test="bean.videoUserId != null">
-				video_user_id = VALUES(video_user_id),
+				video_user_id = VALUES(videoUserId),
+			</if>
+			<if test="bean.commentId != null">
+				comment_id = VALUES(comment_id),
+			</if>
+			<if test="bean.actionType != null">
+				action_type = VALUES(action_type),
 			</if>
 			<if test="bean.actionCount != null">
 				action_count = VALUES(action_count),
+			</if>
+			<if test="bean.userId != null">
+				user_id = VALUES(user_id),
 			</if>
 			<if test="bean.actionTime != null">
 				action_time = VALUES(action_time),
@@ -226,21 +237,25 @@
 	</insert>
 	<!-- 添加(批量插入)-->
 	<insert id="insertBatch" parameterType="org.jingtao8a.entity.po.UserAction" >
-		INSERT INTO user_action (action_id,video_id,video_user_id,comment_id,action_type,action_count,user_id,action_time) VALUES
+		INSERT INTO user_action (video_id,video_user_id,comment_id,action_type,action_count,user_id,action_time) VALUES
 		<foreach collection="list" item="item" separator="," >
-			(#{item.actionId},#{item.videoId},#{item.videoUserId},#{item.commentId},#{item.actionType},#{item.actionCount},#{item.userId},#{item.actionTime})
+			#{item.videoId},#{item.videoUserId},#{item.commentId},#{item.actionType},#{item.actionCount},#{item.userId},#{item.actionTime})
 		</foreach>
 	</insert>
 	<!-- 批量插入或更新-->
 	<insert id="insertOrUpdateBatch" parameterType="org.jingtao8a.entity.po.UserAction" >
-		INSERT INTO user_action (action_id,video_id,video_user_id,comment_id,action_type,action_count,user_id,action_time) VALUES
+		INSERT INTO user_action (video_id,video_user_id,comment_id,action_type,action_count,user_id,action_time) VALUES
 		<foreach collection="list" item="item" separator="," >
-			(#{item.actionId},#{item.videoId},#{item.videoUserId},#{item.commentId},#{item.actionType},#{item.actionCount},#{item.userId},#{item.actionTime})
+			#{item.videoId},#{item.videoUserId},#{item.commentId},#{item.actionType},#{item.actionCount},#{item.userId},#{item.actionTime})
 		</foreach>
 		on DUPLICATE key update
 		<trim prefix="" suffix="" suffixOverrides=",">
+			video_id = VALUES(video_id),
 			video_user_id = VALUES(video_user_id),
+			comment_id = VALUES(comment_id),
+			action_type = VALUES(action_type),
 			action_count = VALUES(action_count),
+			user_id = VALUES(user_id),
 			action_time = VALUES(action_time),
 		</trim>
 	</insert>
