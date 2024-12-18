@@ -2,6 +2,7 @@ package org.jingtao8a.service;
 
 import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.query.UserActionQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import java.util.List;
@@ -77,4 +78,5 @@ public interface UserActionService {
 	*/
 	Long deleteByVideoIdAndCommentIdAndActionTypeAndUserId(String videoId, Integer commentId, Integer actionType, String userId);
 
+    void saveAction(UserAction userAction) throws BusinessException;
 }

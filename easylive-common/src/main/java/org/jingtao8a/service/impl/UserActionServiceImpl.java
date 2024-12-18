@@ -1,15 +1,27 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.UserAction;
+import org.jingtao8a.entity.po.UserInfo;
+import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.SimplePage;
 import org.jingtao8a.entity.query.UserActionQuery;
+import org.jingtao8a.entity.query.UserInfoQuery;
+import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.enums.UserActionTypeEnum;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.UserActionMapper;
+import org.jingtao8a.mapper.UserInfoMapper;
+import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 /**
 @Description:UserActionService
@@ -20,6 +32,13 @@ public class UserActionServiceImpl implements UserActionService {
 
 	@Resource
 	private UserActionMapper<UserAction, UserActionQuery> userActionMapper;
+
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+
+	@Resource
+	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -134,6 +153,60 @@ public class UserActionServiceImpl implements UserActionService {
 	@Override
 	public Long deleteByVideoIdAndCommentIdAndActionTypeAndUserId(String videoId, Integer commentId, Integer actionType, String userId) {
 		return userActionMapper.deleteByVideoIdAndCommentIdAndActionTypeAndUserId(videoId, commentId, actionType, userId);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void saveAction(UserAction userAction) throws BusinessException {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(userAction.getVideoId());
+		if (videoInfo == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		userAction.setVideoUserId(videoInfo.getUserId());
+		userAction.setActionTime(new Date());
+
+		UserAction dbAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(userAction.getVideoId(), userAction.getCommentId(), userAction.getActionType(), userAction.getUserId());
+		UserActionTypeEnum userActionTypeEnum = UserActionTypeEnum.getEnum(userAction.getActionType());
+		int changeCount;
+
+		switch (userActionTypeEnum) {
+			case VIDEO_LIKE://自己可以给自己 点赞、收藏
+			case VIDEO_COLLECT:
+				if (dbAction != null) {//重复操作表示取消 视频喜欢、视频收藏
+					userActionMapper.deleteByActionId(dbAction.getActionId());
+					changeCount = -Constants.ONE;
+				} else {
+					userActionMapper.insert(userAction);
+					changeCount = Constants.ONE;
+				}
+				videoInfoMapper.updateCountInfo(userAction.getVideoId(), userActionTypeEnum.getField(), changeCount);
+				//TODO 更新es
+				break;
+			case VIDEO_COIN://自己不可以给自己 投币
+				if (userAction.getUserId().equals(videoInfo.getUserId())) {
+					throw new BusinessException("UP主不能给自己投币");
+				}
+				if (dbAction != null) {
+					throw new BusinessException("对本稿件的投币枚数已用完");
+				}
+				Long count = userInfoMapper.updateCoinCount(userAction.getUserId(), -userAction.getActionCount());//减少投币者的硬币数量
+				if (count == 0L) {
+					throw new BusinessException("硬币数量不够");
+				}
+				count = userInfoMapper.updateCoinCount(videoInfo.getUserId(), userAction.getActionCount());//增加视频UP主的硬币数量
+				if (count == 0L) {
+					throw new BusinessException("投币失败");
+				}
+				userActionMapper.insert(userAction);//添加UserAction
+				videoInfoMapper.updateCountInfo(userAction.getVideoId(), userActionTypeEnum.getField(), userAction.getActionCount());//更新视频投币数量
+				break;
+			case COMMENT_HATE:
+				//TODO
+				break;
+			case COMMENT_LIKE:
+				//TODO
+				break;
+		}
 	}
 
 }
