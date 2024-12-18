@@ -171,7 +171,7 @@ CREATE TABLE `easylive`.`video_comment` (
   INDEX `idx_p_id` (`p_comment_id` ASC) VISIBLE,
   INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
-COMMENT = '评论';
+AUTO_INCREMENT = 8 COMMENT = '评论';
 
 
 -- drop table `easylive`.`user_info`; 
