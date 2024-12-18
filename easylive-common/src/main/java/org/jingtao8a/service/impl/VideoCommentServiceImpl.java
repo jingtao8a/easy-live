@@ -1,15 +1,27 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.constants.Constants;
+import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.po.VideoComment;
+import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.SimplePage;
+import org.jingtao8a.entity.query.UserInfoQuery;
 import org.jingtao8a.entity.query.VideoCommentQuery;
+import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.enums.UserActionTypeEnum;
+import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.mapper.UserInfoMapper;
 import org.jingtao8a.mapper.VideoCommentMapper;
+import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.VideoCommentService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 /**
 @Description:VideoCommentService
@@ -20,6 +32,13 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 
 	@Resource
 	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
+
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+
+	@Resource
+	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -110,6 +129,40 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 	@Override
 	public Long deleteByCommentId(Integer commentId) {
 		return videoCommentMapper.deleteByCommentId(commentId);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void postComment(VideoComment videoComment, Integer replyCommentId) throws BusinessException {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoComment.getVideoId());
+		if (videoInfo == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ZERO.toString())) {
+			throw new BusinessException("UP主已经关闭评论区");
+		}
+		if (replyCommentId != null) {
+			VideoComment replyComment = videoCommentMapper.selectByCommentId(replyCommentId);
+			if (replyComment == null) {
+				throw new BusinessException(ResponseCodeEnum.CODE_600);
+			}
+			if (replyComment.getPCommentId() == 0) {//回复一级评论
+				videoComment.setPCommentId(replyComment.getCommentId());
+			} else {//回复二级评论
+				videoComment.setPCommentId(replyComment.getPCommentId());
+				videoComment.setReplyUserId(replyComment.getUserId());
+			}
+			UserInfo replyUserInfo = userInfoMapper.selectByUserId(replyComment.getUserId());
+			videoComment.setReplyNickName(replyUserInfo.getNickName());
+		} else {
+			videoComment.setPCommentId(0);
+		}
+		videoComment.setPostTime(new Date());
+		videoComment.setVideoUserId(videoInfo.getUserId());
+		videoCommentMapper.insert(videoComment);
+		if (videoComment.getPCommentId() == 0) {
+			videoInfoMapper.updateCountInfo(videoComment.getVideoId(), UserActionTypeEnum.VIDEO_COMMENT.getField(), Constants.ONE);
+		}
 	}
 
 }

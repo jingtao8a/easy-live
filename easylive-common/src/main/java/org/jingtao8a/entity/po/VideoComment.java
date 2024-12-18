@@ -64,4 +64,12 @@ public class VideoComment implements Serializable {
 	 * 讨厌数量
 	*/
 	private Integer hateCount;
+
+	private String avatar;
+
+	private String nickName;
+
+	private String replyAvatar;
+
+	private String replyNickName;
 }

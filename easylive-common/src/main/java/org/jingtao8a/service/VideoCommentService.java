@@ -2,6 +2,7 @@ package org.jingtao8a.service;
 
 import org.jingtao8a.entity.po.VideoComment;
 import org.jingtao8a.entity.query.VideoCommentQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import java.util.List;
@@ -62,4 +63,5 @@ public interface VideoCommentService {
 	*/
 	Long deleteByCommentId(Integer commentId);
 
+    void postComment(VideoComment videoComment, Integer replyCommentId) throws BusinessException;
 }
