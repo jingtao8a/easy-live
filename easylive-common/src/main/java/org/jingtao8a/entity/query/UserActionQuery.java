@@ -52,4 +52,5 @@ public class UserActionQuery extends BaseQuery {
 	private String actionTimeStart;
 	private String actionTimeEnd;
 
+	private Integer[] actionTypeArray;
 }
