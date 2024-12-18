@@ -3,7 +3,7 @@ package org.jingtao8a.enums;
 public enum UserActionTypeEnum {
     COMMENT_LIKE(0, "like_count", "喜欢点赞评论"),
     COMMENT_HATE(1, "hate_count", "讨厌评论"),
-    VIDEO_LIK(2, "like_count", "视频点赞"),
+    VIDEO_LIKE(2, "like_count", "视频点赞"),
     VIDEO_COLLECT(3, "collect_count", "视频收藏"),
     VIDEO_COIN(4, "coin_count", "视频投币"),
     VIDEO_COMMENT(5, "comment_count", "视频评论数"),
