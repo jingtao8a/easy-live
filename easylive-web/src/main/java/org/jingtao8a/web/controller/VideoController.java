@@ -1,13 +1,18 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.po.VideoInfoFile;
+import org.jingtao8a.entity.query.UserActionQuery;
 import org.jingtao8a.entity.query.VideoInfoFileQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.enums.VideoRecommendTypeEnum;
 import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.vo.PaginationResultVO;
@@ -30,6 +35,9 @@ public class VideoController extends ABaseController {
 
     @Resource
     private VideoInfoFileService videoInfoFileService;
+
+    @Resource
+    private UserActionService userActionService;
 
     @RequestMapping("/loadRecommendVideo")
     public ResponseVO loadRecommendVideo() {
@@ -62,9 +70,19 @@ public class VideoController extends ABaseController {
         if (videoInfo == null) {
             throw new BusinessException(ResponseCodeEnum.CODE_404);
         }
-        //TODO 获取用户行为 点赞、投币、收藏
+        //获取用户行为 (点赞、投币、收藏)
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        List<UserAction> userActions = new ArrayList<>();
+        if (tokenUserInfoDto != null) {//登入状态
+            UserActionQuery userActionQuery = new UserActionQuery();
+            userActionQuery.setUserId(tokenUserInfoDto.getUserId());
+            userActionQuery.setVideoId(videoId);
+            userActionQuery.setActionTypeArray(new Integer[]{UserActionTypeEnum.VIDEO_LIKE.getType(), UserActionTypeEnum.VIDEO_COIN.getType(), UserActionTypeEnum.VIDEO_COLLECT.getType()});
+            userActions = userActionService.findListByParam(userActionQuery);
+        }
         VideoInfoResultVO resultVO = new VideoInfoResultVO();
         resultVO.setVideoInfo(videoInfo);
+        resultVO.setUserActionList(userActions);
         return getSuccessResponseVO(resultVO);
     }
 
