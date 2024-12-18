@@ -70,7 +70,7 @@ public class VideoController extends ABaseController {
         if (videoInfo == null) {
             throw new BusinessException(ResponseCodeEnum.CODE_404);
         }
-        //获取用户行为 (点赞、投币、收藏)
+        //获取用户行为 (视频点赞、投币、收藏)
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         List<UserAction> userActions = new ArrayList<>();
         if (tokenUserInfoDto != null) {//登入状态
