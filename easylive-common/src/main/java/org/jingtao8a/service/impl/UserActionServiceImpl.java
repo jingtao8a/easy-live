@@ -3,17 +3,16 @@ package org.jingtao8a.service.impl;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.UserInfo;
+import org.jingtao8a.entity.po.VideoComment;
 import org.jingtao8a.entity.po.VideoInfo;
-import org.jingtao8a.entity.query.SimplePage;
-import org.jingtao8a.entity.query.UserActionQuery;
-import org.jingtao8a.entity.query.UserInfoQuery;
-import org.jingtao8a.entity.query.VideoInfoQuery;
+import org.jingtao8a.entity.query.*;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.UserActionMapper;
 import org.jingtao8a.mapper.UserInfoMapper;
+import org.jingtao8a.mapper.VideoCommentMapper;
 import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.vo.PaginationResultVO;
@@ -38,6 +37,9 @@ public class UserActionServiceImpl implements UserActionService {
 
 	@Resource
 	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
+
+	@Resource
+	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -167,7 +169,7 @@ public class UserActionServiceImpl implements UserActionService {
 
 		UserAction dbAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(userAction.getVideoId(), userAction.getCommentId(), userAction.getActionType(), userAction.getUserId());
 		UserActionTypeEnum userActionTypeEnum = UserActionTypeEnum.getEnum(userAction.getActionType());
-		int changeCount;
+		int changeCount = Constants.ZERO, opposeChangeCount = Constants.ZERO;
 
 		switch (userActionTypeEnum) {
 			case VIDEO_LIKE://自己可以给自己 点赞、收藏
@@ -201,10 +203,22 @@ public class UserActionServiceImpl implements UserActionService {
 				videoInfoMapper.updateCountInfo(userAction.getVideoId(), userActionTypeEnum.getField(), userAction.getActionCount());//更新视频投币数量
 				break;
 			case COMMENT_HATE:
-				//TODO
-				break;
 			case COMMENT_LIKE:
-				//TODO
+				UserActionTypeEnum opposeTypeEnum = UserActionTypeEnum.COMMENT_LIKE == userActionTypeEnum ? UserActionTypeEnum.COMMENT_HATE : UserActionTypeEnum.COMMENT_LIKE;
+				if (dbAction != null) {//重复操作表示取消
+					userActionMapper.deleteByActionId(dbAction.getActionId());
+					changeCount = -Constants.ONE;
+				} else {
+					UserAction opposeUserAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(userAction.getVideoId(), userAction.getCommentId(), opposeTypeEnum.getType(), userAction.getUserId());
+					if (opposeUserAction != null) {
+						userActionMapper.deleteByActionId(opposeUserAction.getActionId());//将对立面评论action删除
+						opposeChangeCount = -Constants.ONE;
+
+					}
+					userActionMapper.insert(userAction);
+					changeCount = Constants.ONE;
+				}
+				videoCommentMapper.updateCountInfo(userAction.getCommentId(), userActionTypeEnum.getField(), changeCount, opposeTypeEnum.getField(), opposeChangeCount);
 				break;
 		}
 	}
