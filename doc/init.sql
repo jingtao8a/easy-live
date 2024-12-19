@@ -173,6 +173,32 @@ CREATE TABLE `easylive`.`video_comment` (
   INDEX `idx_video_id` (`video_id` ASC) VISIBLE)
 AUTO_INCREMENT = 8 COMMENT = '评论';
 
+CREATE TABLE `easylive`.`user_focus` (
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `focus_user_id` VARCHAR(10) NOT NULL COMMENT '被关注用户ID',
+  `focus_time` DATETIME NULL DEFAULT NULL COMMENT '关注时间',
+  PRIMARY KEY (`user_id`, `focus_user_id`))
+COMMENT = '用户关注表';
+
+CREATE TABLE `easylive`.`user_video_series` (
+  `series_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '列表ID',
+  `series_name` VARCHAR(100) NOT NULL COMMENT '列表名称',
+  `series_description` VARCHAR(200) NULL DEFAULT NULL COMMENT '描述',
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `sort` TINYINT(4) NOT NULL COMMENT '排序',
+  `update_time` DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`series_id`),
+  INDEX `id_user_id` (`user_id` ASC) VISIBLE)
+COMMENT = '用户视频序列归档';
+
+CREATE TABLE `easylive`.`user_video_series_video` (
+  `series_id` INT(11) NOT NULL COMMENT '列表ID',
+  `video_id` VARCHAR(10) NOT NULL COMMENT '视频ID',
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `sort` TINYINT(4) NOT NULL COMMENT '排序',
+  PRIMARY KEY (`series_id`, `video_id`))
+COMMENT = '用户视频序列归档视频';
+
 
 -- drop table `easylive`.`user_info`; 
 -- drop table `easylive`.`category_info`;

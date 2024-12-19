@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jingtao8a.mapper.UserVideoSeriesMapper">
+
+	<!-- 实体映射 -->
+	<resultMap id="base_result_map" type="org.jingtao8a.entity.po.UserVideoSeries">
+	<!-- 列表ID-->
+		<id column="series_id" property="seriesId"/>
+	<!-- 列表名称-->
+		<result column="series_name" property="seriesName"/>
+	<!-- 描述-->
+		<result column="series_description" property="seriesDescription"/>
+	<!-- 用户ID-->
+		<result column="user_id" property="userId"/>
+	<!-- 排序-->
+		<result column="sort" property="sort"/>
+	<!-- 更新时间-->
+		<result column="update_time" property="updateTime"/>
+	</resultMap>
+	<!-- 通用查询结果列 -->
+	<sql id="base_column_list">
+		series_id ,series_name ,series_description ,user_id ,sort ,update_time 
+	</sql>
+	<!-- 基础查询条件-->
+	<sql id="base_query_condition">
+		<if test="query.seriesId != null">
+				and series_id = #{query.seriesId}
+		</if>
+		<if test="query.seriesName != null and query.seriesName !=''">
+				and series_name = #{query.seriesName}
+		</if>
+		<if test="query.seriesDescription != null and query.seriesDescription !=''">
+				and series_description = #{query.seriesDescription}
+		</if>
+		<if test="query.userId != null and query.userId !=''">
+				and user_id = #{query.userId}
+		</if>
+		<if test="query.sort != null">
+				and sort = #{query.sort}
+		</if>
+		<if test="query.updateTime != null">
+				and update_time = #{query.updateTime}
+		</if>
+	</sql>
+
+	<!-- 扩展的查询条件 -->
+	<sql id="base_query_condition_extend">
+		<if test="query.seriesNameFuzzy != null and query.seriesNameFuzzy != ''">
+			 and series_name like concat('%', #{query.seriesNameFuzzy}, '%')
+		</if>
+		<if test="query.seriesDescriptionFuzzy != null and query.seriesDescriptionFuzzy != ''">
+			 and series_description like concat('%', #{query.seriesDescriptionFuzzy}, '%')
+		</if>
+		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
+			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+		</if>
+		<if test="query.updateTimeStart != null and query.updateTimeStart != ''">
+			<![CDATA[ and update_time >= str_to_date(#{query.updateTimeStart}, '%Y-%m-%d')]]>
+		</if>
+		<if test="query.updateTimeEnd != null and query.updateTimeEnd != ''">
+			<![CDATA[ and update_time < date_sub(str_to_date(#{query.updateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+		</if>
+	</sql>
+
+	<!-- 通用查询条件 -->
+	<sql id="query_condition">
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+		</where>
+	</sql>
+
+	<!-- 查询列表 -->
+	<select id="selectList" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/> FROM user_video_series <include refid="query_condition"/>
+		<if test="query.orderBy!=null">
+			order by ${query.orderBy}
+		</if>
+		<if test="query.simplePage!=null">
+			limit #{query.simplePage.start}, #{query.simplePage.end}
+		</if>
+	</select>
+
+	<!-- 查询数量 -->
+	<select id="selectCount" resultType="java.lang.Long">
+		SELECT count(1) FROM user_video_series <include refid="query_condition"/>
+	</select>
+
+	<!-- 单条插入 -->
+	<insert id="insert" parameterType="org.jingtao8a.entity.po.UserVideoSeries">
+		<selectKey> keyProperty="bean.seriesId" resultType="Integer" order="AFTER"
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO user_video_series
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.seriesId != null">
+				series_id,
+			</if>
+			<if test="bean.seriesName != null">
+				series_name,
+			</if>
+			<if test="bean.seriesDescription != null">
+				series_description,
+			</if>
+			<if test="bean.userId != null">
+				user_id,
+			</if>
+			<if test="bean.sort != null">
+				sort,
+			</if>
+			<if test="bean.updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			<if test="bean.seriesId != null">
+				#{bean.seriesId},
+			</if>
+			<if test="bean.seriesName != null">
+				#{bean.seriesName},
+			</if>
+			<if test="bean.seriesDescription != null">
+				#{bean.seriesDescription},
+			</if>
+			<if test="bean.userId != null">
+				#{bean.userId},
+			</if>
+			<if test="bean.sort != null">
+				#{bean.sort},
+			</if>
+			<if test="bean.updateTime != null">
+				#{bean.updateTime},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 插入或者更新 (匹配有值的字段) -->
+	<insert id="insertOrUpdate" parameterType="org.jingtao8a.entity.po.UserVideoSeries">
+
+		INSERT INTO user_video_series
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.seriesId != null">
+				series_id,
+			</if>
+			<if test="bean.seriesName != null">
+				series_name,
+			</if>
+			<if test="bean.seriesDescription != null">
+				series_description,
+			</if>
+			<if test="bean.userId != null">
+				user_id,
+			</if>
+			<if test="bean.sort != null">
+				sort,
+			</if>
+			<if test="bean.updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			<if test="bean.seriesId != null">
+				#{bean.seriesId},
+			</if>
+			<if test="bean.seriesName != null">
+				#{bean.seriesName},
+			</if>
+			<if test="bean.seriesDescription != null">
+				#{bean.seriesDescription},
+			</if>
+			<if test="bean.userId != null">
+				#{bean.userId},
+			</if>
+			<if test="bean.sort != null">
+				#{bean.sort},
+			</if>
+			<if test="bean.updateTime != null">
+				#{bean.updateTime},
+			</if>
+		</trim>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.seriesName != null">
+				series_name = VALUES(series_name),
+			</if>
+			<if test="bean.seriesDescription != null">
+				series_description = VALUES(series_description),
+			</if>
+			<if test="bean.userId != null">
+				user_id = VALUES(user_id),
+			</if>
+			<if test="bean.sort != null">
+				sort = VALUES(sort),
+			</if>
+			<if test="bean.updateTime != null">
+				update_time = VALUES(update_time),
+			</if>
+		</trim>
+	</insert>
+	<!-- 添加(批量插入)-->
+	<insert id="insertBatch" parameterType="org.jingtao8a.entity.po.UserVideoSeries" >
+		INSERT INTO user_video_series (series_name,series_description,user_id,sort,update_time) VALUES
+		<foreach collection="list" item="item" separator="," >
+			(#{item.seriesName},#{item.seriesDescription},#{item.userId},#{item.sort},#{item.updateTime})
+		</foreach>
+	</insert>
+	<!-- 批量插入或更新-->
+	<insert id="insertOrUpdateBatch" parameterType="org.jingtao8a.entity.po.UserVideoSeries" >
+		INSERT INTO user_video_series (series_name,series_description,user_id,sort,update_time) VALUES
+		<foreach collection="list" item="item" separator="," >
+			(#{item.seriesName},#{item.seriesDescription},#{item.userId},#{item.sort},#{item.updateTime})
+		</foreach>
+		on DUPLICATE key update
+		<trim prefix="" suffix="" suffixOverrides=",">
+			series_name = VALUES(series_name),
+			series_description = VALUES(series_description),
+			user_id = VALUES(user_id),
+			sort = VALUES(sort),
+			update_time = VALUES(update_time),
+		</trim>
+	</insert>
+	<!-- 根据SeriesId查找-->
+	<select id="selectBySeriesId" resultMap="base_result_map">
+		select <include refid="base_column_list"/> from user_video_series  where  series_id = #{seriesId} 
+	</select>
+	<!-- 根据SeriesId删除-->
+	<delete id="deleteBySeriesId" >
+		delete from user_video_series  where  series_id = #{seriesId} 
+	</delete>
+	<!-- 根据SeriesId更改-->
+	<update id="updateBySeriesId" parameterType="org.jingtao8a.entity.po.UserVideoSeries">
+		UPDATE user_video_series
+		<set>
+			<if test="bean.seriesId != null">
+				series_id=#{bean.seriesId},
+			</if>
+			<if test="bean.seriesName != null">
+				series_name=#{bean.seriesName},
+			</if>
+			<if test="bean.seriesDescription != null">
+				series_description=#{bean.seriesDescription},
+			</if>
+			<if test="bean.userId != null">
+				user_id=#{bean.userId},
+			</if>
+			<if test="bean.sort != null">
+				sort=#{bean.sort},
+			</if>
+			<if test="bean.updateTime != null">
+				update_time=#{bean.updateTime},
+			</if>
+		</set>
+		where  series_id = #{seriesId} 
+	</update>
+
+</mapper>
