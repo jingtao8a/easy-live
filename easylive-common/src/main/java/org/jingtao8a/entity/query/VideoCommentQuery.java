@@ -74,4 +74,6 @@ public class VideoCommentQuery extends BaseQuery {
 	 * 讨厌数量
 	*/
 	private Integer hateCount;
+
+	private Boolean loadChildren;
 }
