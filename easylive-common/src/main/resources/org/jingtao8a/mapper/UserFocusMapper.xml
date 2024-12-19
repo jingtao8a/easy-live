@@ -173,4 +173,10 @@
 		where  user_id = #{userId} and focus_user_id = #{focusUserId} 
 	</update>
 
+	<select id="selectFansCount" resultType="java.lang.Long">
+		select count(1) from user_focus where focus_user_id = #{userId}
+	</select>
+	<select id="selectFocusCount" resultType="java.lang.Long">
+		select count(1) from user_focus where user_id = #{userId}
+	</select>
 </mapper>

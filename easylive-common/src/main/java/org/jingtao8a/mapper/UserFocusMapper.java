@@ -21,4 +21,7 @@ public interface UserFocusMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByUserIdAndFocusUserId(@Param("userId") String userId, @Param("focusUserId") String focusUserId);
 
+	 Long selectFansCount(@Param("userId") String userId);
+
+	 Long selectFocusCount(@Param("userId") String userId);
 }
