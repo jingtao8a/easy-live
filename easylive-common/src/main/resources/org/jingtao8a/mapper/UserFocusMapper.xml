@@ -14,31 +14,31 @@
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		user_id ,focus_user_id ,focus_time 
+		u.user_id ,u.focus_user_id ,u.focus_time
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
 		<if test="query.userId != null and query.userId !=''">
-				and user_id = #{query.userId}
+				and u.user_id = #{query.userId}
 		</if>
 		<if test="query.focusUserId != null and query.focusUserId !=''">
-				and focus_user_id = #{query.focusUserId}
+				and u.focus_user_id = #{query.focusUserId}
 		</if>
 		<if test="query.focusTime != null">
-				and focus_time = #{query.focusTime}
+				and u.focus_time = #{query.focusTime}
 		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
 	<sql id="base_query_condition_extend">
 		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
-			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+			 and u.user_id like concat('%', #{query.userIdFuzzy}, '%')
 		</if>
 		<if test="query.focusUserIdFuzzy != null and query.focusUserIdFuzzy != ''">
-			 and focus_user_id like concat('%', #{query.focusUserIdFuzzy}, '%')
+			 and u.focus_user_id like concat('%', #{query.focusUserIdFuzzy}, '%')
 		</if>
 		<if test="query.focusTimeStart != null and query.focusTimeStart != ''">
-			<![CDATA[ and focus_time >= str_to_date(#{query.focusTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and u.focus_time >= str_to_date(#{query.focusTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.focusTimeEnd != null and query.focusTimeEnd != ''">
 			<![CDATA[ and focus_time < date_sub(str_to_date(#{query.focusTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
@@ -55,7 +55,22 @@
 
 	<!-- 查询列表 -->
 	<select id="selectList" resultMap="base_result_map">
-		SELECT <include refid="base_column_list"/> FROM user_focus <include refid="query_condition"/>
+		SELECT
+		<include refid="base_column_list"/>
+		<if test="query.queryType != null">
+			,i.nick_name otherNickName, i.user_id otherUserId, i.person_introduction otherPersonIntroduction, i.avatar otherAvatar
+		  	,(select count(1) from user_focus f where u.user_id = f.focus_user_id and u.focus_user_id = f.user_id) focusType
+		</if>
+		FROM user_focus u
+		<!--查关注-->
+		<if test="query.queryType == 0">
+			inner join user_info i on i.user_id = u.focus_user_id
+		</if>
+		<!--查粉丝-->
+		<if test="query.queryType == 1">
+			inner join user_info i on i.user_id = u.user_id
+		</if>
+		<include refid="query_condition"/>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
 		</if>
@@ -66,7 +81,7 @@
 
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT count(1) FROM user_focus <include refid="query_condition"/>
+		SELECT count(1) FROM user_focus u <include refid="query_condition"/>
 	</select>
 
 	<!-- 单条插入 -->
@@ -150,7 +165,7 @@
 	</insert>
 	<!-- 根据UserIdAndFocusUserId查找-->
 	<select id="selectByUserIdAndFocusUserId" resultMap="base_result_map">
-		select <include refid="base_column_list"/> from user_focus  where  user_id = #{userId} and focus_user_id = #{focusUserId} 
+		select <include refid="base_column_list"/> from user_focus u where  u.user_id = #{userId} and u.focus_user_id = #{focusUserId}
 	</select>
 	<!-- 根据UserIdAndFocusUserId删除-->
 	<delete id="deleteByUserIdAndFocusUserId" >

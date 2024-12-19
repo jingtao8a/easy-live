@@ -30,4 +30,5 @@ public class UserFocusQuery extends BaseQuery {
 	private String focusTimeStart;
 	private String focusTimeEnd;
 
+	private Integer queryType;//0:查关注 1：查粉丝
 }

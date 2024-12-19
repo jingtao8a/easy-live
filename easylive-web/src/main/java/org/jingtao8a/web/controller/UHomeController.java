@@ -1,15 +1,17 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
-import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.UserInfo;
+import org.jingtao8a.entity.query.UserFocusQuery;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.service.UserFocusService;
 import org.jingtao8a.service.UserInfoService;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.utils.CopyTools;
+import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
 import org.jingtao8a.vo.UserInfoVO;
 import org.springframework.validation.annotation.Validated;
@@ -103,5 +105,44 @@ public class UHomeController extends ABaseController{
         }
         userFocusService.cancelFocus(tokenUserInfoDto.getUserId(), focusUserId);
         return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/loadFocusList")
+    public ResponseVO loadFocusList(Integer pageNo, Integer pageSize) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        UserFocusQuery userFocusQuery = new UserFocusQuery();
+        userFocusQuery.setUserId(tokenUserInfoDto.getUserId());
+        try {
+            userFocusQuery.setPageNo(Long.valueOf(pageNo));
+        } catch (Exception e) {
+            userFocusQuery.setPageNo(0L);
+        }
+
+        userFocusQuery.setOrderBy("focus_time desc");
+        userFocusQuery.setQueryType(Constants.ZERO);
+        PaginationResultVO resultVO = userFocusService.findListByPage(userFocusQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
+    @RequestMapping("/loadFansList")
+    public ResponseVO loadFansList(Integer pageNo, Integer pageSize) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        UserFocusQuery userFocusQuery = new UserFocusQuery();
+        userFocusQuery.setFocusUserId(tokenUserInfoDto.getUserId());
+        try {
+            userFocusQuery.setPageNo(Long.valueOf(pageNo));
+        } catch (Exception e) {
+            userFocusQuery.setPageNo(0L);
+        }
+        userFocusQuery.setOrderBy("focus_time desc");
+        userFocusQuery.setQueryType(Constants.ONE);
+        PaginationResultVO resultVO = userFocusService.findListByPage(userFocusQuery);
+        return getSuccessResponseVO(resultVO);
     }
 }
