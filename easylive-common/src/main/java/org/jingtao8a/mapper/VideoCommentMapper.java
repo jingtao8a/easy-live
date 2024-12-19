@@ -1,5 +1,8 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
 @Description:评论Mapper
 @Date:2024-12-17
@@ -21,4 +24,7 @@ public interface VideoCommentMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByCommentId(@Param("commentId") Integer commentId);
 
+	 List<T> selectChildComment(@Param("commentId") Integer commentId);
+
+	 List<T> selectListWithChildren(@Param("query") P p);
 }

@@ -32,73 +32,73 @@
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		comment_id ,p_comment_id ,video_id ,video_user_id ,content ,img_path ,user_id ,reply_user_id ,top_type ,post_time ,like_count ,hate_count 
+		v.comment_id ,v.p_comment_id ,v.video_id ,v.video_user_id ,v.content ,v.img_path ,v.user_id ,v.reply_user_id ,v.top_type ,v.post_time ,v.like_count ,v.hate_count
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
 		<if test="query.commentId != null">
-				and comment_id = #{query.commentId}
+				and v.comment_id = #{query.commentId}
 		</if>
 		<if test="query.pCommentId != null">
-				and p_comment_id = #{query.pCommentId}
+				and v.p_comment_id = #{query.pCommentId}
 		</if>
 		<if test="query.videoId != null and query.videoId !=''">
-				and video_id = #{query.videoId}
+				and v.video_id = #{query.videoId}
 		</if>
 		<if test="query.videoUserId != null and query.videoUserId !=''">
-				and video_user_id = #{query.videoUserId}
+				and v.video_user_id = #{query.videoUserId}
 		</if>
 		<if test="query.content != null and query.content !=''">
-				and content = #{query.content}
+				and v.content = #{query.content}
 		</if>
 		<if test="query.imgPath != null and query.imgPath !=''">
-				and img_path = #{query.imgPath}
+				and v.img_path = #{query.imgPath}
 		</if>
 		<if test="query.userId != null and query.userId !=''">
-				and user_id = #{query.userId}
+				and v.user_id = #{query.userId}
 		</if>
 		<if test="query.replyUserId != null and query.replyUserId !=''">
-				and reply_user_id = #{query.replyUserId}
+				and v.reply_user_id = #{query.replyUserId}
 		</if>
 		<if test="query.topType != null">
-				and top_type = #{query.topType}
+				and v.top_type = #{query.topType}
 		</if>
 		<if test="query.postTime != null">
-				and post_time = #{query.postTime}
+				and v.post_time = #{query.postTime}
 		</if>
 		<if test="query.likeCount != null">
-				and like_count = #{query.likeCount}
+				and v.like_count = #{query.likeCount}
 		</if>
 		<if test="query.hateCount != null">
-				and hate_count = #{query.hateCount}
+				and v.hate_count = #{query.hateCount}
 		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
 	<sql id="base_query_condition_extend">
 		<if test="query.videoIdFuzzy != null and query.videoIdFuzzy != ''">
-			 and video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			 and v.video_id like concat('%', #{query.videoIdFuzzy}, '%')
 		</if>
 		<if test="query.videoUserIdFuzzy != null and query.videoUserIdFuzzy != ''">
-			 and video_user_id like concat('%', #{query.videoUserIdFuzzy}, '%')
+			 and v.video_user_id like concat('%', #{query.videoUserIdFuzzy}, '%')
 		</if>
 		<if test="query.contentFuzzy != null and query.contentFuzzy != ''">
-			 and content like concat('%', #{query.contentFuzzy}, '%')
+			 and v.content like concat('%', #{query.contentFuzzy}, '%')
 		</if>
 		<if test="query.imgPathFuzzy != null and query.imgPathFuzzy != ''">
-			 and img_path like concat('%', #{query.imgPathFuzzy}, '%')
+			 and v.img_path like concat('%', #{query.imgPathFuzzy}, '%')
 		</if>
 		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
-			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+			 and v.user_id like concat('%', #{query.userIdFuzzy}, '%')
 		</if>
 		<if test="query.replyUserIdFuzzy != null and query.replyUserIdFuzzy != ''">
-			 and reply_user_id like concat('%', #{query.replyUserIdFuzzy}, '%')
+			 and v.reply_user_id like concat('%', #{query.replyUserIdFuzzy}, '%')
 		</if>
 		<if test="query.postTimeStart != null and query.postTimeStart != ''">
-			<![CDATA[ and post_time >= str_to_date(#{query.postTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and v.post_time >= str_to_date(#{query.postTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.postTimeEnd != null and query.postTimeEnd != ''">
-			<![CDATA[ and post_time < date_sub(str_to_date(#{query.postTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and v.post_time < date_sub(str_to_date(#{query.postTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 	</sql>
 
@@ -110,9 +110,34 @@
 		</where>
 	</sql>
 
+	<resultMap id="base_result_map_children" type="org.jingtao8a.entity.po.VideoComment" extends="base_result_map">
+		<!--将主查询中comment_id列的值传递给名为selectChildComment的子查询-->
+		<collection property="children" column="comment_id" select="org.jingtao8a.mapper.VideoCommentMapper.selectChildComment"></collection>
+	</resultMap>
+
+	<select id="selectChildComment" resultMap="base_result_map">
+		select <include refid="base_column_list"></include>, u.nick_name nickName, u.avatar avatar, u2.nick_name replyNickName, u2.avatar replyAvatar
+		from video_comment v
+		inner join user_info u on  u.user_id = v.user_id
+		left join user_info u2 on u2.user_id = v.reply_user_id
+		where p_comment_id = #{commentId} order by v.comment_id asc
+	</select>
+
+	<select id="selectListWithChildren" resultMap="base_result_map_children">
+		select <include refid="base_column_list"></include>, u.nick_name nickName, u.avatar avatar
+		from video_comment v left join user_info u on u.user_id = v.user_id
+		<include refid="query_condition"></include>
+		<if test="query.orderBy != null">
+			order by ${query.orderBy}
+		</if>
+		<if test="query.simplePage != null">
+			limit #{query.simplePage.start}, #{query.simplePage.end}
+		</if>
+	</select>
+
 	<!-- 查询列表 -->
 	<select id="selectList" resultMap="base_result_map">
-		SELECT <include refid="base_column_list"/> FROM video_comment <include refid="query_condition"/>
+		SELECT <include refid="base_column_list"/> FROM video_comment v <include refid="query_condition"/>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
 		</if>
@@ -123,7 +148,7 @@
 
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT count(1) FROM video_comment <include refid="query_condition"/>
+		SELECT count(1) FROM video_comment v <include refid="query_condition"/>
 	</select>
 
 	<!-- 单条插入 -->
@@ -351,7 +376,7 @@
 	</insert>
 	<!-- 根据CommentId查找-->
 	<select id="selectByCommentId" resultMap="base_result_map">
-		select <include refid="base_column_list"/> from video_comment  where  comment_id = #{commentId} 
+		select <include refid="base_column_list"/> from video_comment v where  comment_id = #{commentId}
 	</select>
 	<!-- 根据CommentId删除-->
 	<delete id="deleteByCommentId" >
