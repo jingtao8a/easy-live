@@ -235,8 +235,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 		}
 		UserInfoVO userInfoVO = CopyTools.copy(userInfo, UserInfoVO.class);
 
-		Long focusCount = userFocusMapper.selectFansCount(userId);
-		Long fanCount = userFocusMapper.selectFocusCount(userId);
+		Long focusCount = userFocusMapper.selectFocusCount(userId);
+		Long fanCount = userFocusMapper.selectFansCount(userId);
 		userInfoVO.setFocusCount(focusCount);
 		userInfoVO.setFansCount(fanCount);
 		if (currentUserId == null) {
