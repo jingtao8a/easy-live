@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,5 +115,37 @@ public class VideoCommentController extends ABaseController{
         videoCommentQuery.setLoadChildren(true);
         List<VideoComment> videoComments = videoCommentService.findListByParam(videoCommentQuery);
         return videoComments;
+    }
+
+
+    @RequestMapping("/topComment")
+    public ResponseVO topComment(@NotNull Integer commentId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoCommentService.topComment(commentId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/cancelTopComment")
+    public ResponseVO cancelTopComment(@NotNull Integer commentId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoCommentService.cancelTopComment(commentId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
+    }
+
+
+    @RequestMapping("/userDelComment")
+    public ResponseVO userDelComment(@NotNull Integer commentId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoCommentService.deleteComment(commentId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
     }
 }

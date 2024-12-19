@@ -435,4 +435,50 @@
 		</set>
 		where comment_id = #{commentId}
 	</update>
+	<update id="updateByParam">
+		update video_comment v
+		<set>
+			<if test="bean.commentId != null">
+				v.comment_id=#{bean.commentId},
+			</if>
+			<if test="bean.pCommentId != null">
+				v.p_comment_id=#{bean.pCommentId},
+			</if>
+			<if test="bean.videoId != null">
+				v.video_id=#{bean.videoId},
+			</if>
+			<if test="bean.videoUserId != null">
+				v.video_user_id=#{bean.videoUserId},
+			</if>
+			<if test="bean.content != null">
+				v.content=#{bean.content},
+			</if>
+			<if test="bean.imgPath != null">
+				v.img_path=#{bean.imgPath},
+			</if>
+			<if test="bean.userId != null">
+				v.user_id=#{bean.userId},
+			</if>
+			<if test="bean.replyUserId != null">
+				v.reply_user_id=#{bean.replyUserId},
+			</if>
+			<if test="bean.topType != null">
+				v.top_type=#{bean.topType},
+			</if>
+			<if test="bean.postTime != null">
+				v.post_time=#{bean.postTime},
+			</if>
+			<if test="bean.likeCount != null">
+				v.like_count=#{bean.likeCount},
+			</if>
+			<if test="bean.hateCount != null">
+				v.hate_count=#{bean.hateCount},
+			</if>
+		</set>
+		<include refid="query_condition"/>
+	</update>
+	<delete id="deleteByParam">
+		delete from video_comment v
+		<include refid="query_condition"/>
+	</delete>
 </mapper>

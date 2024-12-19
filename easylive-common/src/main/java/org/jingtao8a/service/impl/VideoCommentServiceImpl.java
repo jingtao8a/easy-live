@@ -8,6 +8,7 @@ import org.jingtao8a.entity.query.SimplePage;
 import org.jingtao8a.entity.query.UserInfoQuery;
 import org.jingtao8a.entity.query.VideoCommentQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
+import org.jingtao8a.enums.CommentTopTypeEnum;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
@@ -165,6 +166,61 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 		videoCommentMapper.insert(videoComment);
 		if (videoComment.getPCommentId() == 0) {
 			videoInfoMapper.updateCountInfo(videoComment.getVideoId(), UserActionTypeEnum.VIDEO_COMMENT.getField(), Constants.ONE);
+		}
+	}
+
+    @Override
+	@Transactional(rollbackFor = Exception.class)
+    public void topComment(Integer commentId, String userId) throws BusinessException {
+		cancelTopComment(commentId, userId);
+		VideoComment videoComment = new VideoComment();
+		videoComment.setTopType(CommentTopTypeEnum.TOP.getType());
+		videoCommentMapper.updateByCommentId(videoComment, commentId);
+	}
+
+	@Override
+	public void cancelTopComment(Integer commentId, String userId) throws BusinessException {
+		VideoComment dbVideoComment = videoCommentMapper.selectByCommentId(commentId);
+		if (dbVideoComment == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(dbVideoComment.getVideoId());
+		if (videoInfo == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if (!videoInfo.getUserId().equals(userId)) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		VideoComment videoComment = new VideoComment();
+		videoComment.setTopType(CommentTopTypeEnum.NO_TOP.getType());
+
+		VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
+		videoCommentQuery.setVideoId(dbVideoComment.getVideoId());
+		videoCommentQuery.setTopType(CommentTopTypeEnum.TOP.getType());
+		videoCommentMapper.updateByParam(videoComment, videoCommentQuery);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteComment(Integer commentId, String userId) throws BusinessException {
+		VideoComment dbVideoComment = videoCommentMapper.selectByCommentId(commentId);
+		if (dbVideoComment == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(dbVideoComment.getVideoId());
+		if (videoInfo == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if (!videoInfo.getUserId().equals(userId) && !dbVideoComment.getUserId().equals(userId)) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		videoCommentMapper.deleteByCommentId(commentId);
+		if (dbVideoComment.getPCommentId() == 0) {
+			videoInfoMapper.updateCountInfo(videoInfo.getVideoId(), UserActionTypeEnum.VIDEO_COMMENT.getField(), -1);
+			//删除二级评论
+			VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
+			videoCommentQuery.setPCommentId(dbVideoComment.getCommentId());
+			videoCommentMapper.deleteByParam(videoCommentQuery);
 		}
 	}
 

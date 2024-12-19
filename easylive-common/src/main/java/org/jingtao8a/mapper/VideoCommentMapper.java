@@ -30,4 +30,8 @@ public interface VideoCommentMapper<T,P> extends BaseMapper {
 
 	void updateCountInfo(@Param("commentId") Integer commentId, @Param("field") String field, @Param("changeCount") Integer changeCount,
 						 @Param("opposeField") String opposeField, @Param("opposeChangeCount") Integer opposeChangeCount);
+
+	void updateByParam(@Param("bean") T videoComment,@Param("query") P videoCommentQuery);
+
+	void deleteByParam(@Param("query") P videoCommentQuery);
 }

@@ -5,6 +5,7 @@ import org.jingtao8a.entity.query.VideoCommentQuery;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -64,4 +65,10 @@ public interface VideoCommentService {
 	Long deleteByCommentId(Integer commentId);
 
     void postComment(VideoComment videoComment, Integer replyCommentId) throws BusinessException;
+
+	void topComment(Integer commentId, String userId) throws BusinessException;
+
+	void cancelTopComment(Integer commentId, String userId) throws BusinessException;
+
+	void deleteComment(Integer commentId, String userId) throws BusinessException;
 }
