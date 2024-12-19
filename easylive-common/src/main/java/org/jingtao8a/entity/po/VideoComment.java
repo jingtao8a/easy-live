@@ -6,7 +6,7 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 /**
 @Description:评论
 @Date:2024-12-17
@@ -72,4 +72,6 @@ public class VideoComment implements Serializable {
 	private String replyAvatar;
 
 	private String replyNickName;
+
+	private List<VideoComment> children;
 }
