@@ -25,6 +25,8 @@ public class Constants {
 
     public static final String REGEX_PASSWORD = "^(?=.*\\d)(?=.*[a-zA-Z])[\\da-zA-Z~!@#$%^&*_]{8,18}$";
 
+    public static final Integer REDIS_KEY_EXPIRES_ONE_SECOND = 1000;
+
     public static final Integer REDIS_KEY_EXPIRES_ONE_MINUTE = 1000 * 60;
 
     public static final Integer REDIS_KEY_EXPIRES_TEN_MINUTE = 10 * REDIS_KEY_EXPIRES_ONE_MINUTE;
@@ -50,6 +52,14 @@ public class Constants {
     public static final String REDIS_KEY_FILE_DEL = REDIS_KEY_PREFIX + "file:list:del";
 
     public static final String REDIS_KEY_QUEUE_TRANSFER = REDIS_KEY_PREFIX + "queue:transfer";
+
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE_PREFIX = REDIS_KEY_PREFIX + "video:play:online:";
+
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE = REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE_PREFIX + "count:%s";
+
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_USER_PREFIX = "user:";
+
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_USER = REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE_PREFIX + REDIS_KEY_VIDEO_PLAY_COUNT_USER_PREFIX + "%s:%s";
 
     public static final String TOKEN_WEB = "token";
 

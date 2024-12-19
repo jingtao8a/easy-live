@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.VideoInfo;
@@ -18,6 +19,7 @@ import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
 import org.jingtao8a.vo.VideoInfoResultVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +40,8 @@ public class VideoController extends ABaseController {
 
     @Resource
     private UserActionService userActionService;
+    @Autowired
+    private RedisComponent redisComponent;
 
     @RequestMapping("/loadRecommendVideo")
     public ResponseVO loadRecommendVideo() {
@@ -97,7 +101,6 @@ public class VideoController extends ABaseController {
 
     @RequestMapping("/reportVideoPlayOnline")
     public ResponseVO reportVideoPlayOnline(@NotEmpty String fileId, @NotEmpty String deviceId) throws BusinessException {
-        //TODO
-        return getSuccessResponseVO(null);
+        return getSuccessResponseVO(redisComponent.reportVideoPlayOnline(fileId, deviceId));
     }
 }
