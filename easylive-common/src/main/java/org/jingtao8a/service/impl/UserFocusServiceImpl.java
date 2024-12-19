@@ -1,15 +1,21 @@
 package org.jingtao8a.service.impl;
 
 import org.jingtao8a.entity.po.UserFocus;
+import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.query.SimplePage;
 import org.jingtao8a.entity.query.UserFocusQuery;
+import org.jingtao8a.entity.query.UserInfoQuery;
 import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.UserFocusMapper;
+import org.jingtao8a.mapper.UserInfoMapper;
 import org.jingtao8a.service.UserFocusService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 /**
 @Description:UserFocusService
@@ -20,6 +26,9 @@ public class UserFocusServiceImpl implements UserFocusService {
 
 	@Resource
 	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
+
+	@Resource
+	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
 	/**
 	 * 根据条件查询列表
 	*/
@@ -111,5 +120,31 @@ public class UserFocusServiceImpl implements UserFocusService {
 	public Long deleteByUserIdAndFocusUserId(String userId, String focusUserId) {
 		return userFocusMapper.deleteByUserIdAndFocusUserId(userId, focusUserId);
 	}
+
+	@Override
+	public void focusUser(String userId, String focusUserId) throws BusinessException {
+		if (userId.equals(focusUserId)) {
+			throw new BusinessException("不能关注自己");
+		}
+		UserFocus dbUserFocus = userFocusMapper.selectByUserIdAndFocusUserId(userId, focusUserId);
+		if (dbUserFocus != null) {//已经关注
+			return;
+		}
+		UserInfo userInfo = userInfoMapper.selectByUserId(focusUserId);
+		if (userInfo == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		UserFocus userFocus = new UserFocus();
+		userFocus.setUserId(userId);
+		userFocus.setFocusUserId(focusUserId);
+		userFocus.setFocusTime(new Date());
+		userFocusMapper.insert(userFocus);
+	}
+
+	@Override
+	public void cancelFocus(String userId, String focusUserId) throws BusinessException {
+		userFocusMapper.deleteByUserIdAndFocusUserId(userId, focusUserId);
+	}
+
 
 }

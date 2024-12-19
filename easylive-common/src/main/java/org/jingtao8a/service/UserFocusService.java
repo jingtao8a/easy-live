@@ -2,8 +2,11 @@ package org.jingtao8a.service;
 
 import org.jingtao8a.entity.po.UserFocus;
 import org.jingtao8a.entity.query.UserFocusQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -62,4 +65,7 @@ public interface UserFocusService {
 	*/
 	Long deleteByUserIdAndFocusUserId(String userId, String focusUserId);
 
+	void focusUser(String userId, String focusUserId) throws BusinessException;
+
+	void cancelFocus(String userId, String focusUserId) throws BusinessException;
 }
