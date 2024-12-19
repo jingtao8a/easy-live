@@ -37,12 +37,12 @@ public class UserInfoVO {
      */
     private String school;
 
-    private Integer fansCount;//粉丝数
-    private Integer currentCoinCount;
-    private Integer focusCount;//关注数
+    private Long fansCount;//粉丝数
+    private Long currentCoinCount;
+    private Long focusCount;//关注数
 
-    private Integer likeCount;
-    private Integer playCount;
+    private Long likeCount;
+    private Long playCount;
     private Boolean havaFocus;
 
     private Integer theme;

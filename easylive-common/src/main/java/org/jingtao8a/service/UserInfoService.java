@@ -6,6 +6,7 @@ import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.query.UserInfoQuery;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
+import org.jingtao8a.vo.UserInfoVO;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -99,7 +100,7 @@ public interface UserInfoService {
 
 	TokenUserInfoDto login(String email, String password, String ip) throws BusinessException;
 
-	UserInfo getUserDetailInfo(String currentUserId, String userId) throws BusinessException;
+	UserInfoVO getUserDetailInfo(String currentUserId, String userId) throws BusinessException;
 
 	void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto) throws BusinessException;
 }

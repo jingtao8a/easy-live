@@ -43,8 +43,7 @@ public class UHomeController extends ABaseController{
         if (tokenUserInfoDto != null) {
             currentUserId = tokenUserInfoDto.getUserId();
         }
-        UserInfo userInfo = userInfoService.getUserDetailInfo(currentUserId, userId);
-        UserInfoVO userInfoVO = CopyTools.copy(userInfo, UserInfoVO.class);
+        UserInfoVO userInfoVO = userInfoService.getUserDetailInfo(currentUserId, userId);
         return getSuccessResponseVO(userInfoVO);
     }
 

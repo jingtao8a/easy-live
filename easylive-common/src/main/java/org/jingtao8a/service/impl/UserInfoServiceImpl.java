@@ -5,17 +5,21 @@ import java.util.List;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.entity.po.UserFocus;
 import org.jingtao8a.entity.po.UserInfo;
+import org.jingtao8a.entity.query.UserFocusQuery;
 import org.jingtao8a.entity.query.UserInfoQuery;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserSexEnum;
 import org.jingtao8a.enums.UserStatusEnum;
 import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.mapper.UserFocusMapper;
 import org.jingtao8a.utils.CopyTools;
 import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.service.UserInfoService;
 import org.jingtao8a.mapper.UserInfoMapper;
+import org.jingtao8a.vo.UserInfoVO;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.jingtao8a.enums.PageSize;
@@ -35,6 +39,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 	@Resource
 	private RedisComponent redisComponent;
 
+	@Resource
+	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
 	/**
 	 * 根据条件查询列表
 	*/
@@ -222,13 +228,29 @@ public class UserInfoServiceImpl implements UserInfoService {
 	}
 
     @Override
-    public UserInfo getUserDetailInfo(String currentUserId, String userId) throws BusinessException {
+    public UserInfoVO getUserDetailInfo(String currentUserId, String userId) throws BusinessException {
         UserInfo userInfo = selectByUserId(userId);
 		if (null == userInfo) {
 			throw new BusinessException(ResponseCodeEnum.CODE_404);
 		}
-		//TODO 粉丝相关
-		return userInfo;
+		UserInfoVO userInfoVO = CopyTools.copy(userInfo, UserInfoVO.class);
+
+		Long focusCount = userFocusMapper.selectFansCount(userId);
+		Long fanCount = userFocusMapper.selectFocusCount(userId);
+		userInfoVO.setFocusCount(focusCount);
+		userInfoVO.setFansCount(fanCount);
+		if (currentUserId == null) {
+			userInfoVO.setHavaFocus(false);
+		} else {
+			UserFocus dbUserFocus = userFocusMapper.selectByUserIdAndFocusUserId(currentUserId, userId);
+			if (dbUserFocus != null) {
+				userInfoVO.setHavaFocus(true);
+			} else {
+				userInfoVO.setHavaFocus(false);
+			}
+		}
+		//TODO 点赞数，播放数
+		return userInfoVO;
     }
 
 	@Override
