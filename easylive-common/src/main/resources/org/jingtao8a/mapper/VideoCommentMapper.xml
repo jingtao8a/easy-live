@@ -425,5 +425,14 @@
 		</set>
 		where  comment_id = #{commentId} 
 	</update>
-
+	<update id="updateCountInfo">
+		update video_comment
+		<set>
+			${field} = ${field} + #{changeCount},
+		    <if test="opposeField != null">
+				${opposeField} = ${opposeField} + #{opposeChangeCount}
+			</if>
+		</set>
+		where comment_id = #{commentId}
+	</update>
 </mapper>
