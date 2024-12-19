@@ -7,6 +7,7 @@ import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.query.UserInfoQuery;
+import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserSexEnum;
 import org.jingtao8a.enums.UserStatusEnum;
 import org.jingtao8a.exception.BusinessException;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.entity.query.SimplePage;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
 @Description:UserInfoService
 @Date:2024-11-06
@@ -218,4 +221,43 @@ public class UserInfoServiceImpl implements UserInfoService {
 		return tokenUserInfoDto;
 	}
 
+    @Override
+    public UserInfo getUserDetailInfo(String currentUserId, String userId) throws BusinessException {
+        UserInfo userInfo = selectByUserId(userId);
+		if (null == userInfo) {
+			throw new BusinessException(ResponseCodeEnum.CODE_404);
+		}
+		//TODO 粉丝相关
+		return userInfo;
+    }
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto) throws BusinessException {
+		UserInfo dbInfo = userInfoMapper.selectByUserId(userInfo.getUserId());
+		if (!dbInfo.getNickName().equals(userInfo.getNickName()) && dbInfo.getCurrentCoinCount() < Constants.UPDATE_NICK_NAME_COIN) {
+			throw new BusinessException("硬币不足，无法修改昵称");
+		}
+		if (!dbInfo.getNickName().equals(userInfo.getNickName())) {
+			Long count = this.userInfoMapper.updateCoinCount(userInfo.getUserId(), -Constants.UPDATE_NICK_NAME_COIN);
+			if (count == 0L) {
+				throw new BusinessException("硬币不足，无法修改昵称");
+			}
+		}
+
+		userInfoMapper.updateByUserId(userInfo, userInfo.getUserId());
+
+		Boolean updateTokenUserInfo = false;
+		if (!userInfo.getAvatar().equals(tokenUserInfoDto.getAvatar())) {
+			tokenUserInfoDto.setAvatar(userInfo.getAvatar());
+			updateTokenUserInfo = true;
+		}
+		if (!tokenUserInfoDto.getNickName().equals(userInfo.getNickName())) {
+			tokenUserInfoDto.setNickName(userInfo.getNickName());
+			updateTokenUserInfo = true;
+		}
+		if (updateTokenUserInfo) {
+			redisComponent.updateTokenUserInfo(tokenUserInfoDto);
+		}
+	}
 }

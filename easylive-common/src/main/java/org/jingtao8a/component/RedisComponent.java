@@ -45,6 +45,11 @@ public class RedisComponent {
         tokenUserInfoDto.setExpireAt(System.currentTimeMillis() + Constants.REDIS_KEY_EXPIRES_ONE_DAY * 7);
         redisUtils.setex(Constants.REDIS_KEY_TOKEN_WEB + token, tokenUserInfoDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY * 7);
     }
+
+    public void updateTokenUserInfo(TokenUserInfoDto tokenUserInfoDto) {
+        redisUtils.setex(Constants.REDIS_KEY_TOKEN_WEB + tokenUserInfoDto.getToken(), tokenUserInfoDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY * 7);
+    }
+
     public TokenUserInfoDto getTokenInfo(String token) {
         return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_WEB + token);
     }
@@ -156,4 +161,6 @@ public class RedisComponent {
     public void decrementPlayOnlineCount(String key) {
         redisUtils.decrement(key);
     }
+
+
 }
