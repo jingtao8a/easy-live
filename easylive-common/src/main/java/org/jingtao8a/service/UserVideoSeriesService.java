@@ -2,8 +2,10 @@ package org.jingtao8a.service;
 
 import org.jingtao8a.entity.po.UserVideoSeries;
 import org.jingtao8a.entity.query.UserVideoSeriesQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -62,4 +64,9 @@ public interface UserVideoSeriesService {
 	*/
 	Long deleteBySeriesId(Integer seriesId);
 
+	List<UserVideoSeries> getUserAllSeries(String userId);
+
+	void saveUserVideoSeries(UserVideoSeries userVideoSeries, String videoIds) throws BusinessException;
+
+	void saveUserVideoSeriesVideo(String userId, Integer seriesId, String videoIds) throws BusinessException;
 }

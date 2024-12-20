@@ -190,5 +190,7 @@
 		</set>
 		where  series_id = #{seriesId} and video_id = #{videoId} 
 	</update>
-
+	<select id="selectMaxSort" resultType="java.lang.Long">
+		select ifnull(max(sort), 0) from user_video_series_video where series_id = #{seriesId}
+	</select>
 </mapper>

@@ -21,4 +21,5 @@ public interface UserVideoSeriesVideoMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteBySeriesIdAndVideoId(@Param("seriesId") Integer seriesId, @Param("videoId") String videoId);
 
+	 Long selectMaxSort(@Param("seriesId") Integer seriesId);
 }

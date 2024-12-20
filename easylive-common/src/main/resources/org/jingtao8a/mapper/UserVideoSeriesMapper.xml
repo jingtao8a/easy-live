@@ -89,7 +89,7 @@
 
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="org.jingtao8a.entity.po.UserVideoSeries">
-		<selectKey> keyProperty="bean.seriesId" resultType="Integer" order="AFTER"
+		<selectKey keyProperty="bean.seriesId" resultType="Integer" order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO user_video_series
@@ -253,5 +253,26 @@
 		</set>
 		where  series_id = #{seriesId} 
 	</update>
-
+	<select id="selectUserAllSeries" resultMap="base_result_map">
+		SELECT
+		t.*,
+		v.video_cover cover
+		FROM
+		(
+			SELECT *,(
+		    	SELECT
+		    	video_id
+		    	FROM
+		    	user_video_series_video v
+		    	WHERE
+		    	v.series_id = s.series_id
+		    	ORDER BY sort ASC
+		    	LIMIT 1
+			) as video_id FROM user_video_series s WHERE s.user_id = #{userId}
+		) t
+		LEFT JOIN video_info v ON v.video_id = t.video_id;
+	</select>
+	<select id="selectMaxSort" resultType="java.lang.Long">
+		select ifnull(max(sort), 0) from user_video_series s where s.user_id = #{userId}
+	</select>
 </mapper>

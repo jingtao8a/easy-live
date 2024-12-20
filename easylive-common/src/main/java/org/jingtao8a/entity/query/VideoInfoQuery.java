@@ -3,7 +3,7 @@ package org.jingtao8a.entity.query;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.Date;
+import java.util.*;
 /**
 @Description:视频信息
 @Date:2024-12-11
@@ -119,4 +119,8 @@ public class VideoInfoQuery extends BaseQuery {
 	private String lastPlayTimeEnd;
 
     private boolean queryUserInfo;
+
+	private String[] videoIdArray;
+
+	private String[] excludeVideoIdArray;
 }

@@ -1,5 +1,8 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
 @Description:用户视频序列归档Mapper
 @Date:2024-12-19
@@ -21,4 +24,7 @@ public interface UserVideoSeriesMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteBySeriesId(@Param("seriesId") Integer seriesId);
 
+	List<T> selectUserAllSeries(@Param("userId") String userId);
+
+	Long selectMaxSort(@Param("userId") String userId);
 }
