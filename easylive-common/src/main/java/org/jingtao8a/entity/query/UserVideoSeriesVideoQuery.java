@@ -28,4 +28,6 @@ public class UserVideoSeriesVideoQuery extends BaseQuery {
 	 * 排序
 	*/
 	private Integer sort;
+
+	private Boolean queryVideoInfo;
 }
