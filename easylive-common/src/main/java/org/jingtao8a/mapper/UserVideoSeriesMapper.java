@@ -1,5 +1,6 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+import org.jingtao8a.entity.po.VideoInfo;
 
 import java.util.List;
 
@@ -31,4 +32,8 @@ public interface UserVideoSeriesMapper<T,P> extends BaseMapper {
 	Long deleteByParam(@Param("query") P userVideoSeriesQuery);
 
 	void changeSort(@Param("list") List<T> seriesVideoList);
+
+	List<T> selectListWithVideoList(@Param("query") P userVideoSeriesQuery);
+
+	List<VideoInfo> selectVideoList(@Param("seriesId") Integer seriesId);
 }

@@ -5,6 +5,7 @@ import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserVideoSeries;
 import org.jingtao8a.entity.po.UserVideoSeriesVideo;
 import org.jingtao8a.entity.po.VideoInfo;
+import org.jingtao8a.entity.query.UserVideoSeriesQuery;
 import org.jingtao8a.entity.query.UserVideoSeriesVideoQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.ResponseCodeEnum;
@@ -141,6 +142,10 @@ public class UHomeVideoSeriesController extends ABaseController {
 
     @RequestMapping("/loadVideoSeriesWithVideo")
     public ResponseVO loadVideoSeriesWithVideo(@NotEmpty String userId) throws BusinessException {
-        return getSuccessResponseVO(null);
+        UserVideoSeriesQuery userVideoSeriesQuery = new UserVideoSeriesQuery();
+        userVideoSeriesQuery.setUserId(userId);
+        userVideoSeriesQuery.setOrderBy("sort asc");
+        List<UserVideoSeries> videoSeries = userVideoSeriesService.findListWithVideoList(userVideoSeriesQuery);
+        return getSuccessResponseVO(videoSeries);
     }
 }

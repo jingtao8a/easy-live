@@ -20,46 +20,46 @@
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		series_id ,series_name ,series_description ,user_id ,sort ,update_time 
+		u.series_id ,u.series_name ,u.series_description ,u.user_id ,u.sort ,u.update_time
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
 		<if test="query.seriesId != null">
-				and series_id = #{query.seriesId}
+				and u.series_id = #{query.seriesId}
 		</if>
 		<if test="query.seriesName != null and query.seriesName !=''">
-				and series_name = #{query.seriesName}
+				and u.series_name = #{query.seriesName}
 		</if>
 		<if test="query.seriesDescription != null and query.seriesDescription !=''">
-				and series_description = #{query.seriesDescription}
+				and u.series_description = #{query.seriesDescription}
 		</if>
 		<if test="query.userId != null and query.userId !=''">
-				and user_id = #{query.userId}
+				and u.user_id = #{query.userId}
 		</if>
 		<if test="query.sort != null">
-				and sort = #{query.sort}
+				and u.sort = #{query.sort}
 		</if>
 		<if test="query.updateTime != null">
-				and update_time = #{query.updateTime}
+				and u.update_time = #{query.updateTime}
 		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
 	<sql id="base_query_condition_extend">
 		<if test="query.seriesNameFuzzy != null and query.seriesNameFuzzy != ''">
-			 and series_name like concat('%', #{query.seriesNameFuzzy}, '%')
+			 and u.series_name like concat('%', #{query.seriesNameFuzzy}, '%')
 		</if>
 		<if test="query.seriesDescriptionFuzzy != null and query.seriesDescriptionFuzzy != ''">
-			 and series_description like concat('%', #{query.seriesDescriptionFuzzy}, '%')
+			 and u.series_description like concat('%', #{query.seriesDescriptionFuzzy}, '%')
 		</if>
 		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
-			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+			 and u.user_id like concat('%', #{query.userIdFuzzy}, '%')
 		</if>
 		<if test="query.updateTimeStart != null and query.updateTimeStart != ''">
-			<![CDATA[ and update_time >= str_to_date(#{query.updateTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and u.update_time >= str_to_date(#{query.updateTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.updateTimeEnd != null and query.updateTimeEnd != ''">
-			<![CDATA[ and update_time < date_sub(str_to_date(#{query.updateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and u.update_time < date_sub(str_to_date(#{query.updateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 	</sql>
 
@@ -73,7 +73,7 @@
 
 	<!-- 查询列表 -->
 	<select id="selectList" resultMap="base_result_map">
-		SELECT <include refid="base_column_list"/> FROM user_video_series <include refid="query_condition"/>
+		SELECT <include refid="base_column_list"/> FROM user_video_series u <include refid="query_condition"/>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
 		</if>
@@ -84,7 +84,7 @@
 
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT count(1) FROM user_video_series <include refid="query_condition"/>
+		SELECT count(1) FROM user_video_series u <include refid="query_condition"/>
 	</select>
 
 	<!-- 单条插入 -->
@@ -222,7 +222,7 @@
 	</insert>
 	<!-- 根据SeriesId查找-->
 	<select id="selectBySeriesId" resultMap="base_result_map">
-		select <include refid="base_column_list"/> from user_video_series  where  series_id = #{seriesId} 
+		select <include refid="base_column_list"/> from user_video_series u where  u.series_id = #{seriesId}
 	</select>
 	<!-- 根据SeriesId删除-->
 	<delete id="deleteBySeriesId" >
@@ -284,4 +284,30 @@
 			update user_video_series set sort = #{item.sort} where user_id = #{item.userId} and series_id = #{item.seriesId}
 		</foreach>
 	</update>
+	
+	<resultMap id="base_result_map_video" type="org.jingtao8a.entity.po.UserVideoSeries" extends="base_result_map">
+		<collection property="videoInfoList" column="series_id" select="org.jingtao8a.mapper.UserVideoSeriesMapper.selectVideoList">
+		</collection>
+	</resultMap>
+
+	<select id="selectVideoList" resultType="org.jingtao8a.entity.po.VideoInfo">
+		SELECT v.video_id, v.video_name, v.video_cover, v.play_count, v.create_time
+		FROM user_video_series_video sv INNER JOIN video_info v ON sv.video_id = v.video_id
+		WHERE sv.series_id = #{seriesId}
+		ORDER BY sv.sort ASC
+		LIMIT 5
+	</select>
+
+	<select id="selectListWithVideoList" resultMap="base_result_map_video">
+		SELECT
+		<include refid="base_column_list"/>
+		FROM user_video_series u
+		<include refid="query_condition"/>
+		<if test="query.orderBy!=null">
+			order by ${query.orderBy}
+		</if>
+		<if test="query.simplePage!=null">
+			limit #{query.simplePage.start}, #{query.simplePage.end}
+		</if>
+	</select>
 </mapper>

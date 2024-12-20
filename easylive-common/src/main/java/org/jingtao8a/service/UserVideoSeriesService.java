@@ -76,4 +76,6 @@ public interface UserVideoSeriesService {
 	void delVideoSeries(String userId, Integer seriesId) throws BusinessException;
 
 	void changeVideoSeriesSort(String userId, String seriesIds);
+
+	List<UserVideoSeries> findListWithVideoList(UserVideoSeriesQuery userVideoSeriesQuery);
 }

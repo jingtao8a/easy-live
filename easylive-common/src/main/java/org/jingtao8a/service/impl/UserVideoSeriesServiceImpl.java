@@ -231,7 +231,12 @@ public class UserVideoSeriesServiceImpl implements UserVideoSeriesService {
 		userVideoSeriesMapper.changeSort(seriesVideoList);
     }
 
-    private void checkVideoIds(String userId, String videoIds) throws BusinessException {
+	@Override
+	public List<UserVideoSeries> findListWithVideoList(UserVideoSeriesQuery userVideoSeriesQuery) {
+		return userVideoSeriesMapper.selectListWithVideoList(userVideoSeriesQuery);
+	}
+
+	private void checkVideoIds(String userId, String videoIds) throws BusinessException {
 		String[] videoIdArray = videoIds.split(",");
 		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
 		videoInfoQuery.setUserId(userId);

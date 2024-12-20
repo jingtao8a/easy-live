@@ -6,7 +6,7 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 /**
 @Description:用户视频序列归档
 @Date:2024-12-19
@@ -42,4 +42,6 @@ public class UserVideoSeries implements Serializable {
 	private Date updateTime;
 
 	private String cover;
+
+	private List<VideoInfo> videoInfoList;
 }
