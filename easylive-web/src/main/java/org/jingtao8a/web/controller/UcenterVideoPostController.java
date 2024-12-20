@@ -153,4 +153,15 @@ public class UcenterVideoPostController extends ABaseController{
         videoInfoPostService.changeInteraction(videoId, tokenUserInfoDto.getUserId(), interaction);
         return getSuccessResponseVO(null);
     }
+
+    @RequestMapping("/deleteVideo")
+    public ResponseVO deleteVideo(@NotEmpty String videoId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoInfoPostService.deleteVideo(videoId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
+    }
+
 }

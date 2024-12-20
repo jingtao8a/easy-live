@@ -70,4 +70,6 @@ public interface VideoInfoPostService {
     void auditVideo(String videoId, Integer status, String reason) throws BusinessException;
 
     void changeInteraction(String videoId, String userId, String interaction);
+
+	void deleteVideo(String videoId, String userId) throws BusinessException;
 }

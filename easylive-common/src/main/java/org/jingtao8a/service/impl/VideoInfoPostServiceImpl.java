@@ -8,17 +8,11 @@ import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.config.AppConfig;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.SysSettingDto;
-import org.jingtao8a.entity.po.VideoInfo;
-import org.jingtao8a.entity.po.VideoInfoFile;
-import org.jingtao8a.entity.po.VideoInfoFilePost;
-import org.jingtao8a.entity.po.VideoInfoPost;
+import org.jingtao8a.entity.po.*;
 import org.jingtao8a.entity.query.*;
 import org.jingtao8a.enums.*;
 import org.jingtao8a.exception.BusinessException;
-import org.jingtao8a.mapper.VideoInfoFileMapper;
-import org.jingtao8a.mapper.VideoInfoFilePostMapper;
-import org.jingtao8a.mapper.VideoInfoMapper;
-import org.jingtao8a.mapper.VideoInfoPostMapper;
+import org.jingtao8a.mapper.*;
 import org.jingtao8a.service.VideoInfoPostService;
 import org.jingtao8a.utils.CopyTools;
 import org.jingtao8a.utils.StringTools;
@@ -31,6 +25,8 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -41,7 +37,7 @@ import java.util.stream.Collectors;
 @Service("videoInfoPostService")
 @Slf4j
 public class VideoInfoPostServiceImpl implements VideoInfoPostService {
-
+	private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 	@Resource
 	private VideoInfoPostMapper<VideoInfoPost, VideoInfoPostQuery> videoInfoPostMapper;
 
@@ -59,6 +55,11 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 
     @Resource
     private AppConfig appConfig;
+	private UserInfoMapper userInfoMapper;
+    @Autowired
+    private VideoDanmuMapper videoDanmuMapper;
+    @Autowired
+    private VideoCommentMapper videoCommentMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -338,6 +339,51 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		videoInfoPostQuery.setUserId(userId);
 		videoInfoPostQuery.setVideoId(videoId);
 		videoInfoPostMapper.updateByParam(videoInfoPost, videoInfoPostQuery);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteVideo(String videoId, String userId) throws BusinessException {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoId);
+		if (videoInfo == null || userId != null && !userId.equals(videoInfo.getUserId())) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		videoInfoMapper.deleteByVideoId(videoId);
+		videoInfoPostMapper.deleteByVideoId(videoId);
+//		TODO 减去用户硬币
+//		TODO 删除es信息
+		executorService.submit(()->{
+			VideoInfoFileQuery videoInfoFileQuery = new VideoInfoFileQuery();
+			videoInfoFileQuery.setVideoId(videoId);
+			List<VideoInfoFile> videoInfoFileList = videoInfoFileMapper.selectList(videoInfoFileQuery);
+			videoInfoFileMapper.deleteByParam(videoInfoFileQuery);//删除分p
+
+			VideoInfoFilePostQuery videoInfoFilePostQuery = new VideoInfoFilePostQuery();
+			videoInfoFilePostQuery.setVideoId(videoId);
+			videoInfoFilePostMapper.deleteByParam(videoInfoFilePostQuery);//删除分p
+
+			//删除弹幕
+			VideoDanmuQuery videoDanmuQuery = new VideoDanmuQuery();
+			videoDanmuQuery.setVideoId(videoId);
+			videoDanmuMapper.deleteByParam(videoDanmuQuery);
+
+			//删除评论
+			VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
+			videoCommentQuery.setVideoId(videoId);
+			videoCommentMapper.deleteByParam(videoCommentQuery);
+
+			//删除文件
+			for (VideoInfoFile item : videoInfoFileList) {
+                try {
+                    FileUtils.deleteDirectory(new File(appConfig.getProjectFolder() + Constants.FILE_FOLDER + item.getFilePath()));
+                } catch (IOException e) {
+                    log.error("删除文件失败,文件路径:{}", item.getFilePath());
+                }
+            }
+			//TODO 删除文件封面
+			//TODO 删除用户行为
+			//TODO 删除用户视频序列归档
+		});
 	}
 
 }
