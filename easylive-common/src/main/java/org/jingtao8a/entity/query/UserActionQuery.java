@@ -53,4 +53,6 @@ public class UserActionQuery extends BaseQuery {
 	private String actionTimeEnd;
 
 	private Integer[] actionTypeArray;
+
+	private Boolean queryVideoInfo;
 }
