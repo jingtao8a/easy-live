@@ -6,6 +6,7 @@ import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -69,4 +70,10 @@ public interface UserVideoSeriesService {
 	void saveUserVideoSeries(UserVideoSeries userVideoSeries, String videoIds) throws BusinessException;
 
 	void saveUserVideoSeriesVideo(String userId, Integer seriesId, String videoIds) throws BusinessException;
+
+	void delUserVideoSeriesVideo(String userId, Integer seriesId, String videoId) throws BusinessException;
+
+	void delVideoSeries(String userId, Integer seriesId) throws BusinessException;
+
+	void changeVideoSeriesSort(String userId, String seriesIds);
 }

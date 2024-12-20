@@ -98,4 +98,49 @@ public class UHomeVideoSeriesController extends ABaseController {
         userVideoSeriesDetailVO.setSeriesVideoList(userVideoSeriesVideoList);
         return getSuccessResponseVO(userVideoSeriesDetailVO);
     }
+
+    @RequestMapping("/saveSeriesVideo")
+    public ResponseVO saveSeriesVideo(@NotNull Integer seriesId, @NotEmpty String videoIds) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        userVideoSeriesService.saveUserVideoSeriesVideo(tokenUserInfoDto.getUserId(), seriesId, videoIds);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/delSeriesVideo")
+    public ResponseVO delSeriesVideo(@NotNull Integer seriesId, @NotEmpty String videoId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        userVideoSeriesService.delUserVideoSeriesVideo(tokenUserInfoDto.getUserId(), seriesId, videoId);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/delVideoSeries")
+    public ResponseVO delVideoSeries(@NotNull Integer seriesId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        userVideoSeriesService.delVideoSeries(tokenUserInfoDto.getUserId(), seriesId);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/changeVideoSeriesSort")
+    public ResponseVO changeVideoSeriesSort(@NotEmpty String seriesIds) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        userVideoSeriesService.changeVideoSeriesSort(tokenUserInfoDto.getUserId(), seriesIds);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/loadVideoSeriesWithVideo")
+    public ResponseVO loadVideoSeriesWithVideo(@NotEmpty String userId) throws BusinessException {
+        return getSuccessResponseVO(null);
+    }
 }

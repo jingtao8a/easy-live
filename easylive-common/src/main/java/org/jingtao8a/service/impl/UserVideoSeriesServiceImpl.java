@@ -154,7 +154,7 @@ public class UserVideoSeriesServiceImpl implements UserVideoSeriesService {
 			userVideoSeries.setSort(maxSort.intValue() + 1);
 			userVideoSeriesMapper.insert(userVideoSeries);
 
-			saveUserVideoSeriesVideo(userVideoSeries.getUserId(), userVideoSeries.getSeriesId(), videoIds); //FIXBUG TODO
+			saveUserVideoSeriesVideo(userVideoSeries.getUserId(), userVideoSeries.getSeriesId(), videoIds);
 		} else {//修改
 			UserVideoSeries dbUserVideoSeries = userVideoSeriesMapper.selectBySeriesId(userVideoSeries.getSeriesId());
 			if (dbUserVideoSeries == null || !dbUserVideoSeries.getUserId().equals(userVideoSeries.getUserId())) {
@@ -187,10 +187,51 @@ public class UserVideoSeriesServiceImpl implements UserVideoSeriesService {
 			userVideoSeriesVideo.setSort(maxSort.intValue());
 			seriesVideoList.add(userVideoSeriesVideo);
 		}
-		userVideoSeriesVideoMapper.insertBatch(seriesVideoList);
+		userVideoSeriesVideoMapper.insertOrUpdateBatch(seriesVideoList);
 	}
 
-	private void checkVideoIds(String userId, String videoIds) throws BusinessException {
+	@Override
+	public void delUserVideoSeriesVideo(String userId, Integer seriesId, String videoId) throws BusinessException {
+		UserVideoSeriesVideoQuery userVideoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
+		userVideoSeriesVideoQuery.setUserId(userId);
+		userVideoSeriesVideoQuery.setSeriesId(seriesId);
+		userVideoSeriesVideoQuery.setVideoId(videoId);
+		userVideoSeriesVideoMapper.deleteByParam(userVideoSeriesVideoQuery);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void delVideoSeries(String userId, Integer seriesId) throws BusinessException {
+		UserVideoSeriesQuery userVideoSeriesQuery = new UserVideoSeriesQuery();
+		userVideoSeriesQuery.setUserId(userId);
+		userVideoSeriesQuery.setSeriesId(seriesId);
+		Long count = userVideoSeriesMapper.deleteByParam(userVideoSeriesQuery);
+		if (count == 0L) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		UserVideoSeriesVideoQuery userVideoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
+		userVideoSeriesVideoQuery.setUserId(userId);
+		userVideoSeriesVideoQuery.setSeriesId(seriesId);
+		userVideoSeriesVideoMapper.deleteByParam(userVideoSeriesVideoQuery);
+	}
+
+    @Override
+    public void changeVideoSeriesSort(String userId, String seriesIds) {
+        String[] seriesIdArray = seriesIds.split(",");
+		Long maxSort = userVideoSeriesMapper.selectMaxSort(userId);
+		List<UserVideoSeries> seriesVideoList = new ArrayList<>();
+		for (String seriesId : seriesIdArray) {
+			++maxSort;
+			UserVideoSeries userVideoSeries = new UserVideoSeries();
+			userVideoSeries.setUserId(userId);
+			userVideoSeries.setSeriesId(Integer.parseInt(seriesId));
+			userVideoSeries.setSort(maxSort.intValue());
+			seriesVideoList.add(userVideoSeries);
+		}
+		userVideoSeriesMapper.changeSort(seriesVideoList);
+    }
+
+    private void checkVideoIds(String userId, String videoIds) throws BusinessException {
 		String[] videoIdArray = videoIds.split(",");
 		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
 		videoInfoQuery.setUserId(userId);
