@@ -325,5 +325,8 @@
 		</set>
 		where  danmu_id = #{danmuId} 
 	</update>
-
+	<delete id="deleteByParam">
+		delete from video_danmu
+		<include refid="query_condition"></include>
+	</delete>
 </mapper>

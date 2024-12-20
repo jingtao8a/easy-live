@@ -1,5 +1,7 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+import org.jingtao8a.entity.query.VideoDanmuQuery;
+
 /**
 @Description:视频弹幕Mapper
 @Date:2024-12-17
@@ -21,4 +23,5 @@ public interface VideoDanmuMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByDanmuId(@Param("danmuId") Integer danmuId);
 
+    void deleteByParam(@Param("query") VideoDanmuQuery videoDanmuQuery);
 }
