@@ -43,4 +43,6 @@ public interface VideoInfoFilePostMapper<T,P> extends BaseMapper {
 	void deleteBatchByFileIdList(@Param("list") List<String> delFileIdList, @Param("userId") String userId);
 
 	Integer sumDuration(@Param("videoId") String videoId);
+
+    void deleteByParam(@Param("query") P videoInfoFilePostQuery);
 }

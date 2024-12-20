@@ -471,4 +471,8 @@
 	<select id="sumDuration" resultType="java.lang.Integer">
 		select ifnull(sum(duration), 0) from video_info_file_post where video_id = #{videoId}
 	</select>
+	<delete id="deleteByParam">
+		delete from video_info_file_post
+		<include refid="query_condition"></include>
+	</delete>
 </mapper>
