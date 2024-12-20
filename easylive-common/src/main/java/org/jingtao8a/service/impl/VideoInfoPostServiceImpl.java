@@ -240,10 +240,10 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 	private Boolean changeVideoInfoPost(VideoInfoPost videoInfoPost) {
 		VideoInfoPost dbInfo = this.videoInfoPostMapper.selectByVideoId(videoInfoPost.getVideoId());
 		//标题，封面，标签，简介
-		if (!videoInfoPost.equals(dbInfo.getVideoName())
+		if (!videoInfoPost.getVideoName().equals(dbInfo.getVideoName())
 				|| !videoInfoPost.getVideoCover().equals(dbInfo.getVideoCover())
 				|| !videoInfoPost.getTags().equals(dbInfo.getTags())
-				|| !videoInfoPost.getInteraction().equals(dbInfo.getInteraction())) {
+				|| !videoInfoPost.getInteraction().equals(dbInfo.getInteraction() == null ? "": dbInfo.getInteraction())) {
 			return true;
 		}
 		return false;
