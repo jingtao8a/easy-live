@@ -6,6 +6,7 @@ import org.jingtao8a.entity.query.VideoInfoPostQuery;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -67,4 +68,6 @@ public interface VideoInfoPostService {
 	void saveVideoInfoPost(VideoInfoPost videoInfoPost, List<VideoInfoFilePost> videoInfoFilePostList) throws BusinessException;
 
     void auditVideo(String videoId, Integer status, String reason) throws BusinessException;
+
+    void changeInteraction(String videoId, String userId, String interaction);
 }

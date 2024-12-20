@@ -143,4 +143,14 @@ public class UcenterVideoPostController extends ABaseController{
         videoPostEditInfoVO.setVideoInfoFileList(videoInfoFilePostList);
         return getSuccessResponseVO(videoPostEditInfoVO);
     }
+
+    @RequestMapping("/saveVideoInteraction")
+    public ResponseVO saveVideoInteraction(@NotEmpty String videoId, String interaction) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoInfoPostService.changeInteraction(videoId, tokenUserInfoDto.getUserId(), interaction);
+        return getSuccessResponseVO(null);
+    }
 }

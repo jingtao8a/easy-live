@@ -322,4 +322,22 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		//TODO 保存信息到 es
 	}
 
+    @Override
+	@Transactional(rollbackFor = Exception.class)
+    public void changeInteraction(String videoId, String userId, String interaction) {
+		VideoInfo videoInfo = new VideoInfo();
+		videoInfo.setInteraction(interaction);
+		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
+		videoInfoQuery.setUserId(userId);
+		videoInfoQuery.setVideoId(videoId);
+		videoInfoMapper.updateByParam(videoInfo, videoInfoQuery);
+
+		VideoInfoPost videoInfoPost = new VideoInfoPost();
+		videoInfoPost.setInteraction(interaction);
+		VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
+		videoInfoPostQuery.setUserId(userId);
+		videoInfoPostQuery.setVideoId(videoId);
+		videoInfoPostMapper.updateByParam(videoInfoPost, videoInfoPostQuery);
+	}
+
 }
