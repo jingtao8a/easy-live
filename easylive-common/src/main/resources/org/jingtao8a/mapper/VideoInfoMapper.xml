@@ -656,4 +656,73 @@
 		</if>
 		where video_id = #{videoId}
 	</update>
+	<update id="updateByParam">
+		update video_info v
+		<set>
+			<if test="bean.videoId != null">
+				v.video_id=#{bean.videoId},
+			</if>
+			<if test="bean.videoCover != null">
+				v.video_cover=#{bean.videoCover},
+			</if>
+			<if test="bean.videoName != null">
+				v.video_name=#{bean.videoName},
+			</if>
+			<if test="bean.userId != null">
+				v.user_id=#{bean.userId},
+			</if>
+			<if test="bean.createTime != null">
+				v.create_time=#{bean.createTime},
+			</if>
+			<if test="bean.lastUpdateTime != null">
+				v.last_update_time=#{bean.lastUpdateTime},
+			</if>
+			<if test="bean.pCategoryId != null">
+				v.p_category_id=#{bean.pCategoryId},
+			</if>
+			<if test="bean.categoryId != null">
+				v.category_id=#{bean.categoryId},
+			</if>
+			<if test="bean.postType != null">
+				v.post_type=#{bean.postType},
+			</if>
+			<if test="bean.tags != null">
+				v.tags=#{bean.tags},
+			</if>
+			<if test="bean.introduction != null">
+				v.introduction=#{bean.introduction},
+			</if>
+			<if test="bean.interaction != null">
+				v.interaction=#{bean.interaction},
+			</if>
+			<if test="bean.duration != null">
+				v.duration=#{bean.duration},
+			</if>
+			<if test="bean.playCount != null">
+				v.play_count=#{bean.playCount},
+			</if>
+			<if test="bean.likeCount != null">
+				v.like_count=#{bean.likeCount},
+			</if>
+			<if test="bean.danmuCount != null">
+				v.danmu_count=#{bean.danmuCount},
+			</if>
+			<if test="bean.commentCount != null">
+				v.comment_count=#{bean.commentCount},
+			</if>
+			<if test="bean.coinCount != null">
+				v.coin_count=#{bean.coinCount},
+			</if>
+			<if test="bean.collectCount != null">
+				v.collect_count=#{bean.collectCount},
+			</if>
+			<if test="bean.recommendType != null">
+				v.recommend_type=#{bean.recommendType},
+			</if>
+			<if test="bean.lastPlayTime != null">
+				v.last_play_time=#{bean.lastPlayTime},
+			</if>
+		</set>
+		<include refid="query_condition"></include>
+	</update>
 </mapper>

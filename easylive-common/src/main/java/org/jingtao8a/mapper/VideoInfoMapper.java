@@ -22,4 +22,6 @@ public interface VideoInfoMapper<T,P> extends BaseMapper {
 	 Long deleteByVideoId(@Param("videoId") String videoId);
 
     void updateCountInfo(@Param("videoId") String videoId, @Param("field") String field, @Param("changeCount") Integer changeCount);
+
+    void updateByParam(@Param("bean") T videoInfo, @Param("query") P videoInfoQuery);
 }
