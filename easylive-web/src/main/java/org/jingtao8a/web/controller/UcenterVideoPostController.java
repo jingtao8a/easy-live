@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.entity.po.VideoInfoPost;
+import org.jingtao8a.entity.query.VideoInfoFilePostQuery;
 import org.jingtao8a.entity.query.VideoInfoPostQuery;
+import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.VideoStatusEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.VideoInfoFilePostService;
@@ -14,6 +16,7 @@ import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.utils.JsonUtils;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
+import org.jingtao8a.vo.VideoPostEditInfoVO;
 import org.jingtao8a.vo.VideoStatusCountInfoVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +54,9 @@ public class UcenterVideoPostController extends ABaseController{
                                 @Size(max = 3) String interaction,
                                 @NotEmpty String uploadFileList) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
         List<VideoInfoFilePost> videoInfoFilePostList = JsonUtils.convertJson2List(uploadFileList, VideoInfoFilePost.class);
         //只有create_time last_update_time status origin_info duration 未初始化
         VideoInfoPost videoInfoPost = new VideoInfoPost();
@@ -70,8 +76,11 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/loadVideoList")
-    public ResponseVO loadVideoList(Integer status, Long pageNo, String videoNameFuzzy) {
+    public ResponseVO loadVideoList(Integer status, Long pageNo, String videoNameFuzzy) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
         VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
         videoInfoPostQuery.setUserId(tokenUserInfoDto.getUserId());
         videoInfoPostQuery.setPageNo(pageNo);
@@ -90,8 +99,11 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/getVideoCountInfo")
-    public ResponseVO getVideoCountInfo() {
+    public ResponseVO getVideoCountInfo() throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
         VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
         videoInfoPostQuery.setUserId(tokenUserInfoDto.getUserId());
         videoInfoPostQuery.setStatus(VideoStatusEnum.STATUS3.getStatus());//审核通过的
@@ -109,5 +121,26 @@ public class UcenterVideoPostController extends ABaseController{
         videoStatusCountInfoVO.setAuditFailCount(auditFailCount);
         videoStatusCountInfoVO.setInProgress(inProgress);
         return getSuccessResponseVO(videoStatusCountInfoVO);
+    }
+
+    @RequestMapping("/getVideoByVideoId")
+    public ResponseVO getVideoByVideoId(@NotEmpty String videoId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        VideoInfoPost videoInfoPost = videoInfoPostService.selectByVideoId(videoId);
+        if (videoInfoPost == null || !videoInfoPost.getUserId().equals(tokenUserInfoDto.getUserId())) {
+            throw new BusinessException(ResponseCodeEnum.CODE_404);
+        }
+        VideoInfoFilePostQuery videoInfoFilePostQuery = new VideoInfoFilePostQuery();
+        videoInfoFilePostQuery.setVideoId(videoId);
+        videoInfoFilePostQuery.setOrderBy("file_index asc");
+        List<VideoInfoFilePost> videoInfoFilePostList = videoInfoFilePostService.findListByParam(videoInfoFilePostQuery);
+
+        VideoPostEditInfoVO videoPostEditInfoVO = new VideoPostEditInfoVO();
+        videoPostEditInfoVO.setVideoInfo(videoInfoPost);
+        videoPostEditInfoVO.setVideoInfoFileList(videoInfoFilePostList);
+        return getSuccessResponseVO(videoPostEditInfoVO);
     }
 }
