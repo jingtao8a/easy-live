@@ -3,8 +3,15 @@ package org.jingtao8a.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.UserInfo;
+import org.jingtao8a.entity.po.VideoInfo;
+import org.jingtao8a.entity.query.UserActionQuery;
 import org.jingtao8a.entity.query.UserFocusQuery;
+import org.jingtao8a.entity.query.VideoInfoQuery;
+import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.UserActionTypeEnum;
+import org.jingtao8a.enums.VideoOrderTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.service.UserFocusService;
@@ -144,5 +151,50 @@ public class UHomeController extends ABaseController{
         userFocusQuery.setQueryType(Constants.ONE);
         PaginationResultVO resultVO = userFocusService.findListByPage(userFocusQuery);
         return getSuccessResponseVO(resultVO);
+    }
+
+    @RequestMapping("/loadVideoList")
+    public ResponseVO loadVideoList(@NotEmpty String userId,
+                                    Integer type,//主页 或者 投稿页
+                                    Integer pageNo,
+                                    String videoName,//名字模糊查询
+                                    Integer orderType//投稿页 按最新、最多播放、最多收藏 查询
+                                    ) throws BusinessException {
+        VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
+        if (type != null) {//主页
+            videoInfoQuery.setPageSize(Long.valueOf(PageSize.SIZE15.getSize()));
+            videoInfoQuery.setPageNo(0L);
+        } else {//投稿页
+            try {
+                videoInfoQuery.setPageNo(Long.valueOf(pageNo));
+            } catch (Exception e) {
+                videoInfoQuery.setPageNo(0L);
+            }
+        }
+        VideoOrderTypeEnum videoOrderTypeEnum = VideoOrderTypeEnum.getEnum(orderType);
+        if (videoOrderTypeEnum == null) {
+            videoOrderTypeEnum = VideoOrderTypeEnum.CREATE_TIME;
+        }
+        videoInfoQuery.setOrderBy(videoOrderTypeEnum.getField() + " desc");
+        videoInfoQuery.setVideoNameFuzzy(videoName);
+        videoInfoQuery.setUserId(userId);
+        PaginationResultVO<VideoInfo> paginationResultVO = videoInfoService.findListByPage(videoInfoQuery);
+        return getSuccessResponseVO(paginationResultVO);
+    }
+
+    @RequestMapping("/loadUserCollection")
+    public ResponseVO loadUserCollection(@NotEmpty String userId, Integer pageNo) throws BusinessException {
+        UserActionQuery userActionQuery = new UserActionQuery();
+        userActionQuery.setActionType(UserActionTypeEnum.VIDEO_COLLECT.getType());
+        userActionQuery.setUserId(userId);
+        try {
+            userActionQuery.setPageNo(Long.valueOf(pageNo));
+        } catch (Exception e) {
+            userActionQuery.setPageNo(0L);
+        }
+        userActionQuery.setOrderBy("action_time desc");
+        userActionQuery.setQueryVideoInfo(true);
+        PaginationResultVO<UserAction> paginationResultVO = userActionService.findListByPage(userActionQuery);
+        return getSuccessResponseVO(paginationResultVO);
     }
 }
