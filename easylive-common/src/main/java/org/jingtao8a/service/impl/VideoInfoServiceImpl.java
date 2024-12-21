@@ -1,15 +1,19 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.SimplePage;
 import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 /**
 @Description:VideoInfoService
@@ -110,6 +114,15 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 	@Override
 	public Long deleteByVideoId(String videoId) {
 		return videoInfoMapper.deleteByVideoId(videoId);
+	}
+
+    @Override
+	@Transactional(rollbackFor = Exception.class)
+    public void updateVideoPlayInfo(String videoId) {
+        videoInfoMapper.updateCountInfo(videoId, UserActionTypeEnum.VIDEO_PLAY.getField(), Constants.ONE);
+    	VideoInfo videoInfo = new VideoInfo();
+		videoInfo.setLastPlayTime(new Date());
+		videoInfoMapper.updateByVideoId(videoInfo, videoId);
 	}
 
 }

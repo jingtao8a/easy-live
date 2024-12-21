@@ -12,6 +12,7 @@ import org.jingtao8a.entity.po.VideoInfoFile;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.VideoInfoFileService;
+import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.utils.DateUtils;
 import org.jingtao8a.utils.FFmpegUtils;
 import org.jingtao8a.utils.StringTools;
@@ -48,6 +49,9 @@ public class FileController extends ABaseController{
 
     @Resource
     private VideoInfoFileService videoInfoFileService;
+
+    @Resource
+    private VideoInfoService videoInfoService;
 
     @RequestMapping("/uploadImage")
     public ResponseVO uploadImage(@NotNull MultipartFile file, @NotNull Boolean createThumbnail) throws IOException, BusinessException {
@@ -102,6 +106,9 @@ public class FileController extends ABaseController{
     @RequestMapping("/preUploadVideo")
     public ResponseVO preUploadVideo(@NotNull String fileName, @NotNull Integer chunks) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
         String uploadId = redisComponent.savePreVideoFileInfo(tokenUserInfoDto.getUserId(), fileName, chunks);
         return getSuccessResponseVO(uploadId);
     }
@@ -112,6 +119,9 @@ public class FileController extends ABaseController{
             throw new BusinessException("文件不能为空");
         }
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
         UploadingFileDto uploadingFileDto = redisComponent.getUploadingFileDto(tokenUserInfoDto.getUserId(), uploadId);
         if (uploadingFileDto == null) {
             throw new BusinessException("文件不存在，请重新上传");
@@ -136,6 +146,9 @@ public class FileController extends ABaseController{
     @RequestMapping("/delUploadVideo")
     public ResponseVO delUploadVideo(@NotNull String uploadId) throws BusinessException, IOException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
         UploadingFileDto uploadingFileDto = redisComponent.getUploadingFileDto(tokenUserInfoDto.getUserId(), uploadId);
         if (uploadingFileDto == null) {
             throw new BusinessException("文件不存在,请重新上传");
@@ -146,16 +159,23 @@ public class FileController extends ABaseController{
     }
 
     @RequestMapping("/videoResource/{fileId}")
-    public void videResource(@PathVariable @NotEmpty String fileId, HttpServletResponse response) throws BusinessException, IOException {
+    public void videResource(@PathVariable @NotEmpty String fileId, HttpServletResponse response) throws BusinessException {
         VideoInfoFile videoInfoFile = videoInfoFileService.selectByFileId(fileId);
+        if (videoInfoFile == null) {
+            throw new BusinessException(ResponseCodeEnum.CODE_600);
+        }
         String filePath = videoInfoFile.getFilePath();
         readFile(response, filePath + "/" + Constants.M3U8_NAME);
-        //TODO 更新视频的阅读信息
+        //更新视频最后播放时间和播放量
+        videoInfoService.updateVideoPlayInfo(videoInfoFile.getVideoId());
     }
 
     @RequestMapping("/videoResource/{fileId}/{ts}")
-    public void videResourceTS(@PathVariable @NotEmpty String fileId, @PathVariable @NotEmpty String ts, HttpServletResponse response) {
+    public void videResourceTS(@PathVariable @NotEmpty String fileId, @PathVariable @NotEmpty String ts, HttpServletResponse response) throws BusinessException {
         VideoInfoFile videoInfoFile = videoInfoFileService.selectByFileId(fileId);
+        if (videoInfoFile == null) {
+            throw new BusinessException(ResponseCodeEnum.CODE_600);
+        }
         String filePath = videoInfoFile.getFilePath();
         readFile(response, filePath + "/" + ts);
     }

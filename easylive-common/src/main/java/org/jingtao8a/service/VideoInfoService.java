@@ -62,4 +62,5 @@ public interface VideoInfoService {
 	*/
 	Long deleteByVideoId(String videoId);
 
+    void updateVideoPlayInfo(String videoId);
 }
