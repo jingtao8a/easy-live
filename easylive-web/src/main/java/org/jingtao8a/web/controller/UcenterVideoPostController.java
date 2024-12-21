@@ -2,14 +2,8 @@ package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.dto.TokenUserInfoDto;
-import org.jingtao8a.entity.po.VideoComment;
-import org.jingtao8a.entity.po.VideoInfo;
-import org.jingtao8a.entity.po.VideoInfoFilePost;
-import org.jingtao8a.entity.po.VideoInfoPost;
-import org.jingtao8a.entity.query.VideoCommentQuery;
-import org.jingtao8a.entity.query.VideoInfoFilePostQuery;
-import org.jingtao8a.entity.query.VideoInfoPostQuery;
-import org.jingtao8a.entity.query.VideoInfoQuery;
+import org.jingtao8a.entity.po.*;
+import org.jingtao8a.entity.query.*;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.VideoStatusEnum;
 import org.jingtao8a.exception.BusinessException;
@@ -19,6 +13,7 @@ import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.service.VideoInfoPostService;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.service.impl.VideoCommentServiceImpl;
+import org.jingtao8a.service.impl.VideoDanmuServiceImpl;
 import org.jingtao8a.utils.JsonUtils;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
@@ -51,6 +46,8 @@ public class UcenterVideoPostController extends ABaseController{
     private VideoCommentMapper videoCommentMapper;
     @Autowired
     private VideoCommentServiceImpl videoCommentService;
+    @Autowired
+    private VideoDanmuServiceImpl videoDanmuService;
 
     @RequestMapping("/postVideo")
     public ResponseVO postVideo(String videoId,
@@ -211,6 +208,33 @@ public class UcenterVideoPostController extends ABaseController{
             throw new BusinessException("未登入");
         }
         videoCommentService.deleteComment(commentId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/loadDanmu")
+    public ResponseVO loadDanmu(Integer pageNo, Integer pageSize, String videoId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        VideoDanmuQuery videoDanmuQuery = new VideoDanmuQuery();
+        videoDanmuQuery.setVideoId(videoId);
+        videoDanmuQuery.setVideoUserId(tokenUserInfoDto.getUserId());
+        videoDanmuQuery.setOrderBy("danmu_id desc");
+        videoDanmuQuery.setPageNo(pageNo == null ? null: pageNo.longValue());
+        videoDanmuQuery.setPageSize(pageSize == null ? null: pageSize.longValue());
+        videoDanmuQuery.setQueryVideoInfo(true);
+        PaginationResultVO<VideoDanmu> resultVO = videoDanmuService.findListByPage(videoDanmuQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
+    @RequestMapping("/delDanmu")
+    public ResponseVO delDanmu(@NotNull Integer danmuId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoDanmuService.deleteDanmu(danmuId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
 }

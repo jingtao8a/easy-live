@@ -26,61 +26,61 @@
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		danmu_id ,video_id ,file_id ,user_id ,post_time ,text ,mode ,color ,time 
+		v.danmu_id ,v.video_id ,v.file_id ,v.user_id ,v.post_time ,v.text ,v.mode ,v.color ,v.time
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
 		<if test="query.danmuId != null">
-				and danmu_id = #{query.danmuId}
+				and v.danmu_id = #{query.danmuId}
 		</if>
 		<if test="query.videoId != null and query.videoId !=''">
-				and video_id = #{query.videoId}
+				and v.video_id = #{query.videoId}
 		</if>
 		<if test="query.fileId != null and query.fileId !=''">
-				and file_id = #{query.fileId}
+				and v.file_id = #{query.fileId}
 		</if>
 		<if test="query.userId != null and query.userId !=''">
-				and user_id = #{query.userId}
+				and v.user_id = #{query.userId}
 		</if>
 		<if test="query.postTime != null">
-				and post_time = #{query.postTime}
+				and v.post_time = #{query.postTime}
 		</if>
 		<if test="query.text != null and query.text !=''">
-				and text = #{query.text}
+				and v.text = #{query.text}
 		</if>
 		<if test="query.mode != null">
-				and mode = #{query.mode}
+				and v.mode = #{query.mode}
 		</if>
 		<if test="query.color != null and query.color !=''">
-				and color = #{query.color}
+				and v.color = #{query.color}
 		</if>
 		<if test="query.time != null">
-				and time = #{query.time}
+				and v.time = #{query.time}
 		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
 	<sql id="base_query_condition_extend">
 		<if test="query.videoIdFuzzy != null and query.videoIdFuzzy != ''">
-			 and video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			 and v.video_id like concat('%', #{query.videoIdFuzzy}, '%')
 		</if>
 		<if test="query.fileIdFuzzy != null and query.fileIdFuzzy != ''">
-			 and file_id like concat('%', #{query.fileIdFuzzy}, '%')
+			 and v.file_id like concat('%', #{query.fileIdFuzzy}, '%')
 		</if>
 		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
-			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+			 and v.user_id like concat('%', #{query.userIdFuzzy}, '%')
 		</if>
 		<if test="query.postTimeStart != null and query.postTimeStart != ''">
-			<![CDATA[ and post_time >= str_to_date(#{query.postTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and v.post_time >= str_to_date(#{query.postTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.postTimeEnd != null and query.postTimeEnd != ''">
-			<![CDATA[ and post_time < date_sub(str_to_date(#{query.postTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and v.post_time < date_sub(str_to_date(#{query.postTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 		<if test="query.textFuzzy != null and query.textFuzzy != ''">
-			 and text like concat('%', #{query.textFuzzy}, '%')
+			 and v.text like concat('%', #{query.textFuzzy}, '%')
 		</if>
 		<if test="query.colorFuzzy != null and query.colorFuzzy != ''">
-			 and color like concat('%', #{query.colorFuzzy}, '%')
+			 and v.color like concat('%', #{query.colorFuzzy}, '%')
 		</if>
 	</sql>
 
@@ -94,7 +94,23 @@
 
 	<!-- 查询列表 -->
 	<select id="selectList" resultMap="base_result_map">
-		SELECT <include refid="base_column_list"/> FROM video_danmu <include refid="query_condition"/>
+		SELECT
+		<include refid="base_column_list"/>
+		<if test="query.queryVideoInfo">
+			, vd.video_name, vd.video_cover, u.nick_name
+		</if>
+		FROM video_danmu v
+		<if test="query.queryVideoInfo">
+			inner join video_info vd on vd.video_id = v.video_id
+			left join user_info u on u.user_id = v.user_id
+		</if>
+		<where>
+			<include refid="base_query_condition"/>
+			<include refid="base_query_condition_extend"/>
+			<if test="query.videoUserId != null and query.videoUserId != ''">
+				and vd.user_id = #{query.videoUserId}
+			</if>
+		</where>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
 		</if>
@@ -105,12 +121,12 @@
 
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT count(1) FROM video_danmu <include refid="query_condition"/>
+		SELECT count(1) FROM video_danmu v <include refid="query_condition"/>
 	</select>
 
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="org.jingtao8a.entity.po.VideoDanmu">
-		<selectKey> keyProperty="bean.danmuId" resultType="Integer" order="AFTER"
+		<selectKey keyProperty="bean.danmuId" resultType="Integer" order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO video_danmu
@@ -285,7 +301,7 @@
 	</insert>
 	<!-- 根据DanmuId查找-->
 	<select id="selectByDanmuId" resultMap="base_result_map">
-		select <include refid="base_column_list"/> from video_danmu  where  danmu_id = #{danmuId} 
+		select <include refid="base_column_list"/> from video_danmu v where  v.danmu_id = #{danmuId}
 	</select>
 	<!-- 根据DanmuId删除-->
 	<delete id="deleteByDanmuId" >
@@ -326,7 +342,7 @@
 		where  danmu_id = #{danmuId} 
 	</update>
 	<delete id="deleteByParam">
-		delete from video_danmu
+		delete from video_danmu v
 		<include refid="query_condition"></include>
 	</delete>
 </mapper>

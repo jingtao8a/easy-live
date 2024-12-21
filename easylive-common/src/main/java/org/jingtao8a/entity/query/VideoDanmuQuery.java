@@ -60,4 +60,8 @@ public class VideoDanmuQuery extends BaseQuery {
 	 * 展示时间
 	*/
 	private Integer time;
+
+	private String videoUserId;
+
+	private Boolean queryVideoInfo;
 }

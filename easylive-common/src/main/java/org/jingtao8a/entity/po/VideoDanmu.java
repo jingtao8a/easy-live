@@ -52,4 +52,10 @@ public class VideoDanmu implements Serializable {
 	 * 展示时间
 	*/
 	private Integer time;
+
+	private String videoName;
+
+	private String videoCover;
+
+	private String nickName;
 }

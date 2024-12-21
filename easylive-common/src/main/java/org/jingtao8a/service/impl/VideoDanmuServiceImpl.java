@@ -1,9 +1,11 @@
 package org.jingtao8a.service.impl;
 
 import org.jingtao8a.constants.Constants;
+import org.jingtao8a.entity.po.VideoComment;
 import org.jingtao8a.entity.po.VideoDanmu;
 import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.SimplePage;
+import org.jingtao8a.entity.query.VideoCommentQuery;
 import org.jingtao8a.entity.query.VideoDanmuQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.PageSize;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 /**
 @Description:VideoDanmuService
@@ -138,4 +141,19 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		//TODO 更新 es, 弹幕数量
     }
 
+	@Override
+    public void deleteDanmu(Integer danmuId, String userId) throws BusinessException {
+		VideoDanmu dbVideoDanmu = videoDanmuMapper.selectByDanmuId(danmuId);
+		if (dbVideoDanmu == null) {//弹幕不存在
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(dbVideoDanmu.getVideoId());
+		if (videoInfo == null) {//视频不存在
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if (!videoInfo.getUserId().equals(userId) && !dbVideoDanmu.getUserId().equals(userId)) {//只有video的user和danmu的user可以删除该弹幕
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		videoDanmuMapper.deleteByDanmuId(danmuId);
+	}
 }
