@@ -2,22 +2,29 @@ package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.entity.po.VideoComment;
+import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.entity.po.VideoInfoPost;
+import org.jingtao8a.entity.query.VideoCommentQuery;
 import org.jingtao8a.entity.query.VideoInfoFilePostQuery;
 import org.jingtao8a.entity.query.VideoInfoPostQuery;
+import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.VideoStatusEnum;
 import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.mapper.VideoCommentMapper;
 import org.jingtao8a.service.VideoInfoFilePostService;
 import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.service.VideoInfoPostService;
 import org.jingtao8a.service.VideoInfoService;
+import org.jingtao8a.service.impl.VideoCommentServiceImpl;
 import org.jingtao8a.utils.JsonUtils;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
 import org.jingtao8a.vo.VideoPostEditInfoVO;
 import org.jingtao8a.vo.VideoStatusCountInfoVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +48,9 @@ public class UcenterVideoPostController extends ABaseController{
     private VideoInfoService videoInfoService;
     @Resource
     private VideoInfoFileService videoInfoFileService;
+    private VideoCommentMapper videoCommentMapper;
+    @Autowired
+    private VideoCommentServiceImpl videoCommentService;
 
     @RequestMapping("/postVideo")
     public ResponseVO postVideo(String videoId,
@@ -164,4 +174,33 @@ public class UcenterVideoPostController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
+    @RequestMapping("/loadAllVideo")
+    public ResponseVO loadAllVideo() throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
+        videoInfoQuery.setUserId(tokenUserInfoDto.getUserId());
+        videoInfoQuery.setOrderBy("create_time desc");
+        List<VideoInfo> videoInfoList = videoInfoService.findListByParam(videoInfoQuery);
+        return getSuccessResponseVO(videoInfoList);
+    }
+
+    @RequestMapping("/loadComment")
+    public ResponseVO loadComment(Integer pageNo, Integer pageSize, String videoId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
+        videoCommentQuery.setVideoId(videoId);
+        videoCommentQuery.setVideoUserId(tokenUserInfoDto.getUserId());
+        videoCommentQuery.setOrderBy("comment_id desc");
+        videoCommentQuery.setPageNo(pageNo == null ? null: pageNo.longValue());
+        videoCommentQuery.setPageSize(pageSize == null ? null: pageSize.longValue());
+        videoCommentQuery.setQueryVideoInfo(true);
+        PaginationResultVO<VideoComment> resultVO = videoCommentService.findListByPage(videoCommentQuery);
+        return getSuccessResponseVO(resultVO);
+    }
 }

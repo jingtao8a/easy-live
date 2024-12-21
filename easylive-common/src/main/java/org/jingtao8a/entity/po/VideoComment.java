@@ -74,4 +74,8 @@ public class VideoComment implements Serializable {
 	private String replyNickName;
 
 	private List<VideoComment> children;
+
+	private String videoName;
+
+	private String videoCover;
 }

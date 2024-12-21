@@ -76,4 +76,6 @@ public class VideoCommentQuery extends BaseQuery {
 	private Integer hateCount;
 
 	private Boolean loadChildren;
+
+	private Boolean queryVideoInfo;
 }
