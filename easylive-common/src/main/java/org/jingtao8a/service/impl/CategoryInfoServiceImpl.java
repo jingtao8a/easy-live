@@ -166,7 +166,7 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	@Override
 	public void saveCategory(CategoryInfo bean) throws BusinessException {
 		CategoryInfo res = categoryInfoMapper.selectByCategoryCode(bean.getCategoryCode());
-		if (res != null) {
+		if (res != null && bean.getCategoryId() == null) {
 			throw new BusinessException("分类编号已存在");
 		}
 		if (bean.getCategoryId() == null) {//新增分类
@@ -179,9 +179,11 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	}
 
 	@Override
-	public void delCategory(Integer categoryId) {
+	public void delCategory(Integer categoryId) throws BusinessException {
 		//TODO 查询分类下是否有视频
-
+		if (true) {
+			throw new BusinessException("该分类下存在视频，不可删");
+		}
 		CategoryInfoQuery categoryInfoQuery = new CategoryInfoQuery();
 		categoryInfoQuery.setCategoryIdOrPCategoryId(categoryId);
 		categoryInfoMapper.deleteByParam(categoryInfoQuery);
