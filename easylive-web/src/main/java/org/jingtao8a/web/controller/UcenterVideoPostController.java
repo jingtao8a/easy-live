@@ -42,11 +42,8 @@ public class UcenterVideoPostController extends ABaseController{
     @Resource
     private VideoInfoService videoInfoService;
     @Resource
-    private VideoInfoFileService videoInfoFileService;
-    private VideoCommentMapper videoCommentMapper;
-    @Autowired
     private VideoCommentServiceImpl videoCommentService;
-    @Autowired
+    @Resource
     private VideoDanmuServiceImpl videoDanmuService;
 
     @RequestMapping("/postVideo")
@@ -138,7 +135,7 @@ public class UcenterVideoPostController extends ABaseController{
         }
         VideoInfoPost videoInfoPost = videoInfoPostService.selectByVideoId(videoId);
         if (videoInfoPost == null || !videoInfoPost.getUserId().equals(tokenUserInfoDto.getUserId())) {
-            throw new BusinessException(ResponseCodeEnum.CODE_404);
+            throw new BusinessException(ResponseCodeEnum.CODE_600);
         }
         VideoInfoFilePostQuery videoInfoFilePostQuery = new VideoInfoFilePostQuery();
         videoInfoFilePostQuery.setVideoId(videoId);
