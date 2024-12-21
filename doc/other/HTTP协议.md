@@ -7,7 +7,7 @@ localhost:7090/api/getAvatar/{userId}
 localhost:7090/api/checkCode?type=0
 ```
 
-### 2. Reuqest Head
+### 2. Reuqest Header
 - User-Agent:
 - Accept:
 - Cookie:
@@ -65,7 +65,7 @@ VERSION CODE MESSAGE
 - 4xx: 请求资源不在服务器上
 - 5xx: 服务器内部错误
 
-### 2. Response Head
+### 2. Response Header
 - Content-Type:
 - Content-Length:
 - Set-Cookies:
