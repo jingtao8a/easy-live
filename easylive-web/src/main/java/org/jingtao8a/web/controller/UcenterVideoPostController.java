@@ -203,4 +203,14 @@ public class UcenterVideoPostController extends ABaseController{
         PaginationResultVO<VideoComment> resultVO = videoCommentService.findListByPage(videoCommentQuery);
         return getSuccessResponseVO(resultVO);
     }
+
+    @RequestMapping("/delComment")
+    public ResponseVO delComment(@NotNull Integer commentId) throws BusinessException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        if (tokenUserInfoDto == null) {
+            throw new BusinessException("未登入");
+        }
+        videoCommentService.deleteComment(commentId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
+    }
 }
