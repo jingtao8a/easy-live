@@ -81,7 +81,7 @@ public interface CategoryInfoService {
 
 	void saveCategory(CategoryInfo bean) throws BusinessException;
 
-	void delCategory(Integer categoryId);
+	void delCategory(Integer categoryId) throws BusinessException;
 
 	void changeSort(Integer pCategoryId, String categoryId);
 

@@ -2,18 +2,20 @@ package org.jingtao8a.service.impl;
 
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.entity.po.CategoryInfo;
+import org.jingtao8a.entity.po.VideoInfoPost;
 import org.jingtao8a.entity.query.CategoryInfoQuery;
 import org.jingtao8a.entity.query.SimplePage;
+import org.jingtao8a.entity.query.VideoInfoPostQuery;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.CategoryInfoMapper;
+import org.jingtao8a.mapper.VideoInfoPostMapper;
 import org.jingtao8a.service.CategoryInfoService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,6 +31,8 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	@Resource
 	private RedisComponent redisComponent;
 
+	@Resource
+	private VideoInfoPostMapper<VideoInfoPost, VideoInfoPostQuery> videoInfoPostMapper;
 	/**
 	 * 根据条件查询列表
 	*/
@@ -180,8 +184,10 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 
 	@Override
 	public void delCategory(Integer categoryId) throws BusinessException {
-		//TODO 查询分类下是否有视频
-		if (true) {
+		VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
+		videoInfoPostQuery.setCategoryIdOrPCategoryId(categoryId);
+		Long count =videoInfoPostMapper.selectCount(videoInfoPostQuery);
+		if (count > 0L) {
 			throw new BusinessException("该分类下存在视频，不可删");
 		}
 		CategoryInfoQuery categoryInfoQuery = new CategoryInfoQuery();

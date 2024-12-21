@@ -130,6 +130,9 @@
 		<if test="query.excludeStatusArray != null">
 			and v.status not in (<foreach collection="query.excludeStatusArray" separator="," item="item">#{item}</foreach>)
 		</if>
+		<if test="query.categoryIdOrPCategoryId != null">
+			and ( v.category_id = #{query.categoryIdOrPCategoryId} or v.p_category_id = #{query.categoryIdOrPCategoryId})
+		</if>
 	</sql>
 
 	<!-- 通用查询条件 -->

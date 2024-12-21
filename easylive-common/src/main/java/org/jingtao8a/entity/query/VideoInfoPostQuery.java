@@ -99,4 +99,6 @@ public class VideoInfoPostQuery extends BaseQuery {
 	private Boolean queryCountInfo;
 
 	private Boolean queryUserInfo;
+
+	private Integer categoryIdOrPCategoryId;
 }
