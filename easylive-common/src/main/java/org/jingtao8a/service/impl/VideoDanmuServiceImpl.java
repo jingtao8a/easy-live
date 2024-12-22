@@ -142,6 +142,7 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
     }
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
     public void deleteDanmu(Integer danmuId, String userId) throws BusinessException {
 		VideoDanmu dbVideoDanmu = videoDanmuMapper.selectByDanmuId(danmuId);
 		if (dbVideoDanmu == null) {//弹幕不存在
@@ -155,5 +156,6 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
 		videoDanmuMapper.deleteByDanmuId(danmuId);
+		videoInfoMapper.updateCountInfo(videoInfo.getVideoId(), UserActionTypeEnum.VIDEO_DANMU.getField(), -1);
 	}
 }
