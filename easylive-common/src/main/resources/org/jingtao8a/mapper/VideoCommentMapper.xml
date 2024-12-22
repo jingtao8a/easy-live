@@ -164,7 +164,7 @@
 
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="org.jingtao8a.entity.po.VideoComment">
-		<selectKey> keyProperty="bean.commentId" resultType="Integer" order="AFTER"
+		<selectKey keyProperty="bean.commentId" resultType="Integer" order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO video_comment

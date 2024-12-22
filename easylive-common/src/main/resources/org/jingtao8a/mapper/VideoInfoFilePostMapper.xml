@@ -314,15 +314,16 @@
 		</foreach>
 		on DUPLICATE key update
 		<trim prefix="" suffix="" suffixOverrides=",">
-			user_id = VALUES(user_id),
-			video_id = VALUES(video_id),
-			file_index = VALUES(file_index),
-			file_name = VALUES(file_name),
-			file_size = VALUES(file_size),
-			file_path = VALUES(file_path),
-			update_type = VALUES(update_type),
-			transfer_result = VALUES(transfer_result),
-			duration = VALUES(duration),
+			upload_id = CASE WHEN VALUES(upload_id) IS NOT NULL THEN VALUES(upload_id) ELSE upload_id END,
+			user_id = CASE WHEN VALUES(user_id) IS NOT NULL THEN VALUES(user_id) ELSE user_id END,
+			video_id = CASE WHEN VALUES(video_id) IS NOT NULL THEN VALUES(video_id) ELSE video_id END,
+			file_index = CASE WHEN VALUES(file_index) IS NOT NULL THEN VALUES(file_index) ELSE file_index END,
+			file_name = CASE WHEN VALUES(file_name) IS NOT NULL THEN VALUES(file_name) ELSE file_name END,
+			file_size = CASE WHEN VALUES(file_size) IS NOT NULL THEN VALUES(file_size) ELSE file_size END,
+			file_path = CASE WHEN VALUES(file_path) IS NOT NULL THEN VALUES(file_path) ELSE file_path END,
+			update_type = CASE WHEN VALUES(update_type) IS NOT NULL THEN VALUES(update_type) ELSE update_type END,
+			transfer_result = CASE WHEN VALUES(transfer_result) IS NOT NULL THEN VALUES(transfer_result) ELSE transfer_result END,
+			duration = CASE WHEN VALUES(duration) IS NOT NULL THEN VALUES(duration) ELSE duration END,
 		</trim>
 	</insert>
 	<!--多条件修改-->
