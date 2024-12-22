@@ -69,18 +69,18 @@ public class VideoCommentController extends ABaseController{
         if (videoInfo == null) {
             throw new BusinessException(ResponseCodeEnum.CODE_600);
         }
-        if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ZERO.toString())) {
+        if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ONE.toString())) {
             return getSuccessResponseVO(new VideoCommentResultVO());
         }
         VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
         videoCommentQuery.setVideoId(videoId);
         try {
             videoCommentQuery.setPageNo(Long.valueOf(pageNo));
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             videoCommentQuery.setPageNo(0L);
         }
         videoCommentQuery.setPCommentId(0);
-        String orderBy = orderType == null || orderType == 0 ? "like_count desc, comment_id desc" : "comment_id desc";
+        String orderBy = (orderType == null || orderType == 0) ? "like_count desc, comment_id desc" : "comment_id desc";
         videoCommentQuery.setOrderBy(orderBy);
         videoCommentQuery.setTopType(CommentTopTypeEnum.NO_TOP.getType());
         videoCommentQuery.setLoadChildren(true);

@@ -142,7 +142,7 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 		if (videoInfo == null) {
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
-		if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ZERO.toString())) {
+		if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ONE.toString())) {
 			throw new BusinessException("UP主已经关闭评论区");
 		}
 		if (replyCommentId != null) {
@@ -222,6 +222,7 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 			videoCommentQuery.setPCommentId(dbVideoComment.getCommentId());
 			videoCommentMapper.deleteByParam(videoCommentQuery);
 		}
+		//TODO 删除相关用户行为user_action
 	}
 
 }
