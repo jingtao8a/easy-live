@@ -87,7 +87,7 @@ public class UHomeVideoSeriesController extends ABaseController {
     public ResponseVO getVideoSeriesDetail(@NotNull Integer seriesId) throws BusinessException {
         UserVideoSeries userVideoSeries = userVideoSeriesService.selectBySeriesId(seriesId);
         if (userVideoSeries == null) {
-            throw new BusinessException(ResponseCodeEnum.CODE_404);
+            throw new BusinessException(ResponseCodeEnum.CODE_600);
         }
         UserVideoSeriesVideoQuery userVideoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
         userVideoSeriesVideoQuery.setSeriesId(seriesId);
