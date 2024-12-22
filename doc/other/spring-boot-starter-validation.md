@@ -1,5 +1,10 @@
 ## 使用spring-boot-starter-validation进行参数校验
 原理：AOP
+### 请求参数校验AOP
+- @NotEmpty 用于字符串
+- @Size 用于字符串
+- @NotNull 用于非字符串
+- @Max @Min 用于数字
 
 1. **在Web层进行请求验证**
     - **控制器方法参数验证**
