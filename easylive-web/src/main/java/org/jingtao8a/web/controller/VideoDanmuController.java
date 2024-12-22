@@ -61,7 +61,7 @@ public class VideoDanmuController extends ABaseController {
         if (videoInfo == null) {
             throw new BusinessException(ResponseCodeEnum.CODE_600);
         }
-        if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ONE.toString())) {
+        if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ZERO.toString())) {
             return getSuccessResponseVO(new ArrayList<>());
         }
         VideoDanmuQuery videoDanmuQuery = new VideoDanmuQuery();

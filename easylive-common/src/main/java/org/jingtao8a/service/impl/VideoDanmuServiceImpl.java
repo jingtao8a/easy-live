@@ -133,7 +133,7 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		if (videoInfo == null) {
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
-		if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ONE.toString())) {
+		if (videoInfo.getInteraction() != null && videoInfo.getInteraction().contains(Constants.ZERO.toString())) {
 			throw new BusinessException("up主已经关闭弹幕");
 		}
 		videoDanmuMapper.insert(videoDanmu);
