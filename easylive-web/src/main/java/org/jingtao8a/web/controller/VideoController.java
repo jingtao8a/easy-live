@@ -3,6 +3,7 @@ package org.jingtao8a.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.component.RedisComponent;
+import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.VideoInfo;
@@ -109,7 +110,8 @@ public class VideoController extends ABaseController {
 
     @RequestMapping("/search")
     public ResponseVO search(@NotEmpty String keyword, Integer orderType, Integer pageNo) throws BusinessException {
-        //TODO 记录搜索热词
+        //记录搜索热词
+        redisComponent.addKeyWordCount(keyword);
         PaginationResultVO resultVO = esSearchComponent.search(true, keyword, orderType, pageNo, PageSize.SIZE20.getSize());
         return getSuccessResponseVO(resultVO);
     }
@@ -119,5 +121,11 @@ public class VideoController extends ABaseController {
         List<VideoInfo> videoInfoList = esSearchComponent.search(false, keyword, SearchOrderTypeEnum.VIDEO_PLAY.getType(), 1, PageSize.SIZE10.getSize()).getList();
         videoInfoList = videoInfoList.stream().filter(item->!item.getVideoId().equals(videoId)).collect(Collectors.toList());//过滤自己本身
         return getSuccessResponseVO(videoInfoList);
+    }
+
+    @RequestMapping("/getSearchKeywordTop")
+    public ResponseVO getSearchKeywordTop() {
+        List<String> keywordList = redisComponent.getKeywordTop(Constants.LENGTH_10);
+        return getSuccessResponseVO(keywordList);
     }
 }

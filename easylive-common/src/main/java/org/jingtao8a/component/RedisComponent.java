@@ -162,5 +162,11 @@ public class RedisComponent {
         redisUtils.decrement(key);
     }
 
+    public void addKeyWordCount(String keyWord) {
+        redisUtils.zaddCount(Constants.REDIS_KEY_VIDEO_SEARCH_COUNT, keyWord);
+    }
 
+    public List<String> getKeywordTop(Integer top) {
+        return redisUtils.getZSetList(Constants.REDIS_KEY_VIDEO_SEARCH_COUNT, top - 1);
+    }
 }
