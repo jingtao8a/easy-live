@@ -125,7 +125,8 @@ public class EsSearchComponent {
                 videoInfoEsDto.setPlayCount(0);
                 videoInfoEsDto.setDanmuCount(0);
                 IndexRequest request = new IndexRequest((appConfig.getEsIndexVideoName()));
-                request.id(videoInfoEsDto.getVideoId()).source(JsonUtils.convertObj2Json(videoInfoEsDto), XContentType.JSON);
+                String jsonStr = JsonUtils.convertObj2Json(videoInfoEsDto);
+                request.id(videoInfoEsDto.getVideoId()).source(jsonStr, XContentType.JSON);
                 restHighLevelClient.index(request, RequestOptions.DEFAULT);
             }
         } catch (Exception e) {
