@@ -1,6 +1,7 @@
 package org.jingtao8a.component;
 
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -176,6 +177,16 @@ public class EsSearchComponent {
         } catch (Exception e) {
             log.error("es更新视频失败", e);
             throw new BusinessException("保存视频失败");
+        }
+    }
+
+    public void deleteDoc(String videoId) throws BusinessException {
+        DeleteRequest deleteRequest = new DeleteRequest(appConfig.getEsIndexVideoName(), videoId);
+        try {
+            restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            log.error("从es删除视频失败", e);
+            throw new BusinessException("从es删除视频失败");
         }
     }
 }

@@ -168,6 +168,7 @@ public class FileController extends ABaseController{
         readFile(response, filePath + "/" + Constants.M3U8_NAME);
         //更新视频最后播放时间和播放量
         videoInfoService.updateVideoPlayInfo(videoInfoFile.getVideoId());
+        //TODO 更新es
     }
 
     @RequestMapping("/videoResource/{fileId}/{ts}")
