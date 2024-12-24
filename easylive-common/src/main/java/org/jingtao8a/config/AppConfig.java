@@ -18,4 +18,10 @@ public class AppConfig {
 
     @Value("${showFFmpegLog}")
     private Boolean showFFmpegLog;
+
+    @Value("${es.host.port}")
+    private String esHostPort;
+
+    @Value("${es.index.video.name}")
+    private String esIndexVideoName;
 }

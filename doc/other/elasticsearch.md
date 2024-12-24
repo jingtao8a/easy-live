@@ -31,6 +31,65 @@ Elasticsearch是面向文档型数据库，一条数据就是一个文档
 ## 索引操作
 ### 1. 创建索引
 PUT http://localhost:9200/index_name
+***
+创建索引并制定结构
+
+```json
+{
+  "analysis": {
+    "analyzer" : {
+      "comma": {
+        "type": "pattern",
+        "pattern": ","
+      }
+    }
+  }
+}
+//request body
+{
+  "mappings": {
+    "properties": {
+      "videoId": {
+        "type": "text",
+        "index": false
+      },
+      "userId": {
+        "type": "text",
+        "index": false
+      },
+      "videoCover": {
+        "type": "text",
+        "index": false
+      },
+      "videoName": {
+        "type": "text",
+        "analyzer": "ik_max_word"
+      },
+      "tags": {
+        "type": "text",
+        "analyzer": "comma"
+      },
+      "playCount": {
+        "type": "integer",
+        "index": false
+      },
+      "danmuCount": {
+        "type": "integer",
+        "index": false
+      },
+      "collectCount": {
+        "type": "integer",
+        "index": false
+      },
+      "createTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "index": false
+      }
+    }
+  }
+}
+```
 
 ### 2. 删除索引
 DELETE http://localhost:9200/index_name
