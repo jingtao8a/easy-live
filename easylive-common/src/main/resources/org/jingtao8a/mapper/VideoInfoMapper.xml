@@ -166,6 +166,9 @@
 		 <if test="query.excludeVideoIdArray != null and query.excludeVideoIdArray.length > 0">
 			and v.video_id not in (<foreach collection="query.excludeVideoIdArray" separator="," item="item">#{item}</foreach> )
 		 </if>
+		 <if test="query.lastPlayHour != null">
+			 <![CDATA[ and v.last_play_time >= date_sub(now(), interval #{query.lastPlayHour} hour) ]]>
+		 </if>
 	</sql>
 
 	<!-- 通用查询条件 -->

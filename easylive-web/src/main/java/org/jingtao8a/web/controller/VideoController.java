@@ -128,4 +128,15 @@ public class VideoController extends ABaseController {
         List<String> keywordList = redisComponent.getKeywordTop(Constants.LENGTH_10);
         return getSuccessResponseVO(keywordList);
     }
+
+    @RequestMapping("/loadHotVideoList")
+    public ResponseVO loadHotVideoList(Integer pageNo) {
+        VideoInfoQuery query = new VideoInfoQuery();
+        query.setPageNo(pageNo == null ? 1L : (long)pageNo);
+        query.setOrderBy("play_count desc");
+        query.setQueryUserInfo(true);
+        query.setLastPlayHour(Constants.HOUR_24);
+        PaginationResultVO<VideoInfo> resultVO = videoInfoService.findListByPage(query);
+        return getSuccessResponseVO(resultVO);
+    }
 }

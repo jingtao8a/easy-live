@@ -123,4 +123,6 @@ public class VideoInfoQuery extends BaseQuery {
 	private String[] videoIdArray;
 
 	private String[] excludeVideoIdArray;
+
+	private Integer lastPlayHour;
 }
