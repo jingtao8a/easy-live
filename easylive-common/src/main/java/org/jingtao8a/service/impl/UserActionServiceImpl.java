@@ -1,5 +1,6 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.UserAction;
 import org.jingtao8a.entity.po.UserInfo;
@@ -8,6 +9,7 @@ import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.*;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.enums.SearchOrderTypeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.UserActionMapper;
@@ -16,6 +18,7 @@ import org.jingtao8a.mapper.VideoCommentMapper;
 import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.vo.PaginationResultVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,8 @@ public class UserActionServiceImpl implements UserActionService {
 
 	@Resource
 	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
+    @Autowired
+    private EsSearchComponent esSearchComponent;
 
 	/**
 	 * 根据条件查询列表
@@ -182,7 +187,10 @@ public class UserActionServiceImpl implements UserActionService {
 					changeCount = Constants.ONE;
 				}
 				videoInfoMapper.updateCountInfo(userAction.getVideoId(), userActionTypeEnum.getField(), changeCount);
-				//TODO 更新es
+				//更新es 视频收藏数
+				if (userActionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT) {
+					esSearchComponent.updateDocCount(userAction.getVideoId(), SearchOrderTypeEnum.VIDEO_COLLECT.getField(), changeCount);
+				}
 				break;
 			case VIDEO_COIN://自己不可以给自己 投币
 				if (userAction.getUserId().equals(videoInfo.getUserId())) {
