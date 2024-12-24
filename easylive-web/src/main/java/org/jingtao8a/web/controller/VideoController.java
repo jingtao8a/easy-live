@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
@@ -9,6 +10,7 @@ import org.jingtao8a.entity.po.VideoInfoFile;
 import org.jingtao8a.entity.query.UserActionQuery;
 import org.jingtao8a.entity.query.VideoInfoFileQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
+import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.enums.VideoRecommendTypeEnum;
@@ -19,7 +21,6 @@ import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
 import org.jingtao8a.vo.VideoInfoResultVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,8 +41,12 @@ public class VideoController extends ABaseController {
 
     @Resource
     private UserActionService userActionService;
-    @Autowired
+
+    @Resource
     private RedisComponent redisComponent;
+
+    @Resource
+    private EsSearchComponent esSearchComponent;
 
     @RequestMapping("/loadRecommendVideo")
     public ResponseVO loadRecommendVideo() {
@@ -102,5 +107,12 @@ public class VideoController extends ABaseController {
     @RequestMapping("/reportVideoPlayOnline")
     public ResponseVO reportVideoPlayOnline(@NotEmpty String fileId, @NotEmpty String deviceId) throws BusinessException {
         return getSuccessResponseVO(redisComponent.reportVideoPlayOnline(fileId, deviceId));
+    }
+
+    @RequestMapping("/search")
+    public ResponseVO search(@NotEmpty String keyword, Integer orderType, Integer pageNo) throws BusinessException {
+        //TODO 记录搜索热词
+        PaginationResultVO resultVO = esSearchComponent.search(true, keyword, orderType, pageNo, PageSize.SIZE20.getSize());
+        return getSuccessResponseVO(resultVO);
     }
 }

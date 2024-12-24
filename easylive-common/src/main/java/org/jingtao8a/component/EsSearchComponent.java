@@ -5,29 +5,45 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.xcontent.XContentType;
 import org.jingtao8a.config.AppConfig;
 import org.jingtao8a.dto.VideoInfoEsDto;
+import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.po.VideoInfo;
+import org.jingtao8a.entity.query.SimplePage;
+import org.jingtao8a.entity.query.UserInfoQuery;
+import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.SearchOrderTypeEnum;
 import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.mapper.UserInfoMapper;
 import org.jingtao8a.utils.CopyTools;
 import org.jingtao8a.utils.JsonUtils;
 import org.jingtao8a.utils.StringTools;
+import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Component;
-
+import java.util.function.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 @Component("esSearchComponent")
 @Slf4j
@@ -37,6 +53,9 @@ public class EsSearchComponent {
 
     @Resource
     private RestHighLevelClient restHighLevelClient;
+
+    @Resource
+    private UserInfoMapper userInfoMapper;
 
     private Boolean isIndexExist() throws IOException {
         GetIndexRequest getIndexRequest = new GetIndexRequest(appConfig.getEsIndexVideoName());
@@ -188,6 +207,63 @@ public class EsSearchComponent {
         } catch (Exception e) {
             log.error("从es删除视频失败", e);
             throw new BusinessException("从es删除视频失败");
+        }
+    }
+
+    public PaginationResultVO<VideoInfo> search(Boolean highlight, String keyWord, Integer orderType, Integer pageNo, Integer pageSize) throws BusinessException {
+        try {
+            SearchOrderTypeEnum searchOrderTypeEnum = SearchOrderTypeEnum.getEnum(orderType);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(QueryBuilders.multiMatchQuery(keyWord, "videoName", "tags"));
+            //高亮
+            if (highlight) {
+                HighlightBuilder highlightBuilder = new HighlightBuilder();
+                highlightBuilder.field("videoName");
+                highlightBuilder.preTags("<span class='highlight'>");
+                highlightBuilder.postTags("</span>");
+                searchSourceBuilder.highlighter(highlightBuilder);
+            }
+            //排序
+            searchSourceBuilder.sort("_score", SortOrder.ASC);
+            if (searchOrderTypeEnum != null) {
+                searchSourceBuilder.sort(searchOrderTypeEnum.getField(), SortOrder.DESC);
+            }
+
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? PageSize.SIZE20.getSize() : pageSize;
+            searchSourceBuilder.from((pageNo - 1) * pageSize);
+            SearchRequest searchRequest = new SearchRequest(appConfig.getEsIndexVideoName());
+            searchRequest.source(searchSourceBuilder);
+
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+
+            SearchHits searchHits = searchResponse.getHits();
+            Integer totalCount = (int)searchHits.getTotalHits().value;//总数量
+
+            List<VideoInfo> videoInfoList = new ArrayList<>();
+            List<String> userIdList = new ArrayList<>();
+            for (SearchHit searchHit : searchHits.getHits()) {
+                VideoInfo videoInfo = JsonUtils.convertJson2Obj(searchHit.getSourceAsString(), VideoInfo.class);
+                if (searchHit.getHighlightFields().get("videoName") != null) {
+                    videoInfo.setVideoName(searchHit.getHighlightFields().get("videoName").getFragments()[0].toString());
+                }
+                videoInfoList.add(videoInfo);
+                userIdList.add(videoInfo.getUserId());
+            }
+            UserInfoQuery userInfoQuery = new UserInfoQuery();
+            userInfoQuery.setUserIdList(userIdList);
+            List<UserInfo> userInfoList = userInfoMapper.selectList(userInfoQuery);
+            Map<String, UserInfo> userInfoMap = userInfoList.stream().collect(Collectors.toMap(item->item.getUserId(), Function.identity(), (item1, item2)->item1));
+            videoInfoList.forEach( item-> {
+                item.setNickName(userInfoMap.get(item.getUserId()).getNickName());
+                item.setAvatar(userInfoMap.get(item.getUserId()).getAvatar());
+            });
+            SimplePage page = new SimplePage((long)pageNo, (long)totalCount, (long)pageSize);
+            PaginationResultVO<VideoInfo> resultVO = new PaginationResultVO<>((long)totalCount, page.getPageSize(), page.getPageNo(), page.getPageTotal(), videoInfoList);
+            return resultVO;
+        } catch (Exception e) {
+            log.error("从es查询视频失败", e);
+            throw new BusinessException("从es查询视频失败");
         }
     }
 }
