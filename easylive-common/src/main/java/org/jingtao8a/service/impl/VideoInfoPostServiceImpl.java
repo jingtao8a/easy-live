@@ -355,8 +355,9 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 		videoInfoMapper.deleteByVideoId(videoId);
 		videoInfoPostMapper.deleteByVideoId(videoId);
-//		TODO 减去用户硬币
-//		TODO 删除es信息
+		// TODO 减去用户硬币
+		//	删除es信息
+		esSearchComponent.deleteDoc(videoId);
 		executorService.submit(()->{
 			VideoInfoFileQuery videoInfoFileQuery = new VideoInfoFileQuery();
 			videoInfoFileQuery.setVideoId(videoId);
@@ -390,5 +391,4 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 			//TODO 删除用户视频序列归档
 		});
 	}
-
 }
