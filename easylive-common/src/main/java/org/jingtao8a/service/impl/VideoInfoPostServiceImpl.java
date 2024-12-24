@@ -4,6 +4,7 @@ import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.config.AppConfig;
 import org.jingtao8a.constants.Constants;
@@ -55,12 +56,15 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 
     @Resource
     private AppConfig appConfig;
-	private UserInfoMapper userInfoMapper;
-    @Autowired
+
+    @Resource
     private VideoDanmuMapper videoDanmuMapper;
-    @Autowired
+
+	@Resource
     private VideoCommentMapper videoCommentMapper;
 
+	@Resource
+	private EsSearchComponent esSearchComponent;
 	/**
 	 * 根据条件查询列表
 	*/
@@ -320,7 +324,8 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 			}
 		}
 		redisComponent.cleanDelFileList(videoId);
-		//TODO 保存信息到 es
+		//保存到es
+		esSearchComponent.saveDoc(videoInfo);
 	}
 
     @Override
