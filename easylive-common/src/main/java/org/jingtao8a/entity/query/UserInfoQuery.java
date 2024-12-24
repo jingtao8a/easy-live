@@ -2,6 +2,8 @@ package org.jingtao8a.entity.query;
 import lombok.Data;
 import lombok.ToString;
 import java.util.Date;
+import java.util.List;
+
 /**
 @Description:用户信息
 @Date:2024-11-06
@@ -102,4 +104,6 @@ public class UserInfoQuery extends BaseQuery {
 	 */
 	private String avatar;
 	private String avatarFuzzy;
+
+	private List<String> userIdList;
 }
