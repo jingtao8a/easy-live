@@ -10,10 +10,7 @@ import org.jingtao8a.entity.po.VideoInfoFile;
 import org.jingtao8a.entity.query.UserActionQuery;
 import org.jingtao8a.entity.query.VideoInfoFileQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
-import org.jingtao8a.enums.PageSize;
-import org.jingtao8a.enums.ResponseCodeEnum;
-import org.jingtao8a.enums.UserActionTypeEnum;
-import org.jingtao8a.enums.VideoRecommendTypeEnum;
+import org.jingtao8a.enums.*;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.service.VideoInfoFileService;
@@ -25,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 
@@ -114,5 +112,12 @@ public class VideoController extends ABaseController {
         //TODO 记录搜索热词
         PaginationResultVO resultVO = esSearchComponent.search(true, keyword, orderType, pageNo, PageSize.SIZE20.getSize());
         return getSuccessResponseVO(resultVO);
+    }
+
+    @RequestMapping("/getVideoRecommend")
+    public ResponseVO getVideoRecommend(@NotEmpty String keyword, @NotEmpty String videoId) throws BusinessException {
+        List<VideoInfo> videoInfoList = esSearchComponent.search(false, keyword, SearchOrderTypeEnum.VIDEO_PLAY.getType(), 1, PageSize.SIZE10.getSize()).getList();
+        videoInfoList = videoInfoList.stream().filter(item->!item.getVideoId().equals(videoId)).collect(Collectors.toList());//过滤自己本身
+        return getSuccessResponseVO(videoInfoList);
     }
 }
