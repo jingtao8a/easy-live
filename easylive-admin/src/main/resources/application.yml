@@ -50,3 +50,12 @@ admin:
   password: admin123
 
 showFFmpegLog: true
+
+es:
+  host:
+    port:
+      127.0.0.1:9200
+  index:
+    video:
+      name:
+        easylive_video
