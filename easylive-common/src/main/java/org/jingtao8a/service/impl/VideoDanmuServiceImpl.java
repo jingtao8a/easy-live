@@ -1,5 +1,6 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.VideoComment;
 import org.jingtao8a.entity.po.VideoDanmu;
@@ -10,12 +11,14 @@ import org.jingtao8a.entity.query.VideoDanmuQuery;
 import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.enums.SearchOrderTypeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.VideoDanmuMapper;
 import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.VideoDanmuService;
 import org.jingtao8a.vo.PaginationResultVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,10 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 
 	@Resource
 	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+
+    @Resource
+    private EsSearchComponent esSearchComponent;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -138,7 +145,8 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		}
 		videoDanmuMapper.insert(videoDanmu);
 		videoInfoMapper.updateCountInfo(videoInfo.getVideoId(), UserActionTypeEnum.VIDEO_DANMU.getField(), 1);
-		//TODO 更新 es, 弹幕数量
+		//更新 es 弹幕数量
+		esSearchComponent.updateDocCount(videoDanmu.getVideoId(), SearchOrderTypeEnum.VIDEO_DANMU.getField(), 1);
     }
 
 	@Override
@@ -157,5 +165,7 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		}
 		videoDanmuMapper.deleteByDanmuId(danmuId);
 		videoInfoMapper.updateCountInfo(videoInfo.getVideoId(), UserActionTypeEnum.VIDEO_DANMU.getField(), -1);
+		//更新 es, 弹幕数量
+		esSearchComponent.updateDocCount(videoInfo.getVideoId(), SearchOrderTypeEnum.VIDEO_DANMU.getField(), -1);
 	}
 }

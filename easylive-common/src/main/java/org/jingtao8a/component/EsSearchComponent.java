@@ -167,7 +167,7 @@ public class EsSearchComponent {
         }
     }
 
-    private void updateDocCount(String videoId, String fieldName, Integer count) throws BusinessException {
+    public void updateDocCount(String videoId, String fieldName, Integer count) throws BusinessException {
         try {
             UpdateRequest updateRequest = new UpdateRequest(appConfig.getEsIndexVideoName(), videoId);
             Script script = new Script(ScriptType.INLINE, "painless", "ctx._source." + fieldName + " += params.count", Collections.singletonMap("count", count));
