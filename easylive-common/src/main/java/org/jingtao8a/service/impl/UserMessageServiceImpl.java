@@ -140,11 +140,11 @@ public class UserMessageServiceImpl implements UserMessageService {
     public void saveUserMessage(String videoId, String content, Integer replyCommentId, String reason, MessageTypeEnum messageTypeEnum, String sendUserId) {
 		UserMessage userMessage = new UserMessage();
 		String userId = null;
-		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoId);
-		if (videoInfo == null) {
+		VideoInfoPost videoInfoPost = videoInfoPostMapper.selectByVideoId(videoId);
+		if (videoInfoPost == null) {
 			return;
 		}
-		userId = videoInfo.getUserId();
+		userId = videoInfoPost.getUserId();
 		UserMessageExtendDto userMessageExtendDto = new UserMessageExtendDto();
 		log.info("saveUserMessage");
 		if (messageTypeEnum == MessageTypeEnum.LIKE || messageTypeEnum == MessageTypeEnum.COLLECTION) {
@@ -171,16 +171,13 @@ public class UserMessageServiceImpl implements UserMessageService {
 			if (sendUserId.equals(userId)) {//回复自己的评论不记录
 				return;
 			}
+			userMessage.setExtendJson(JsonUtils.convertObj2Json(userMessageExtendDto));
 		} else if (messageTypeEnum == MessageTypeEnum.SYS) {
 			//auditVideo
-			userMessageExtendDto.setMessageContent(reason);
-			VideoInfoPost videoInfoPost = videoInfoPostMapper.selectByVideoId(videoId);
-			log.info("auditVideo");
-			if (videoInfoPost == null) {
-				return;
-			}
 			log.info("audit......");
+			userMessageExtendDto.setMessageContent(reason);
 			userMessageExtendDto.setAuditStatus(videoInfoPost.getStatus());
+			userMessage.setExtendJson(JsonUtils.convertObj2Json(userMessageExtendDto));
 		} else {
 			return;
 		}
@@ -190,7 +187,6 @@ public class UserMessageServiceImpl implements UserMessageService {
 		userMessage.setSendUserId(sendUserId);
 		userMessage.setReadType(MessageReadTypeEnum.NO_READ.getType());
 		userMessage.setCreateTime(new Date());
-		userMessage.setExtendJson(JsonUtils.convertObj2Json(userMessageExtendDto));
 		userMessageMapper.insert(userMessage);
     }
 }
