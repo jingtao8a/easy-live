@@ -199,6 +199,39 @@ CREATE TABLE `easylive`.`user_video_series_video` (
   PRIMARY KEY (`series_id`, `video_id`))
 COMMENT = '用户视频序列归档视频';
 
+CREATE TABLE `easylive`.`user_message` (
+  `message_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '消息ID 自增',
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `video_id` VARCHAR(10) NULL DEFAULT NULL COMMENT '视频ID',
+  `message_type` TINYINT(1) NULL DEFAULT NULL,
+  `send_user_id` VARCHAR(10) NULL DEFAULT NULL COMMENT '发送人ID',
+  `read_type` TINYINT(1) NULL DEFAULT NULL COMMENT '0:未读 1:已读',
+  `create_time` DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+  `extend_json` TEXT NULL COMMENT '扩展信息',
+  PRIMARY KEY (`message_id`),
+  INDEX `idx_user_id` (`user_id` ASC) VISIBLE,
+  INDEX `idx_read_type` (`read_type` ASC) VISIBLE,
+  INDEX `idx_message_type` (`message_type` ASC) VISIBLE)
+COMMENT = '用户消息表';
+
+CREATE TABLE `easylive`.`video_play_history` (
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `video_id` VARCHAR(10) NOT NULL COMMENT '视频ID',
+  `file_index` INT(11) NOT NULL COMMENT '文件索引',
+  `last_update_time` DATETIME NOT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`user_id`, `video_id`),
+  INDEX `idx_video_id` (`video_id` ASC) INVISIBLE,
+  INDEX `idx_user_id` (`user_id` ASC) VISIBLE)
+COMMENT = '视频播放历史';
+
+CREATE TABLE `easylive`.`statistics_info` (
+  `statistics_date` VARCHAR(10) NOT NULL COMMENT '统计日期',
+  `user_id` VARCHAR(10) NOT NULL COMMENT '用户ID',
+  `data_type` TINYINT(1) NOT NULL COMMENT '数据统计类型',
+  `statistics_count` INT(11) NULL DEFAULT NULL COMMENT '统计数量',
+  PRIMARY KEY (`statistics_date`, `user_id`, `data_type`))
+COMMENT = '数据统计信息';
+
 
 -- drop table `easylive`.`user_info`; 
 -- drop table `easylive`.`category_info`;
