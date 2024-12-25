@@ -2,9 +2,11 @@ package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.annotation.GlobalInterceptor;
+import org.jingtao8a.annotation.RecordMessage;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
+import org.jingtao8a.enums.MessageTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.vo.ResponseVO;
@@ -24,6 +26,7 @@ public class UserActionController extends ABaseController {
 
     @RequestMapping("/doAction")
     @GlobalInterceptor(checkLogin = true)
+    @RecordMessage(messageType = MessageTypeEnum.LIKE)
     public ResponseVO doAction(@NotEmpty String videoId,
                                @NotNull Integer actionType,
                                @Max(2) @Min(1) Integer actionCount,

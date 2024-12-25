@@ -2,6 +2,7 @@ package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.annotation.GlobalInterceptor;
+import org.jingtao8a.annotation.RecordMessage;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
@@ -10,6 +11,7 @@ import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.UserActionQuery;
 import org.jingtao8a.entity.query.VideoCommentQuery;
 import org.jingtao8a.enums.CommentTopTypeEnum;
+import org.jingtao8a.enums.MessageTypeEnum;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
 import org.jingtao8a.exception.BusinessException;
@@ -46,6 +48,7 @@ public class VideoCommentController extends ABaseController{
 
     @RequestMapping("/postComment")
     @GlobalInterceptor(checkLogin = true)
+    @RecordMessage(messageType = MessageTypeEnum.COMMENT)
     public ResponseVO postComment(@NotEmpty String videoId,
                                   @NotEmpty @Size(max=500) String content,
                                   Integer replyCommentId,

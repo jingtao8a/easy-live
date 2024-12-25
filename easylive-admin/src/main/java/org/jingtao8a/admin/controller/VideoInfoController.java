@@ -1,8 +1,9 @@
 package org.jingtao8a.admin.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.annotation.RecordMessage;
 import org.jingtao8a.entity.query.VideoInfoPostQuery;
-import org.jingtao8a.enums.VideoStatusEnum;
+import org.jingtao8a.enums.MessageTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.VideoInfoFilePostService;
 import org.jingtao8a.service.VideoInfoFileService;
@@ -42,6 +43,7 @@ public class VideoInfoController extends ABaseController {
     }
 
     @RequestMapping("/auditVideo")
+    @RecordMessage(messageType = MessageTypeEnum.SYS)
     public ResponseVO auditVideo(@NotEmpty String videoId, @NotNull Integer status, String reason) throws BusinessException {
         videoInfoPostService.auditVideo(videoId, status, reason);
         return getSuccessResponseVO(null);
