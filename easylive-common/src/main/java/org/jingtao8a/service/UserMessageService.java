@@ -2,6 +2,7 @@ package org.jingtao8a.service;
 
 import org.jingtao8a.entity.po.UserMessage;
 import org.jingtao8a.entity.query.UserMessageQuery;
+import org.jingtao8a.enums.MessageTypeEnum;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import java.util.List;
@@ -62,4 +63,5 @@ public interface UserMessageService {
 	*/
 	Long deleteByMessageId(Integer messageId);
 
+    void saveUserMessage(String videoId, String content, Integer replyCommentId, String reason, MessageTypeEnum messageTypeEnum, String sendUserId);
 }

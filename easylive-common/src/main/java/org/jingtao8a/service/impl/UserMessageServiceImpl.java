@@ -1,25 +1,48 @@
 package org.jingtao8a.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jingtao8a.dto.UserMessageExtendDto;
 import org.jingtao8a.entity.po.UserMessage;
-import org.jingtao8a.entity.query.SimplePage;
-import org.jingtao8a.entity.query.UserMessageQuery;
+import org.jingtao8a.entity.po.VideoComment;
+import org.jingtao8a.entity.po.VideoInfo;
+import org.jingtao8a.entity.po.VideoInfoPost;
+import org.jingtao8a.entity.query.*;
+import org.jingtao8a.enums.MessageReadTypeEnum;
+import org.jingtao8a.enums.MessageTypeEnum;
 import org.jingtao8a.enums.PageSize;
 import org.jingtao8a.mapper.UserMessageMapper;
+import org.jingtao8a.mapper.VideoCommentMapper;
+import org.jingtao8a.mapper.VideoInfoMapper;
+import org.jingtao8a.mapper.VideoInfoPostMapper;
 import org.jingtao8a.service.UserMessageService;
+import org.jingtao8a.utils.JsonUtils;
 import org.jingtao8a.vo.PaginationResultVO;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
 /**
 @Description:UserMessageService
 @Date:2024-12-25
 */
 @Service("userMessageService")
+@Slf4j
 public class UserMessageServiceImpl implements UserMessageService {
 
 	@Resource
 	private UserMessageMapper<UserMessage, UserMessageQuery> userMessageMapper;
+
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+
+	@Resource
+	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
+
+    @Resource
+    private VideoInfoPostMapper<VideoInfoPost, VideoInfoPostQuery> videoInfoPostMapper;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -112,4 +135,62 @@ public class UserMessageServiceImpl implements UserMessageService {
 		return userMessageMapper.deleteByMessageId(messageId);
 	}
 
+    @Override
+	@Async
+    public void saveUserMessage(String videoId, String content, Integer replyCommentId, String reason, MessageTypeEnum messageTypeEnum, String sendUserId) {
+		UserMessage userMessage = new UserMessage();
+		String userId = null;
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoId);
+		if (videoInfo == null) {
+			return;
+		}
+		userId = videoInfo.getUserId();
+		UserMessageExtendDto userMessageExtendDto = new UserMessageExtendDto();
+		log.info("saveUserMessage");
+		if (messageTypeEnum == MessageTypeEnum.LIKE || messageTypeEnum == MessageTypeEnum.COLLECTION) {
+			//doAction(视频收藏、点赞 已经记录的，不再记录)
+			UserMessageQuery userMessageQuery = new UserMessageQuery();
+			userMessageQuery.setVideoId(videoId);
+			userMessageQuery.setUserId(userId);
+			userMessageQuery.setSendUserId(sendUserId);
+			userMessageQuery.setMessageType(messageTypeEnum.getType());
+			Integer count = userMessageMapper.selectCount(userMessageQuery).intValue();
+			if (count > 0) {
+				return;
+			}
+		} else if (messageTypeEnum == MessageTypeEnum.COMMENT) {
+			//postComment
+			userMessageExtendDto.setMessageContent(content);
+			if (replyCommentId != null) {
+				VideoComment videoComment = videoCommentMapper.selectByCommentId(replyCommentId);
+				if (videoComment != null) {
+					userId = videoComment.getUserId();
+					userMessageExtendDto.setMessageContentReply(videoComment.getContent());
+				}
+			}
+			if (sendUserId.equals(userId)) {//回复自己的评论不记录
+				return;
+			}
+		} else if (messageTypeEnum == MessageTypeEnum.SYS) {
+			//auditVideo
+			userMessageExtendDto.setMessageContent(reason);
+			VideoInfoPost videoInfoPost = videoInfoPostMapper.selectByVideoId(videoId);
+			log.info("auditVideo");
+			if (videoInfoPost == null) {
+				return;
+			}
+			log.info("audit......");
+			userMessageExtendDto.setAuditStatus(videoInfoPost.getStatus());
+		} else {
+			return;
+		}
+		userMessage.setUserId(userId);
+		userMessage.setVideoId(videoId);
+		userMessage.setMessageType(messageTypeEnum.getType());
+		userMessage.setSendUserId(sendUserId);
+		userMessage.setReadType(MessageReadTypeEnum.NO_READ.getType());
+		userMessage.setCreateTime(new Date());
+		userMessage.setExtendJson(JsonUtils.convertObj2Json(userMessageExtendDto));
+		userMessageMapper.insert(userMessage);
+    }
 }
