@@ -71,7 +71,7 @@ public class UserMessageOperationAspect {
         if (userActionTypeEnum != null) {
             if (UserActionTypeEnum.VIDEO_COLLECT == userActionTypeEnum) {
                 messageTypeEnum = MessageTypeEnum.COLLECTION;
-            } else if (UserActionTypeEnum.VIDEO_LIKE != userActionTypeEnum) {
+            } else if (UserActionTypeEnum.VIDEO_LIKE == userActionTypeEnum) {
                 messageTypeEnum = MessageTypeEnum.LIKE;
             } else {
                 return;
