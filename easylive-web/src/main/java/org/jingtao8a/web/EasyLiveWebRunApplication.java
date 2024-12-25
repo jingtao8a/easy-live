@@ -3,6 +3,7 @@ package org.jingtao8a.web;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan(basePackages = {"org.jingtao8a.mapper"})
 @EnableTransactionManagement
 @EnableScheduling
+@EnableAsync
 public class EasyLiveWebRunApplication {
     public static void main(String[] args) {
         SpringApplication.run(EasyLiveWebRunApplication.class, args);
