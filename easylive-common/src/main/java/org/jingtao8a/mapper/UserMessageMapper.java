@@ -1,5 +1,8 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+import org.jingtao8a.dto.UserMessageCountDto;
+import java.util.*;
+
 /**
 @Description:用户消息表Mapper
 @Date:2024-12-25
@@ -21,4 +24,5 @@ public interface UserMessageMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByMessageId(@Param("messageId") Integer messageId);
 
+    List<UserMessageCountDto> getMessageTypeNoReadCount(@Param("userId") String userId);
 }

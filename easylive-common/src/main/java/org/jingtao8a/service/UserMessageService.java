@@ -1,5 +1,6 @@
 package org.jingtao8a.service;
 
+import org.jingtao8a.dto.UserMessageCountDto;
 import org.jingtao8a.entity.po.UserMessage;
 import org.jingtao8a.entity.query.UserMessageQuery;
 import org.jingtao8a.enums.MessageTypeEnum;
@@ -64,4 +65,6 @@ public interface UserMessageService {
 	Long deleteByMessageId(Integer messageId);
 
     void saveUserMessage(String videoId, String content, Integer replyCommentId, String reason, MessageTypeEnum messageTypeEnum, String sendUserId);
+
+	List<UserMessageCountDto> getMessageTypeNoReadCount(String userId);
 }

@@ -1,6 +1,7 @@
 package org.jingtao8a.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.dto.UserMessageCountDto;
 import org.jingtao8a.dto.UserMessageExtendDto;
 import org.jingtao8a.entity.po.UserMessage;
 import org.jingtao8a.entity.po.VideoComment;
@@ -185,5 +186,10 @@ public class UserMessageServiceImpl implements UserMessageService {
 		userMessage.setReadType(MessageReadTypeEnum.NO_READ.getType());
 		userMessage.setCreateTime(new Date());
 		userMessageMapper.insert(userMessage);
+    }
+
+    @Override
+    public List<UserMessageCountDto> getMessageTypeNoReadCount(String userId) {
+		return userMessageMapper.getMessageTypeNoReadCount(userId);
     }
 }

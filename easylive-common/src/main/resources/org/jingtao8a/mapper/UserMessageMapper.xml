@@ -304,5 +304,8 @@
 		</set>
 		where  message_id = #{messageId} 
 	</update>
-
+	<select id="getMessageTypeNoReadCount" resultType="org.jingtao8a.dto.UserMessageCountDto">
+		select message_type messageType, count(1) messageCount from user_message where user_id = #{userId}
+		and read_type = 0 group by message_type
+	</select>
 </mapper>
