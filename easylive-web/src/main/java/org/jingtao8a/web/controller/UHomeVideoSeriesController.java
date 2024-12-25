@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.annotation.GlobalInterceptor;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserVideoSeries;
 import org.jingtao8a.entity.po.UserVideoSeriesVideo;
@@ -45,14 +46,12 @@ public class UHomeVideoSeriesController extends ABaseController {
     }
 
     @RequestMapping("/saveVideoSeries")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveVideoSeries(Integer seriesId,
                                       @NotEmpty @Size(max=100) String seriesName,
                                       @Size(max=200) String seriesDescription,
                                       String videoIds) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         UserVideoSeries userVideoSeries = new UserVideoSeries();
         userVideoSeries.setSeriesId(seriesId);
         userVideoSeries.setSeriesName(seriesName);
@@ -63,12 +62,9 @@ public class UHomeVideoSeriesController extends ABaseController {
     }
 
     @RequestMapping("/loadAllVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadAllVideo(Integer seriesId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
-
         VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
         if (seriesId != null) {
             UserVideoSeriesVideoQuery videoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
@@ -101,41 +97,33 @@ public class UHomeVideoSeriesController extends ABaseController {
     }
 
     @RequestMapping("/saveSeriesVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveSeriesVideo(@NotNull Integer seriesId, @NotEmpty String videoIds) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         userVideoSeriesService.saveUserVideoSeriesVideo(tokenUserInfoDto.getUserId(), seriesId, videoIds);
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/delSeriesVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delSeriesVideo(@NotNull Integer seriesId, @NotEmpty String videoId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         userVideoSeriesService.delUserVideoSeriesVideo(tokenUserInfoDto.getUserId(), seriesId, videoId);
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/delVideoSeries")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delVideoSeries(@NotNull Integer seriesId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         userVideoSeriesService.delVideoSeries(tokenUserInfoDto.getUserId(), seriesId);
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/changeVideoSeriesSort")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO changeVideoSeriesSort(@NotEmpty String seriesIds) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         userVideoSeriesService.changeVideoSeriesSort(tokenUserInfoDto.getUserId(), seriesIds);
         return getSuccessResponseVO(null);
     }

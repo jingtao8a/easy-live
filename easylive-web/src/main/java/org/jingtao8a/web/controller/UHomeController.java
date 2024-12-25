@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.annotation.GlobalInterceptor;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
@@ -17,7 +18,6 @@ import org.jingtao8a.service.UserActionService;
 import org.jingtao8a.service.UserFocusService;
 import org.jingtao8a.service.UserInfoService;
 import org.jingtao8a.service.VideoInfoService;
-import org.jingtao8a.utils.CopyTools;
 import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
 import org.jingtao8a.vo.UserInfoVO;
@@ -57,6 +57,7 @@ public class UHomeController extends ABaseController{
     }
 
     @RequestMapping("/updateUserInfo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO updateUserInfo(@NotEmpty @Size(max=20) String nickName,
                                      @NotEmpty @Size(max=100) String avatar,
                                      @NotNull Integer sex,
@@ -65,9 +66,6 @@ public class UHomeController extends ABaseController{
                                      @Size(max=80) String personIntroduction,
                                      @Size(max=300) String noticeInfo) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         UserInfo userInfo = new UserInfo();
         userInfo.setUserId(tokenUserInfoDto.getUserId());
         userInfo.setNickName(nickName);
@@ -83,11 +81,9 @@ public class UHomeController extends ABaseController{
     }
 
     @RequestMapping("/saveTheme")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveTheme(@NotNull @Min(1) @Max(10) Integer theme) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         UserInfo userInfo = new UserInfo();
         userInfo.setTheme(theme);
         userInfoService.updateByUserId(userInfo, tokenUserInfoDto.getUserId());
@@ -95,31 +91,25 @@ public class UHomeController extends ABaseController{
     }
 
     @RequestMapping("/focus")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO focus(@NotNull @Size(max=10) String focusUserId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         userFocusService.focusUser(tokenUserInfoDto.getUserId(), focusUserId);
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/cancelFocus")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO cancelFocus(@NotNull @Size(max=10) String focusUserId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         userFocusService.cancelFocus(tokenUserInfoDto.getUserId(), focusUserId);
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/loadFocusList")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadFocusList(Integer pageNo, Integer pageSize) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         UserFocusQuery userFocusQuery = new UserFocusQuery();
         userFocusQuery.setUserId(tokenUserInfoDto.getUserId());
         try {
@@ -135,11 +125,9 @@ public class UHomeController extends ABaseController{
     }
 
     @RequestMapping("/loadFansList")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadFansList(Integer pageNo, Integer pageSize) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         UserFocusQuery userFocusQuery = new UserFocusQuery();
         userFocusQuery.setFocusUserId(tokenUserInfoDto.getUserId());
         try {

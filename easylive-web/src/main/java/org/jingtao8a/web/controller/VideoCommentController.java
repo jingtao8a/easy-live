@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.annotation.GlobalInterceptor;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.UserAction;
@@ -44,14 +45,12 @@ public class VideoCommentController extends ABaseController{
     private UserActionService userActionService;
 
     @RequestMapping("/postComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO postComment(@NotEmpty String videoId,
                                   @NotEmpty @Size(max=500) String content,
                                   Integer replyCommentId,
                                   @Size(max=50) String imgPath) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入无法评论");
-        }
         VideoComment videoComment = new VideoComment();
         videoComment.setVideoId(videoId);
         videoComment.setContent(content);
@@ -119,32 +118,26 @@ public class VideoCommentController extends ABaseController{
 
 
     @RequestMapping("/topComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO topComment(@NotNull Integer commentId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoCommentService.topComment(commentId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/cancelTopComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO cancelTopComment(@NotNull Integer commentId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoCommentService.cancelTopComment(commentId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
 
 
     @RequestMapping("/userDelComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO userDelComment(@NotNull Integer commentId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoCommentService.deleteComment(commentId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }

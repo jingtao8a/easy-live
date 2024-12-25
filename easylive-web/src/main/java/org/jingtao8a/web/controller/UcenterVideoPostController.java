@@ -1,15 +1,14 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.annotation.GlobalInterceptor;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.*;
 import org.jingtao8a.entity.query.*;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.VideoStatusEnum;
 import org.jingtao8a.exception.BusinessException;
-import org.jingtao8a.mapper.VideoCommentMapper;
 import org.jingtao8a.service.VideoInfoFilePostService;
-import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.service.VideoInfoPostService;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.service.impl.VideoCommentServiceImpl;
@@ -19,7 +18,6 @@ import org.jingtao8a.vo.PaginationResultVO;
 import org.jingtao8a.vo.ResponseVO;
 import org.jingtao8a.vo.VideoPostEditInfoVO;
 import org.jingtao8a.vo.VideoStatusCountInfoVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +45,7 @@ public class UcenterVideoPostController extends ABaseController{
     private VideoDanmuServiceImpl videoDanmuService;
 
     @RequestMapping("/postVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO postVideo(String videoId,
                                 @NotEmpty String videoCover,
                                 @NotEmpty @Size(max=100) String videoName,
@@ -58,9 +57,6 @@ public class UcenterVideoPostController extends ABaseController{
                                 @Size(max = 3) String interaction,
                                 @NotEmpty String uploadFileList) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         List<VideoInfoFilePost> videoInfoFilePostList = JsonUtils.convertJson2List(uploadFileList, VideoInfoFilePost.class);
         //只有create_time last_update_time status origin_info duration 未初始化
         VideoInfoPost videoInfoPost = new VideoInfoPost();
@@ -80,11 +76,9 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/loadVideoList")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadVideoList(Integer status, Long pageNo, String videoNameFuzzy) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
         videoInfoPostQuery.setUserId(tokenUserInfoDto.getUserId());
         videoInfoPostQuery.setPageNo(pageNo);
@@ -103,11 +97,9 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/getVideoCountInfo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO getVideoCountInfo() throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
         videoInfoPostQuery.setUserId(tokenUserInfoDto.getUserId());
         videoInfoPostQuery.setStatus(VideoStatusEnum.STATUS3.getStatus());//审核通过的
@@ -128,11 +120,9 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/getVideoByVideoId")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO getVideoByVideoId(@NotEmpty String videoId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         VideoInfoPost videoInfoPost = videoInfoPostService.selectByVideoId(videoId);
         if (videoInfoPost == null || !videoInfoPost.getUserId().equals(tokenUserInfoDto.getUserId())) {
             throw new BusinessException(ResponseCodeEnum.CODE_600);
@@ -149,31 +139,25 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/saveVideoInteraction")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveVideoInteraction(@NotEmpty String videoId, String interaction) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoInfoPostService.changeInteraction(videoId, tokenUserInfoDto.getUserId(), interaction);
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/deleteVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO deleteVideo(@NotEmpty String videoId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoInfoPostService.deleteVideo(videoId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/loadAllVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadAllVideo() throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
         videoInfoQuery.setUserId(tokenUserInfoDto.getUserId());
         videoInfoQuery.setOrderBy("create_time desc");
@@ -182,11 +166,9 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/loadComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadComment(Integer pageNo, Integer pageSize, String videoId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
         videoCommentQuery.setVideoId(videoId);
         videoCommentQuery.setVideoUserId(tokenUserInfoDto.getUserId());
@@ -199,21 +181,17 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/delComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delComment(@NotNull Integer commentId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoCommentService.deleteComment(commentId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
 
     @RequestMapping("/loadDanmu")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadDanmu(Integer pageNo, Integer pageSize, String videoId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         VideoDanmuQuery videoDanmuQuery = new VideoDanmuQuery();
         videoDanmuQuery.setVideoId(videoId);
         videoDanmuQuery.setVideoUserId(tokenUserInfoDto.getUserId());
@@ -226,11 +204,9 @@ public class UcenterVideoPostController extends ABaseController{
     }
 
     @RequestMapping("/delDanmu")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delDanmu(@NotNull Integer danmuId) throws BusinessException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
-        if (tokenUserInfoDto == null) {
-            throw new BusinessException("未登入");
-        }
         videoDanmuService.deleteDanmu(danmuId, tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }

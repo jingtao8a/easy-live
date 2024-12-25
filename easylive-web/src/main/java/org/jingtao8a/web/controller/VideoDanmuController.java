@@ -1,6 +1,7 @@
 package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jingtao8a.annotation.GlobalInterceptor;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.entity.po.VideoDanmu;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.swing.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -35,6 +35,7 @@ public class VideoDanmuController extends ABaseController {
     private VideoInfoServiceImpl videoInfoService;
 
     @RequestMapping("/postDanmu")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO postDanmu(@NotEmpty String videoId,
                                 @NotEmpty String fileId,
                                 @NotEmpty @Size(max=200) String text,
