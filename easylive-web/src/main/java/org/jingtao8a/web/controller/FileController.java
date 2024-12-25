@@ -2,14 +2,17 @@ package org.jingtao8a.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.config.AppConfig;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.dto.UploadingFileDto;
+import org.jingtao8a.dto.VideoPlayInfoDto;
 import org.jingtao8a.entity.po.VideoInfoFile;
 import org.jingtao8a.enums.ResponseCodeEnum;
+import org.jingtao8a.enums.SearchOrderTypeEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.service.VideoInfoFileService;
 import org.jingtao8a.service.VideoInfoService;
@@ -17,6 +20,7 @@ import org.jingtao8a.utils.DateUtils;
 import org.jingtao8a.utils.FFmpegUtils;
 import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.ResponseVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,9 +53,6 @@ public class FileController extends ABaseController{
 
     @Resource
     private VideoInfoFileService videoInfoFileService;
-
-    @Resource
-    private VideoInfoService videoInfoService;
 
     @RequestMapping("/uploadImage")
     public ResponseVO uploadImage(@NotNull MultipartFile file, @NotNull Boolean createThumbnail) throws IOException, BusinessException {
@@ -166,9 +167,15 @@ public class FileController extends ABaseController{
         }
         String filePath = videoInfoFile.getFilePath();
         readFile(response, filePath + "/" + Constants.M3U8_NAME);
-        //更新视频最后播放时间和播放量
-        videoInfoService.updateVideoPlayInfo(videoInfoFile.getVideoId());
-        //TODO 更新es
+        //将视频阅读信息加入redis队列
+        VideoPlayInfoDto videoPlayInfoDto = new VideoPlayInfoDto();
+        videoPlayInfoDto.setVideoId(videoInfoFile.getVideoId());
+        videoPlayInfoDto.setFileIndex(videoInfoFile.getFileIndex());
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDtoFromCookie();
+        if (tokenUserInfoDto == null) {
+            videoPlayInfoDto.setUserId(tokenUserInfoDto.getUserId());
+        }
+        redisComponent.addVideoPlayInfo(videoPlayInfoDto);
     }
 
     @RequestMapping("/videoResource/{fileId}/{ts}")

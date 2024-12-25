@@ -2,6 +2,7 @@ package org.jingtao8a.service;
 
 import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.VideoInfoQuery;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import java.util.List;
@@ -62,5 +63,5 @@ public interface VideoInfoService {
 	*/
 	Long deleteByVideoId(String videoId);
 
-    void updateVideoPlayInfo(String videoId);
+    void addReadCount(String videoId) throws BusinessException;
 }

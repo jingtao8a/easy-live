@@ -1,11 +1,14 @@
 package org.jingtao8a.service.impl;
 
+import org.jingtao8a.component.EsSearchComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.SimplePage;
 import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.PageSize;
+import org.jingtao8a.enums.SearchOrderTypeEnum;
 import org.jingtao8a.enums.UserActionTypeEnum;
+import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.VideoInfoService;
 import org.jingtao8a.vo.PaginationResultVO;
@@ -24,6 +27,10 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 
 	@Resource
 	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+
+	@Resource
+	private EsSearchComponent esSearchComponent;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -118,11 +125,12 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 
     @Override
 	@Transactional(rollbackFor = Exception.class)
-    public void updateVideoPlayInfo(String videoId) {
+    public void addReadCount(String videoId) throws BusinessException {
         videoInfoMapper.updateCountInfo(videoId, UserActionTypeEnum.VIDEO_PLAY.getField(), Constants.ONE);
     	VideoInfo videoInfo = new VideoInfo();
 		videoInfo.setLastPlayTime(new Date());
 		videoInfoMapper.updateByVideoId(videoInfo, videoId);
+		//更新es
+		esSearchComponent.updateDocCount(videoId, SearchOrderTypeEnum.VIDEO_PLAY.getField(), 1);
 	}
-
 }

@@ -80,6 +80,20 @@ public class ABaseController {
         return redisComponent.getTokenInfo(token);
     }
 
+    protected TokenUserInfoDto getTokenUserInfoDtoFromCookie() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase(Constants.TOKEN_WEB)) {
+                return redisComponent.getTokenInfo(cookie.getValue());
+            }
+        }
+        return null;
+    }
+
     protected void cleanCookie(HttpServletResponse response) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         Cookie[] cookies = request.getCookies();

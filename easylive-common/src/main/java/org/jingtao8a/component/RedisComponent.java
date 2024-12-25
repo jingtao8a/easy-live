@@ -5,6 +5,7 @@ import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.dto.UploadingFileDto;
+import org.jingtao8a.dto.VideoPlayInfoDto;
 import org.jingtao8a.entity.po.CategoryInfo;
 import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.redis.RedisUtils;
@@ -145,6 +146,10 @@ public class RedisComponent {
         return (VideoInfoFilePost)redisUtils.rpop(Constants.REDIS_KEY_QUEUE_TRANSFER);
     }
 
+    public VideoPlayInfoDto getVideoPlayInfoFromVideoPlayQueue() {
+        return (VideoPlayInfoDto)redisUtils.rpop(Constants.REDIS_KEY_QUEUE_VIDEO_PLAY);
+    }
+
     public Long reportVideoPlayOnline(String fileId, String deviceId) {
         String userPlayOnlineKey = String.format(Constants.REDIS_KEY_VIDEO_PLAY_COUNT_USER, fileId, deviceId);
         String playOnlineCountKey = String.format(Constants.REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE, fileId);
@@ -168,5 +173,14 @@ public class RedisComponent {
 
     public List<String> getKeywordTop(Integer top) {
         return redisUtils.getZSetList(Constants.REDIS_KEY_VIDEO_SEARCH_COUNT, top - 1);
+    }
+
+    public void addVideoPlayInfo(VideoPlayInfoDto videoPlayInfoDto) {
+        redisUtils.lpush(Constants.REDIS_KEY_QUEUE_VIDEO_PLAY, videoPlayInfoDto, null);
+    }
+
+    public void recordVideoPlayCount(String videoId) {
+        String date = DateUtils.format(new Date(), DateUtils.YYYY_MM_DD);
+        redisUtils.incrementex(Constants.REDIS_KEY_VIDEO_PLAY_COUNT + date + ":" + videoId, (long)Constants.REDIS_KEY_EXPIRES_ONE_DAY * 2);
     }
 }
