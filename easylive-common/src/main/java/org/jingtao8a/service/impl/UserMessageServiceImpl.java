@@ -1,7 +1,6 @@
 package org.jingtao8a.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jingtao8a.dto.UserMessageExtendDto;
 import org.jingtao8a.entity.po.UserMessage;
 import org.jingtao8a.entity.po.VideoComment;
@@ -146,7 +145,6 @@ public class UserMessageServiceImpl implements UserMessageService {
 		}
 		userId = videoInfoPost.getUserId();
 		UserMessageExtendDto userMessageExtendDto = new UserMessageExtendDto();
-		log.info("saveUserMessage");
 		if (messageTypeEnum == MessageTypeEnum.LIKE || messageTypeEnum == MessageTypeEnum.COLLECTION) {
 			//doAction(视频收藏、点赞 已经记录的，不再记录)
 			UserMessageQuery userMessageQuery = new UserMessageQuery();
@@ -174,7 +172,6 @@ public class UserMessageServiceImpl implements UserMessageService {
 			userMessage.setExtendJson(JsonUtils.convertObj2Json(userMessageExtendDto));
 		} else if (messageTypeEnum == MessageTypeEnum.SYS) {
 			//auditVideo
-			log.info("audit......");
 			userMessageExtendDto.setMessageContent(reason);
 			userMessageExtendDto.setAuditStatus(videoInfoPost.getStatus());
 			userMessage.setExtendJson(JsonUtils.convertObj2Json(userMessageExtendDto));
