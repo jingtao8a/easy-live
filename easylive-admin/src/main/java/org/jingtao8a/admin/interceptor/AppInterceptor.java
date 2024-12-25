@@ -1,6 +1,5 @@
 package org.jingtao8a.admin.interceptor;
 
-import io.netty.util.Constant;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.enums.ResponseCodeEnum;
@@ -29,15 +28,14 @@ public class AppInterceptor implements HandlerInterceptor {
         if (null == handler) {
             return false;
         }
-        if (!(handler instanceof HandlerMethod)) {//请求静态资源直接返回true
+        if (!(handler instanceof HandlerMethod)) {//没有找到对应的方法，NOT FOUND
             return true;
         }
-        if (request.getRequestURI().contains(URL_ACCOUNT)) {//请求url包含/account直接返回true
+        if (request.getRequestURI().contains(URL_ACCOUNT) || request.getRequestURI().contains(URL_FILE)) {//请求url包含/account直接返回true
             return true;
         }
         String token = request.getHeader(Constants.TOKEN_ADMIN);//从请求头中查找TOKEN_ADMIN
-        //获取图片
-        if (request.getRequestURI().contains(URL_FILE)) {//从cookie中查找TOKEN_ADMIN
+        if (token == null || StringTools.isEmpty(token)) {//从cookie中查找TOKEN_ADMIN
             token = getTokenFromCookie(request);
         }
         if (StringTools.isEmpty(token)) {//请求头和cookie中均没没找到TOKEN_ADMIN
