@@ -34,4 +34,5 @@ public class VideoPlayHistoryQuery extends BaseQuery {
 	private String lastUpdateTimeStart;
 	private String lastUpdateTimeEnd;
 
+    public Boolean queryVideoDetail;
 }
