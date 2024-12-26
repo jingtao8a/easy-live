@@ -338,4 +338,8 @@
 		</set>
 		<include refid="query_condition"></include>
 	</update>
+	<delete id="deleteByParam">
+		delete from user_message
+		<include refid="query_condition"></include>
+	</delete>
 </mapper>

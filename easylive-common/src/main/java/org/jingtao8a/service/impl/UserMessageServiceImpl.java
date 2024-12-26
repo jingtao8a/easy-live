@@ -197,4 +197,9 @@ public class UserMessageServiceImpl implements UserMessageService {
     public void updateByParam(UserMessage userMessage, UserMessageQuery userMessageQuery) {
         userMessageMapper.updateByParam(userMessage, userMessageQuery);
     }
+
+	@Override
+	public void deleteByParam(UserMessageQuery userMessageQuery) {
+		userMessageMapper.deleteByParam(userMessageQuery);
+	}
 }

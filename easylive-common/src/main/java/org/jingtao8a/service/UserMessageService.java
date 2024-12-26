@@ -69,4 +69,6 @@ public interface UserMessageService {
 	List<UserMessageCountDto> getMessageTypeNoReadCount(String userId);
 
 	void updateByParam(UserMessage userMessage, UserMessageQuery userMessageQuery);
+
+	void deleteByParam(UserMessageQuery userMessageQuery);
 }
