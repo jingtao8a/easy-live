@@ -2,6 +2,7 @@ package org.jingtao8a.service;
 import java.util.List;
 
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.dto.UserCountInfoDto;
 import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.query.UserInfoQuery;
 import org.jingtao8a.exception.BusinessException;
@@ -103,4 +104,6 @@ public interface UserInfoService {
 	UserInfoVO getUserDetailInfo(String currentUserId, String userId) throws BusinessException;
 
 	void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto) throws BusinessException;
+
+    UserCountInfoDto getUserCountInfo(String userId);
 }

@@ -1,13 +1,19 @@
 package org.jingtao8a.web.controller;
 
 import com.wf.captcha.ArithmeticCaptcha;
+import org.jingtao8a.annotation.GlobalInterceptor;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.dto.UserCountInfoDto;
 import org.jingtao8a.exception.BusinessException;
+import org.jingtao8a.mapper.UserFocusMapper;
+import org.jingtao8a.mapper.UserInfoMapper;
 import org.jingtao8a.service.UserInfoService;
+import org.jingtao8a.service.impl.UserFocusServiceImpl;
 import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.ResponseVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +42,12 @@ public class AccountController extends ABaseController {
 
 	@Resource
 	private RedisComponent redisComponent;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+    @Autowired
+    private UserFocusServiceImpl userFocusService;
+    @Autowired
+    private UserFocusMapper userFocusMapper;
 
 	@RequestMapping("/checkCode")
 	public ResponseVO checkCode() {
@@ -83,7 +95,6 @@ public class AccountController extends ABaseController {
 			String ip = getIpAddr();
 			TokenUserInfoDto tokenUserInfoDto = userInfoService.login(email, password, ip);
 			saveToken2Cookie(response, tokenUserInfoDto.getToken());
-			// TODO 设置 粉丝数 关注数 硬币数
 			return getSuccessResponseVO(tokenUserInfoDto);
 		} finally {
 			redisComponent.cleanCheckCode(checkCodeKey);
@@ -115,7 +126,6 @@ public class AccountController extends ABaseController {
 			redisComponent.saveTokenInfo(tokenUserInfoDto);//重新存储tokenUserInfoDto，更新生命周期，使用新的token
 			saveToken2Cookie(response, tokenUserInfoDto.getToken());
 		}
-		// TODO 设置 粉丝数 关注数 硬币数
 		return getSuccessResponseVO(tokenUserInfoDto);
 	}
 
@@ -123,5 +133,14 @@ public class AccountController extends ABaseController {
 	public ResponseVO logout(HttpServletResponse response) {
 		cleanCookie(response);
 		return getSuccessResponseVO(null);
+	}
+
+	@RequestMapping("/getUserCountInfo")
+	@GlobalInterceptor(checkLogin = true)
+	public ResponseVO getUserCountInfo() {
+		//设置 粉丝数 关注数 硬币数
+		TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+		UserCountInfoDto userCountInfoDto = userInfoService.getUserCountInfo(tokenUserInfoDto.getUserId());
+		return getSuccessResponseVO(userCountInfoDto);
 	}
 }

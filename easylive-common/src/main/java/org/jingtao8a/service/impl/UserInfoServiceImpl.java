@@ -5,6 +5,7 @@ import java.util.List;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.TokenUserInfoDto;
+import org.jingtao8a.dto.UserCountInfoDto;
 import org.jingtao8a.entity.po.UserFocus;
 import org.jingtao8a.entity.po.UserInfo;
 import org.jingtao8a.entity.query.UserFocusQuery;
@@ -281,5 +282,17 @@ public class UserInfoServiceImpl implements UserInfoService {
 		if (updateTokenUserInfo) {
 			redisComponent.updateTokenUserInfo(tokenUserInfoDto);
 		}
+	}
+
+	@Override
+	public UserCountInfoDto getUserCountInfo(String userId) {
+		UserInfo userInfo = userInfoMapper.selectByUserId(userId);
+		Integer fansCount = userFocusMapper.selectFansCount(userId).intValue();
+		Integer focusCount = userFocusMapper.selectFocusCount(userId).intValue();
+		UserCountInfoDto userCountInfoDto = new UserCountInfoDto();
+		userCountInfoDto.setFocusCount(focusCount);
+		userCountInfoDto.setFansCount(fansCount);
+		userCountInfoDto.setCurrentCoinCount(userInfo.getCurrentCoinCount());
+		return userCountInfoDto;
 	}
 }
