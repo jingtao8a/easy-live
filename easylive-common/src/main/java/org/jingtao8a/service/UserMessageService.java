@@ -67,4 +67,6 @@ public interface UserMessageService {
     void saveUserMessage(String videoId, String content, Integer replyCommentId, String reason, MessageTypeEnum messageTypeEnum, String sendUserId);
 
 	List<UserMessageCountDto> getMessageTypeNoReadCount(String userId);
+
+	void updateByParam(UserMessage userMessage, UserMessageQuery userMessageQuery);
 }

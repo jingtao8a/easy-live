@@ -308,4 +308,34 @@
 		select message_type messageType, count(1) messageCount from user_message where user_id = #{userId}
 		and read_type = 0 group by message_type
 	</select>
+	<update id="updateByParam">
+		update user_message
+		<set>
+			<if test="bean.messageId != null">
+				message_id=#{bean.messageId},
+			</if>
+			<if test="bean.userId != null">
+				user_id=#{bean.userId},
+			</if>
+			<if test="bean.videoId != null">
+				video_id=#{bean.videoId},
+			</if>
+			<if test="bean.messageType != null">
+				message_type=#{bean.messageType},
+			</if>
+			<if test="bean.sendUserId != null">
+				send_user_id=#{bean.sendUserId},
+			</if>
+			<if test="bean.readType != null">
+				read_type=#{bean.readType},
+			</if>
+			<if test="bean.createTime != null">
+				create_time=#{bean.createTime},
+			</if>
+			<if test="bean.extendJson != null">
+				extend_json=#{bean.extendJson},
+			</if>
+		</set>
+		<include refid="query_condition"></include>
+	</update>
 </mapper>

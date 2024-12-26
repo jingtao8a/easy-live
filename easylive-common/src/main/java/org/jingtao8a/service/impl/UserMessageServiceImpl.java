@@ -192,4 +192,9 @@ public class UserMessageServiceImpl implements UserMessageService {
     public List<UserMessageCountDto> getMessageTypeNoReadCount(String userId) {
 		return userMessageMapper.getMessageTypeNoReadCount(userId);
     }
+
+    @Override
+    public void updateByParam(UserMessage userMessage, UserMessageQuery userMessageQuery) {
+        userMessageMapper.updateByParam(userMessage, userMessageQuery);
+    }
 }

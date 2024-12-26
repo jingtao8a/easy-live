@@ -25,4 +25,6 @@ public interface UserMessageMapper<T,P> extends BaseMapper {
 	 Long deleteByMessageId(@Param("messageId") Integer messageId);
 
     List<UserMessageCountDto> getMessageTypeNoReadCount(@Param("userId") String userId);
+
+	void updateByParam(@Param("bean") T userMessage, @Param("query") P userMessageQuery);
 }
