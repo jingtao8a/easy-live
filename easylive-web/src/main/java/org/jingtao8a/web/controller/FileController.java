@@ -172,7 +172,7 @@ public class FileController extends ABaseController{
         videoPlayInfoDto.setVideoId(videoInfoFile.getVideoId());
         videoPlayInfoDto.setFileIndex(videoInfoFile.getFileIndex());
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDtoFromCookie();
-        if (tokenUserInfoDto == null) {
+        if (tokenUserInfoDto != null) {
             videoPlayInfoDto.setUserId(tokenUserInfoDto.getUserId());
         }
         redisComponent.addVideoPlayInfo(videoPlayInfoDto);
