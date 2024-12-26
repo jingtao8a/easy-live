@@ -3,6 +3,9 @@ package org.jingtao8a.entity.po;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.ToString;
+import org.jingtao8a.dto.UserMessageExtendDto;
+import org.jingtao8a.utils.JsonUtils;
+import org.jingtao8a.utils.StringTools;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -48,4 +51,18 @@ public class UserMessage implements Serializable {
 	 * 扩展信息
 	*/
 	private String extendJson;
+
+	private UserMessageExtendDto userMessageExtendDto;
+
+	private UserMessageExtendDto getUserMessageExtendDto() {
+		return StringTools.isEmpty(extendJson) ? new UserMessageExtendDto() : JsonUtils.convertJson2Obj(extendJson, UserMessageExtendDto.class);
+	}
+
+	private String sendUserAvatar;
+
+	private String sendUserNickName;
+
+	private String videoName;
+
+	private String videoCover;
 }
