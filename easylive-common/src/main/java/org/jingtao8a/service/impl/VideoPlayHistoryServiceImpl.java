@@ -10,7 +10,8 @@ import org.jingtao8a.vo.PaginationResultVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
+
 /**
 @Description:VideoPlayHistoryService
 @Date:2024-12-25
@@ -110,6 +111,16 @@ public class VideoPlayHistoryServiceImpl implements VideoPlayHistoryService {
 	@Override
 	public Long deleteByUserIdAndVideoId(String userId, String videoId) {
 		return videoPlayHistoryMapper.deleteByUserIdAndVideoId(userId, videoId);
+	}
+
+	@Override
+	public void saveHistory(String userId, String videoId, Integer fileIndx) {
+		VideoPlayHistory videoPlayHistory = new VideoPlayHistory();
+		videoPlayHistory.setUserId(userId);
+		videoPlayHistory.setVideoId(videoId);
+		videoPlayHistory.setFileIndex(fileIndx);
+		videoPlayHistory.setLastUpdateTime(new Date());
+		videoPlayHistoryMapper.insertOrUpdate(videoPlayHistory);
 	}
 
 }

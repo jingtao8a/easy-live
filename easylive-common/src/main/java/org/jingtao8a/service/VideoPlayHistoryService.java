@@ -62,4 +62,5 @@ public interface VideoPlayHistoryService {
 	*/
 	Long deleteByUserIdAndVideoId(String userId, String videoId);
 
+    void saveHistory(String userId, String videoId, Integer fileIndx);
 }
