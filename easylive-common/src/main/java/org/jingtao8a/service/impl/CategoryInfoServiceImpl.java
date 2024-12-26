@@ -186,7 +186,7 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	public void delCategory(Integer categoryId) throws BusinessException {
 		VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
 		videoInfoPostQuery.setCategoryIdOrPCategoryId(categoryId);
-		Long count =videoInfoPostMapper.selectCount(videoInfoPostQuery);
+		Long count = videoInfoPostMapper.selectCount(videoInfoPostQuery);
 		if (count > 0L) {
 			throw new BusinessException("该分类下存在视频，不可删");
 		}

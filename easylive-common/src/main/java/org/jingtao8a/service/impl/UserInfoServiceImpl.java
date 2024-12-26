@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
+import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.dto.UserCountInfoDto;
 import org.jingtao8a.entity.po.UserFocus;
@@ -200,10 +201,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 		userInfo.setStatus(UserStatusEnum.ENABLE.getStatus());
 		userInfo.setSex(UserSexEnum.SECRECY.getType());
 		userInfo.setTheme(Constants.ONE);
-
-		// TODO 初始化 用户的硬币
-		userInfo.setTotalCoinCount(10);
-		userInfo.setCurrentCoinCount(10);
+		//注册初始化 用户的硬币
+		SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+		userInfo.setTotalCoinCount(sysSettingDto.getRegisterCoinCount());
+		userInfo.setCurrentCoinCount(sysSettingDto.getRegisterCoinCount());
 
 		userInfoMapper.insert(userInfo);
 	}
