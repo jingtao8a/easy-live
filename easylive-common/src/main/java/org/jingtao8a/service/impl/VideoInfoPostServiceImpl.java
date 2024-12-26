@@ -1,6 +1,5 @@
 package org.jingtao8a.service.impl;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,7 +17,6 @@ import org.jingtao8a.service.VideoInfoPostService;
 import org.jingtao8a.utils.CopyTools;
 import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.PaginationResultVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +63,10 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 
 	@Resource
 	private EsSearchComponent esSearchComponent;
+
+	@Resource
+    private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -287,7 +289,8 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 			VideoInfo dbVideoInfo = videoInfoMapper.selectByVideoId(videoId);
 			if (dbVideoInfo == null) {//第一次审核
 				SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
-				//TODO 给用户加硬币
+				//给用户加硬币
+				userInfoMapper.updateCoinCount(videoInfoPost.getUserId(), sysSettingDto.getPostVideoCoinCount());
 			}
 		}
 		//更新videoInfoPost到正式表
@@ -355,7 +358,9 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 		videoInfoMapper.deleteByVideoId(videoId);
 		videoInfoPostMapper.deleteByVideoId(videoId);
-		// TODO 减去用户硬币
+		// 减去用户硬币
+		SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+		userInfoMapper.updateCoinCount(userId, -sysSettingDto.getPostVideoCoinCount());
 		//	删除es信息
 		esSearchComponent.deleteDoc(videoId);
 		executorService.submit(()->{
