@@ -123,4 +123,9 @@ public class VideoPlayHistoryServiceImpl implements VideoPlayHistoryService {
 		videoPlayHistoryMapper.insertOrUpdate(videoPlayHistory);
 	}
 
+	@Override
+	public void deleteByParam(VideoPlayHistoryQuery videoPlayHistoryQuery) {
+		videoPlayHistoryMapper.deleteByParam(videoPlayHistoryQuery);
+	}
+
 }

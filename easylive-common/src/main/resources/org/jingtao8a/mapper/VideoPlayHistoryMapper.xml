@@ -203,5 +203,8 @@
 		</set>
 		where  user_id = #{userId} and video_id = #{videoId} 
 	</update>
-
+	<delete id="deleteByParam">
+		delete from video_play_history v
+		<include refid="query_condition"></include>
+	</delete>
 </mapper>

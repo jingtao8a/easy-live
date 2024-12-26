@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
 
 @RestController
 @Validated
@@ -32,5 +33,23 @@ public class VideoPlayHistoryController extends ABaseController {
         videoPlayHistoryQuery.setQueryVideoDetail(true);
         PaginationResultVO resultVO = videoPlayHistoryService.findListByPage(videoPlayHistoryQuery);
         return getSuccessResponseVO(resultVO);
+    }
+
+    @RequestMapping("/delHistory")
+    @GlobalInterceptor(checkLogin = true)
+    public ResponseVO loadHistory(@NotEmpty String videoId) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        videoPlayHistoryService.deleteByUserIdAndVideoId(tokenUserInfoDto.getUserId(), videoId);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/cleanHistory")
+    @GlobalInterceptor(checkLogin = true)
+    public ResponseVO cleanHistory() {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        VideoPlayHistoryQuery videoPlayHistoryQuery = new VideoPlayHistoryQuery();
+        videoPlayHistoryQuery.setUserId(tokenUserInfoDto.getUserId());
+        videoPlayHistoryService.deleteByParam(videoPlayHistoryQuery);
+        return getSuccessResponseVO(null);
     }
 }

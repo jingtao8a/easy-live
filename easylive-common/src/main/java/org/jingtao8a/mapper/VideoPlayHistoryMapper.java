@@ -21,4 +21,5 @@ public interface VideoPlayHistoryMapper<T,P> extends BaseMapper {
 	*/
 	 Long deleteByUserIdAndVideoId(@Param("userId") String userId, @Param("videoId") String videoId);
 
+    void deleteByParam(@Param("query") P videoPlayHistoryQuery);
 }
