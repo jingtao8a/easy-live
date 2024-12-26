@@ -28,4 +28,8 @@ public class StatisticsInfoQuery extends BaseQuery {
 	 * 统计数量
 	*/
 	private Integer statisticsCount;
+
+	private String statisticsDateStart;
+
+	private String statisticsDateEnd;
 }
