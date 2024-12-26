@@ -4,18 +4,22 @@ import java.util.List;
 
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
+import org.jingtao8a.dto.CountInfoDto;
 import org.jingtao8a.dto.SysSettingDto;
 import org.jingtao8a.dto.TokenUserInfoDto;
 import org.jingtao8a.dto.UserCountInfoDto;
 import org.jingtao8a.entity.po.UserFocus;
 import org.jingtao8a.entity.po.UserInfo;
+import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.UserFocusQuery;
 import org.jingtao8a.entity.query.UserInfoQuery;
+import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.enums.ResponseCodeEnum;
 import org.jingtao8a.enums.UserSexEnum;
 import org.jingtao8a.enums.UserStatusEnum;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.UserFocusMapper;
+import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.utils.CopyTools;
 import org.jingtao8a.utils.StringTools;
 import org.jingtao8a.vo.PaginationResultVO;
@@ -43,6 +47,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Resource
 	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
+
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+
 	/**
 	 * 根据条件查询列表
 	*/
@@ -251,7 +259,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 				userInfoVO.setHavaFocus(false);
 			}
 		}
-		//TODO 点赞数，播放数
+		//获取点赞数，播放数
+		CountInfoDto countInfoDto = videoInfoMapper.selectSumCountInfo(userId);
+		userInfoVO.setLikeCount(countInfoDto.getLikeCount().longValue());
+		userInfoVO.setPlayCount(countInfoDto.getPlayCount().longValue());
 		return userInfoVO;
     }
 

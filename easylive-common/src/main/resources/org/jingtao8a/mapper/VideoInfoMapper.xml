@@ -728,4 +728,9 @@
 		</set>
 		<include refid="query_condition"></include>
 	</update>
+	<select id="selectSumCountInfo" resultType="org.jingtao8a.dto.CountInfoDto">
+		select ifnull(sum(play_count), 0) playCount, ifnull(sum(like_count),0) likeCount
+		from video_info
+		where user_id = #{userId}
+	</select>
 </mapper>

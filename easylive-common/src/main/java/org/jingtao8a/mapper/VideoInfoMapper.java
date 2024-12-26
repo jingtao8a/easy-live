@@ -1,5 +1,7 @@
 package org.jingtao8a.mapper;
 import org.apache.ibatis.annotations.Param;
+import org.jingtao8a.dto.CountInfoDto;
+
 /**
 @Description:视频信息Mapper
 @Date:2024-12-11
@@ -24,4 +26,6 @@ public interface VideoInfoMapper<T,P> extends BaseMapper {
     void updateCountInfo(@Param("videoId") String videoId, @Param("field") String field, @Param("changeCount") Integer changeCount);
 
     void updateByParam(@Param("bean") T videoInfo, @Param("query") P videoInfoQuery);
+
+    CountInfoDto selectSumCountInfo(@Param("userId") String userId);
 }
