@@ -16,37 +16,37 @@
 	</resultMap>
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		user_id ,video_id ,file_index ,last_update_time 
+		v.user_id ,v.video_id ,v.file_index ,v.last_update_time
 	</sql>
 	<!-- 基础查询条件-->
 	<sql id="base_query_condition">
 		<if test="query.userId != null and query.userId !=''">
-				and user_id = #{query.userId}
+				and v.user_id = #{query.userId}
 		</if>
 		<if test="query.videoId != null and query.videoId !=''">
-				and video_id = #{query.videoId}
+				and v.video_id = #{query.videoId}
 		</if>
 		<if test="query.fileIndex != null">
-				and file_index = #{query.fileIndex}
+				and v.file_index = #{query.fileIndex}
 		</if>
 		<if test="query.lastUpdateTime != null">
-				and last_update_time = #{query.lastUpdateTime}
+				and v.last_update_time = #{query.lastUpdateTime}
 		</if>
 	</sql>
 
 	<!-- 扩展的查询条件 -->
 	<sql id="base_query_condition_extend">
 		<if test="query.userIdFuzzy != null and query.userIdFuzzy != ''">
-			 and user_id like concat('%', #{query.userIdFuzzy}, '%')
+			 and v.user_id like concat('%', #{query.userIdFuzzy}, '%')
 		</if>
 		<if test="query.videoIdFuzzy != null and query.videoIdFuzzy != ''">
-			 and video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			 and v.video_id like concat('%', #{query.videoIdFuzzy}, '%')
 		</if>
 		<if test="query.lastUpdateTimeStart != null and query.lastUpdateTimeStart != ''">
-			<![CDATA[ and last_update_time >= str_to_date(#{query.lastUpdateTimeStart}, '%Y-%m-%d')]]>
+			<![CDATA[ and v.last_update_time >= str_to_date(#{query.lastUpdateTimeStart}, '%Y-%m-%d')]]>
 		</if>
 		<if test="query.lastUpdateTimeEnd != null and query.lastUpdateTimeEnd != ''">
-			<![CDATA[ and last_update_time < date_sub(str_to_date(#{query.lastUpdateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
+			<![CDATA[ and v.last_update_time < date_sub(str_to_date(#{query.lastUpdateTimeEnd}, '%Y-%m-%d'), interval - 1 day)]]>
 		</if>
 	</sql>
 
@@ -60,7 +60,16 @@
 
 	<!-- 查询列表 -->
 	<select id="selectList" resultMap="base_result_map">
-		SELECT <include refid="base_column_list"/> FROM video_play_history <include refid="query_condition"/>
+		SELECT
+		<include refid="base_column_list"/>
+		<if test="query.queryVideoDetail">
+		    ,d.video_cover videoCover, d.video_name videoName
+		</if>
+		FROM video_play_history v
+		<if test="query.queryVideoDetail">
+			left join video_info d on v.video_id = d.video_id
+		</if>
+		<include refid="query_condition"/>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
 		</if>
@@ -71,12 +80,11 @@
 
 	<!-- 查询数量 -->
 	<select id="selectCount" resultType="java.lang.Long">
-		SELECT count(1) FROM video_play_history <include refid="query_condition"/>
+		SELECT count(1) FROM video_play_history v <include refid="query_condition"/>
 	</select>
 
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="org.jingtao8a.entity.po.VideoPlayHistory">
-
 		INSERT INTO video_play_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="bean.userId != null">
@@ -110,7 +118,6 @@
 
 	<!-- 插入或者更新 (匹配有值的字段) -->
 	<insert id="insertOrUpdate" parameterType="org.jingtao8a.entity.po.VideoPlayHistory">
-
 		INSERT INTO video_play_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="bean.userId != null">
@@ -171,7 +178,7 @@
 	</insert>
 	<!-- 根据UserIdAndVideoId查找-->
 	<select id="selectByUserIdAndVideoId" resultMap="base_result_map">
-		select <include refid="base_column_list"/> from video_play_history  where  user_id = #{userId} and video_id = #{videoId} 
+		select <include refid="base_column_list"/> from video_play_history v where  v.user_id = #{userId} and v.video_id = #{videoId}
 	</select>
 	<!-- 根据UserIdAndVideoId删除-->
 	<delete id="deleteByUserIdAndVideoId" >
