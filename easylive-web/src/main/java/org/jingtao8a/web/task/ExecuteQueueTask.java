@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.component.RedisComponent;
 import org.jingtao8a.constants.Constants;
 import org.jingtao8a.dto.VideoPlayInfoDto;
-import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.service.VideoInfoFilePostService;
 import org.jingtao8a.service.VideoInfoService;
+import org.jingtao8a.service.VideoPlayHistoryService;
 import org.jingtao8a.utils.StringTools;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +29,9 @@ public class ExecuteQueueTask {
 
     @Resource
     private VideoInfoService videoInfoService;
+
+    @Resource
+    private VideoPlayHistoryService videoPlayHistoryService;
 
     @PostConstruct
     public void consumTransferFileQueue() {
@@ -65,7 +68,8 @@ public class ExecuteQueueTask {
                     }
                     videoInfoService.addReadCount(videoPlayInfoDto.getVideoId());
                     if (!StringTools.isEmpty(videoPlayInfoDto.getUserId())) {
-                        // TODO 记录历史
+                        //记录历史
+                        videoPlayHistoryService.saveHistory(videoPlayInfoDto.getUserId(), videoPlayInfoDto.getVideoId(), videoPlayInfoDto.getFileIndex());
                     }
                     //按天记录视频播放数
                     redisComponent.recordVideoPlayCount(videoPlayInfoDto.getVideoId());
