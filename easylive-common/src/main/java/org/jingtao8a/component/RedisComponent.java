@@ -183,4 +183,9 @@ public class RedisComponent {
         String date = DateUtils.format(new Date(), DateUtils.YYYY_MM_DD);
         redisUtils.incrementex(Constants.REDIS_KEY_VIDEO_PLAY_COUNT + date + ":" + videoId, (long)Constants.REDIS_KEY_EXPIRES_ONE_DAY * 2);
     }
+
+    public Map<String, Integer> getVideoPlayCount(String date) {
+        Map<String, Integer> result = redisUtils.getBatch(Constants.REDIS_KEY_VIDEO_PLAY_COUNT + date);
+        return result;
+    }
 }
