@@ -5,6 +5,7 @@ import org.jingtao8a.entity.query.StatisticsInfoQuery;
 import org.jingtao8a.vo.PaginationResultVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 @Description:数据统计信息Service
@@ -62,4 +63,7 @@ public interface StatisticsInfoService {
 	*/
 	Long deleteByStatisticsDateAndUserIdAndDataType(String statisticsDate, String userId, Integer dataType);
 
+	List<StatisticsInfo> statisticData();
+
+	Map<String, Integer> getStatisticsInfoActualTime(String userId);
 }
