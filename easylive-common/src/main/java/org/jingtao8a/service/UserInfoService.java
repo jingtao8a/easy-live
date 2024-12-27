@@ -106,4 +106,6 @@ public interface UserInfoService {
 	void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto) throws BusinessException;
 
     UserCountInfoDto getUserCountInfo(String userId);
+
+    void changeStatus(String userId, Integer status);
 }
