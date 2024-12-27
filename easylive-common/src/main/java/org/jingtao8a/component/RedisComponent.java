@@ -11,7 +11,6 @@ import org.jingtao8a.entity.po.VideoInfoFilePost;
 import org.jingtao8a.redis.RedisUtils;
 import org.jingtao8a.utils.DateUtils;
 import org.jingtao8a.utils.StringTools;
-import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -112,6 +111,10 @@ public class RedisComponent {
             redisUtils.set(Constants.REDIS_KEY_SYS_SETTING, sysSettingDto);
         }
         return sysSettingDto;
+    }
+
+    public void saveSysSettingDto(SysSettingDto sysSettingDto) {
+        redisUtils.set(Constants.REDIS_KEY_SYS_SETTING, sysSettingDto);
     }
 
     public void updateUploadingFileDto(String userId, String uploadId, UploadingFileDto uploadingFileDto) {
