@@ -33,4 +33,8 @@ public interface StatisticsInfoMapper<T,P> extends BaseMapper {
 	List<T> selectStatisticsDanmu(@Param("statisticsDate") String statisticsDate);
 
     Map<String, Integer> selectTotalCountInfo(@Param("userId") String userId);
+
+	List<T> selectListTotalInfoByParam(@Param("query") P statisticsInfoQuery);
+
+	List<T> selectListUserCountTotalInfoByParam(@Param("query") P statisticsInfoQuery);
 }
