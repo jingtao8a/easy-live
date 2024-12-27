@@ -242,7 +242,7 @@
 		</where>
 	</select>
 	<select id="selectListTotalInfoByParam" resultMap="base_result_map">
-		select ifnull(sum(statistics_count),0) statistics_count, data_type
+		select ifnull(sum(statistics_count),0) statistics_count, data_type, statistics_date
 		from statistics_info
 		<include refid="query_condition"></include>
 		group by data_type
