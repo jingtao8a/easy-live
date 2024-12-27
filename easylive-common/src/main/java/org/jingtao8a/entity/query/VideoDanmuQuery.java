@@ -64,4 +64,6 @@ public class VideoDanmuQuery extends BaseQuery {
 	private String videoUserId;
 
 	private Boolean queryVideoInfo;
+
+	private String videoNameFuzzy;
 }

@@ -78,4 +78,6 @@ public class VideoCommentQuery extends BaseQuery {
 	private Boolean loadChildren;
 
 	private Boolean queryVideoInfo;
+
+	private String videoNameFuzzy;
 }
