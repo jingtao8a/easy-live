@@ -2,6 +2,8 @@ package org.jingtao8a.admin.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jingtao8a.annotation.RecordMessage;
+import org.jingtao8a.entity.po.VideoInfoFilePost;
+import org.jingtao8a.entity.query.VideoInfoFilePostQuery;
 import org.jingtao8a.entity.query.VideoInfoPostQuery;
 import org.jingtao8a.enums.MessageTypeEnum;
 import org.jingtao8a.exception.BusinessException;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.*;
 
 @RestController
 @Validated
@@ -47,5 +50,26 @@ public class VideoInfoController extends ABaseController {
     public ResponseVO auditVideo(@NotEmpty String videoId, @NotNull Integer status, String reason) throws BusinessException {
         videoInfoPostService.auditVideo(videoId, status, reason);
         return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/recommendVideo")
+    public ResponseVO recommendVideo(@NotEmpty String videoId) throws BusinessException {
+        videoInfoService.recommendVideo(videoId);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/deleteVideo")
+    public ResponseVO deleteVideo(@NotEmpty String videoId) throws BusinessException {
+        videoInfoPostService.deleteVideo(videoId, null);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/loadVideoPList")
+    public ResponseVO loadVideoPList(@NotEmpty String videoId) {
+        VideoInfoFilePostQuery videoInfoFilePostQuery = new VideoInfoFilePostQuery();
+        videoInfoFilePostQuery.setVideoId(videoId);
+        videoInfoFilePostQuery.setOrderBy("file_index asc");
+        List<VideoInfoFilePost> videoInfoFilePostList = videoInfoFilePostService.findListByParam(videoInfoFilePostQuery);
+        return getSuccessResponseVO(videoInfoFilePostList);
     }
 }

@@ -5,6 +5,7 @@ import org.jingtao8a.entity.query.VideoInfoQuery;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.vo.PaginationResultVO;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -64,4 +65,6 @@ public interface VideoInfoService {
 	Long deleteByVideoId(String videoId);
 
     void addReadCount(String videoId) throws BusinessException;
+
+    void recommendVideo(String videoId) throws BusinessException;
 }

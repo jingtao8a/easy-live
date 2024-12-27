@@ -5,9 +5,7 @@ import org.jingtao8a.constants.Constants;
 import org.jingtao8a.entity.po.VideoInfo;
 import org.jingtao8a.entity.query.SimplePage;
 import org.jingtao8a.entity.query.VideoInfoQuery;
-import org.jingtao8a.enums.PageSize;
-import org.jingtao8a.enums.SearchOrderTypeEnum;
-import org.jingtao8a.enums.UserActionTypeEnum;
+import org.jingtao8a.enums.*;
 import org.jingtao8a.exception.BusinessException;
 import org.jingtao8a.mapper.VideoInfoMapper;
 import org.jingtao8a.service.VideoInfoService;
@@ -132,5 +130,22 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 		videoInfoMapper.updateByVideoId(videoInfo, videoId);
 		//更新es
 		esSearchComponent.updateDocCount(videoId, SearchOrderTypeEnum.VIDEO_PLAY.getField(), 1);
+	}
+
+	@Override
+	public void recommendVideo(String videoId) throws BusinessException {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoId);
+		if (videoInfo == null) {
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		VideoRecommendTypeEnum videoRecommendTypeEnum = null;
+		if (VideoRecommendTypeEnum.RECOMMEND.getType().equals(videoInfo.getRecommendType())) {
+			videoRecommendTypeEnum = VideoRecommendTypeEnum.NO_RECOMMEND;
+		} else {
+			videoRecommendTypeEnum = VideoRecommendTypeEnum.RECOMMEND;
+		}
+		VideoInfo updateVideoInfo = new VideoInfo();
+		updateVideoInfo.setRecommendType(videoRecommendTypeEnum.getType());
+		videoInfoMapper.updateByVideoId(updateVideoInfo, videoId);
 	}
 }
