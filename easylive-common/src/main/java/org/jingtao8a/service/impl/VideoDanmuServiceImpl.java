@@ -160,7 +160,7 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		if (videoInfo == null) {//视频不存在
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
-		if (!videoInfo.getUserId().equals(userId) && !dbVideoDanmu.getUserId().equals(userId)) {//只有video的user和danmu的user可以删除该弹幕
+		if (userId != null && !videoInfo.getUserId().equals(userId) && !dbVideoDanmu.getUserId().equals(userId)) {//只有video的user和danmu的user可以删除该弹幕
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
 		videoDanmuMapper.deleteByDanmuId(danmuId);
