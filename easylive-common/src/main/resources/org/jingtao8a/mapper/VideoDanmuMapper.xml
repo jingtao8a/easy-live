@@ -110,6 +110,9 @@
 			<if test="query.videoUserId != null and query.videoUserId != ''">
 				and vd.user_id = #{query.videoUserId}
 			</if>
+			<if test="query.videoNameFuzzy != null and query.videoNameFuzzy != ''">
+				and vd.video_name like concat('%', #{query.videoNameFuzzy}, '%')
+			</if>
 		</where>
 		<if test="query.orderBy!=null">
 			order by ${query.orderBy}
