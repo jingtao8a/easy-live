@@ -49,3 +49,32 @@ reason2: NULL是一个没有意义的值
 
 ## 索引下推
 截断的字段不会在server层进行条件判断，而是下推到存储引擎层进行条件判断
+
+## 聚合函数
+- IFNULL()
+- NULLIF()
+- AVG()
+- SUM()
+
+# 表达式
+- BETWEEN AND
+- (CASE
+  - WHEN () THEN() [WHEN() THEN()...] 
+  - ELSE () 
+- END) 
+- ROUND()
+- DISTINCT
+- UNION 和 UNION ALL
+- DATE_FORMAT() DATE_SUB() DATE_ADD()
+- CONVERT()
+- STR_TO_DATE(, "%Y-%m-%d")
+- MONTH() DAY() HOUR()
+
+## 字符串函数
+- CONCAT(str1|column, st2|column, ....)
+- CONCAT_WS(',', str1|column, st2|column, ....)
+- SUBSTRING(str, start, [length])
+- REPLACE(str, from_str, to_str)
+- LOCATE(substr, str, [pos])
+- UPPER()
+- LOWER()
