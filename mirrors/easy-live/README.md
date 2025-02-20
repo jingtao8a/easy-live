@@ -1,5 +1,8 @@
 1.下载jdk8<br>
-
+```shell
+sudo apt-get update
+sudo apt-get install openjdk-8-jdk
+```
 2.下载ffmpeg<br>
 ```shell
 sudo apt install ffmpeg
