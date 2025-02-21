@@ -228,7 +228,7 @@ public class VideoInfoFilePostServiceImpl implements VideoInfoFilePostService {
 			new File(tempFileName).delete();
 		}
 		fFmpegUtils.convertVideo2Ts(tsFolder, completeVideo);
-		videoFile.delete();
+//		videoFile.delete();
 	}
 
 	private void union(String dirPath, String toFilePath, Boolean delSource) throws BusinessException {
