@@ -2,5 +2,6 @@
 ```shell
 sudo docker network create --driver bridge easylive-network
 ```
-
-bug: easylive启动时，需要进入docker容器手动启动admin进程
+## 存在的bug
+> 1. easylive启动时，需要进入docker容器手动启动admin进程
+> 2. nginx-admin和nginx-web需要手动启动
