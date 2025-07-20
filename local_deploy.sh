@@ -21,28 +21,23 @@ else
     echo "Network '$NETWORK_NAME' already exists."
 fi
 
-# deploy elasticsearch
+# build elasticsearch
 sudo docker build -t elasticsearch ./docker-compose-dockerfile/elasticsearch
-sudo docker run -d --name easy_live_es -p 9200:9200 -p 9300:9300 --network easylive-network --network-alias easy_live_es elasticsearch
-
-# deploy mysql
+# build mysql
 sudo docker build -t mysql ./docker-compose-dockerfile/mysql
-sudo docker run -d --name easy_live_mysql -p 3306:3306 --network easylive-network --network-alias easy_live_mysql mysql
-
-# deploy redis
-sudo docker run -d --name easy_live_redis -p 6379:6379 --network easylive-network --network-alias easy_live_redis redis
-
-# deploy nginx_web
+# build nginx_web
 sudo docker build -t nginx_web ./docker-compose-dockerfile/nginx-web
-sudo docker run -p 3001:3001 --name easy_live_nginx_web --network easylive-network --network-alias easy_live_nginx_web -d nginx_web
-
-# deploy nginx_admin
+# build nginx_admin
 sudo docker build -t nginx_admin ./docker-compose-dockerfile/nginx-admin
-sudo docker run -p 3000:3000 --name easy_live_nginx_admin --network easylive-network --network-alias easy_live_nginx_admin -d nginx_admin
+# build easylive
+sudo docker build -t easylive ./docker-compose-dockerfile/easy-live
 
+# run
+sudo docker run -d --name easy_live_es -p 9200:9200 -p 9300:9300 --network easylive-network --network-alias easy_live_es elasticsearch
+sudo docker run -d --name easy_live_mysql -p 3306:3306 --network easylive-network --network-alias easy_live_mysql mysql
+sudo docker run -d --name easy_live_redis -p 6379:6379 --network easylive-network --network-alias easy_live_redis redis
+sudo docker run -p 3001:3001 --name easy_live_nginx_web --network easylive-network --network-alias easy_live_nginx_web -d nginx_web
+sudo docker run -p 3000:3000 --name easy_live_nginx_admin --network easylive-network --network-alias easy_live_nginx_admin -d nginx_admin
 echo "deploy easylive after 5 seconds."
 sleep 5
-
-# deploy easylive
-sudo docker build -t easylive ./docker-compose-dockerfile/easy-live
 sudo docker run -it --name easylive  -p 7070:7070 -p 7071:7071 -d --network easylive-network --network-alias easylive easylive
