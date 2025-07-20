@@ -10,9 +10,9 @@ spring:
     name: easylive-web
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/easylive?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowMultiQueries=true
-    username: root
-    password: 2001yuxintao
+    url: jdbc:mysql://${db.host}:${db.port}/easylive?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: ${db.username}
+    password: ${db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       pool-name: HikariCPDatasource
@@ -26,8 +26,8 @@ spring:
 
   redis:
     database: 0
-    host: 127.0.0.1
-    port: 6379
+    host: ${redis.host}
+    port: ${redis.port}
     jedis:
       pool:
         max-active: 20
@@ -41,7 +41,7 @@ mybatis:
     map-underscore-to-camel-case: true
 
 project:
-  folder: D:/easy-live/
+  folder: ${project.folder}
 
 admin:
   account: admin
@@ -52,7 +52,7 @@ showFFmpegLog: true
 es:
   host:
     port:
-      127.0.0.1:9200
+      ${es.host.port}
   index:
     video:
       name:
