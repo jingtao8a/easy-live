@@ -96,7 +96,8 @@
 	</delete>
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="org.jingtao8a.entity.po.CategoryInfo">
-		<selectKey> keyProperty="bean.categoryId" resultType="Integer" order="AFTER"
+<!--		插入后将自增ID存入bean.categoryId-->
+		<selectKey keyProperty="bean.categoryId" resultType="Integer" order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO category_info
